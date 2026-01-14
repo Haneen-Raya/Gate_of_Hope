@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/casemanagement",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\CaseManagement\\": "app/",
+            "Modules\\CaseManagement\\Database\\Factories\\": "database/factories/",
+            "Modules\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\CaseManagement\\Tests\\": "tests/"
+        }
+    }
+}

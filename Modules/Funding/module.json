@@ -1,0 +1,11 @@
+{
+    "name": "Funding",
+    "alias": "funding",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Funding\\Providers\\FundingServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "CaseManagement",
+    "alias": "casemanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CaseManagement\\Providers\\CaseManagementServiceProvider"
+    ],
+    "files": []
+}

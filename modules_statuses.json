@@ -1,0 +1,11 @@
+{
+    "Core": true,
+    "Beneficiaries": true,
+    "Assessments": true,
+    "CaseManagement": true,
+    "Programs": true,
+    "HumanResources": true,
+    "Entities": true,
+    "Funding": true,
+    "Reporting": true
+}

@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/funding",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Funding\\": "app/",
+            "Modules\\Funding\\Database\\Factories\\": "database/factories/",
+            "Modules\\Funding\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Funding\\Tests\\": "tests/"
+        }
+    }
+}
