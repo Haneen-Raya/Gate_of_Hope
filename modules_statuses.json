@@ -7,5 +7,7 @@
     "HumanResources": true,
     "Entities": true,
     "Funding": true,
-    "Reporting": true
+    "Reporting": true,
+    "Controller": true,
+    "RegionController": true
 }
