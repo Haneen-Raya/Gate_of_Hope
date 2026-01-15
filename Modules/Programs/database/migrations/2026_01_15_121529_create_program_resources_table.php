@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('program_resources', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('program_id')->constrained('programs');
+            $table->string('resource_type');
             $table->string('name');
-            $table->json('label');
-            $table->geometry('location', subtype: 'point')->nullable();
-            $table->string('code')->unique()->index();
-            $table->boolean('is_active')->default(1);
+            $table->integer('quantity');
+            $table->decimal('cost', 15, 2);
+            $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->spatialIndex('location');
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('program_resources');
     }
 };

@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('activities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('program_id')->constrained('programs');
+            $table->foreignId('profession_id')->constrained('professions');
             $table->string('name');
-            $table->json('label');
-            $table->geometry('location', subtype: 'point')->nullable();
-            $table->string('code')->unique()->index();
+            $table->text('description')->nullable();
+            $table->string('activity_type');
+            $table->foreignId('provider_entity_id')->constrained('entities');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
-
-            $table->spatialIndex('location');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('activities');
     }
 };

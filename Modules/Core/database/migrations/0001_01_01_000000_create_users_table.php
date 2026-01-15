@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('full name');
+            $table->string('full_name');
             $table->string('user_type');
             $table->string('phone_number');
             $table->foreignId('region_id')->constrained('regions');
@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index('user_type');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
