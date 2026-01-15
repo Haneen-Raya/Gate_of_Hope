@@ -19,7 +19,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->string('code')->unique()->nullable();
-            $table->index('issue_type_id');
             $table->index('is_active');
             $table->index('sort_order');
             $table->index(['issue_type_id', 'is_active']);

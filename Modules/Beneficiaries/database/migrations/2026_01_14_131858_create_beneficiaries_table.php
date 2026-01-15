@@ -24,15 +24,15 @@ return new class extends Migration
             $table->string('original_hometown');
             $table->string('disability_type');
             $table->string('system_code')->unique()->index();
-            $table->string('housing_tenures');
             $table->integer('serial_number');
             $table->string('identity_hash')->unique()->index();
-            $table->string('national_id');
+            $table->string('national_id')->unique();
             $table->boolean('is_verified')->default(false);
-            $table->timestamp('consent_withdrawn_at')->nullable(); 
+            $table->timestamp('consent_withdrawn_at')->nullable();
             $table->timestamp('archived_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
-    });
+        });
     }
 
     /**

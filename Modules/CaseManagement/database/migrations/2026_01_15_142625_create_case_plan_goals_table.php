@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('case_plan_goals', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->json('label');
-            $table->geometry('location', subtype: 'point')->nullable();
-            $table->string('code')->unique()->index();
-            $table->boolean('is_active')->default(1);
+            $table->foreignId('plan_id')->constrained('case_support_plans');
+            $table->text('goal_description');
+            $table->string('status');
+            $table->date('target_date');
+            $table->date('achieved_at');
+            $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->spatialIndex('location');
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('case_plan_goals');
     }
 };

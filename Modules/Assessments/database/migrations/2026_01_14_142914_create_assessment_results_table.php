@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('assessment_results', function (Blueprint $table) {
-                        $table->id();
+            $table->id();
             $table->foreignId('beneficiary_id')->constrained()->onDelete('cascade');
             $table->foreignId('issue_type_id')->constrained()->onDelete('cascade');
             $table->integer('score')->default(0);
@@ -21,12 +21,13 @@ return new class extends Migration
             $table->string('priority_suggested', 50);
             $table->string('priority_final', 50)->nullable();
             $table->text('justification')->nullable();
-            $table->boolean('is_latest')->default(true);
+            $table->boolean('is_latest')->default(1);
             $table->timestamp('assessed_at')->useCurrent();
             $table->foreignId('assessed_by')->constrained('users')->onDelete('cascade')->nullable();
             $table->foreignId('updated_by')->constrained('users')->onDelete('cascade')->nullable();
             $table->index(['beneficiary_id', 'issue_type_id', 'is_latest']);
             $table->index(['beneficiary_id', 'assessed_at']);
+            $table->index(['normalized_score', 'priority_final']);
             $table->timestamps();
         });
     }

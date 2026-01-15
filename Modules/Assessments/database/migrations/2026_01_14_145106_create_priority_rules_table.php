@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('priority');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
+
+            $table->unique(['issue_type_id', 'min_score', 'max_score']);
         });
     }
 
