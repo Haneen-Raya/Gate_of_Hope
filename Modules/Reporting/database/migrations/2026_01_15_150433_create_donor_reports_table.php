@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('reporting_period_end');
             $table->timestamps();
 
-            $table->index(['donor_entity_id', 'reporting_period_start', 'reporting_period_end']);
+            $table->index(['donor_entity_id', 'reporting_period_start', 'reporting_period_end'], 'donor_reports_period_idx');
         });
     }
 
