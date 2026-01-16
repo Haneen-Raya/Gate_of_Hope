@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->json('label');
-            $table->geometry('location', subtype: 'point')->nullable();
+            $table->geometry('location', subtype: 'point');
             $table->string('code')->unique()->index();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

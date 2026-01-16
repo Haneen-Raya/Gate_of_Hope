@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('social_backgrounds', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('beneficiary_id')->constrained()->onDelete('cascade');
-            $table->foreignId('education_level_id')->constrained('education_levels')->nullable();
-            $table->foreignId('employment_status_id')->constrained('employment_statuses')->onDelete('set null')->nullable();
-            $table->foreignId('housing_type_id')->constrained('housing_types')->onDelete('set null')->nullable();
+            $table->foreignId('beneficiary_id')->nullable()->constrained('beneficiaries')->cascadeOnDelete();
+            $table->foreignId('education_level_id')->nullable()->constrained('education_levels')->nullOnDelete();
+            $table->foreignId('employment_status_id')->nullable()->constrained('employment_statuses')->nullOnDelete();
+            $table->foreignId('housing_type_id')->nullable()->constrained('housing_types')->nullOnDelete();
             $table->string('housing_tenures');
             $table->string('income_level');
             $table->string('living_standard');
