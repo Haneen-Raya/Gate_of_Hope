@@ -5,6 +5,8 @@ namespace Modules\Beneficiaries\Models;
 use Modules\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Assessments\Models\AssessmentResult;
 use Modules\CaseManagement\Models\BeneficiaryCase;
@@ -14,7 +16,7 @@ use Modules\Programs\Models\ActivityAttendance;
 
 class Beneficiary extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +46,10 @@ class Beneficiary extends Model
     //     // return BeneficiariesFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */

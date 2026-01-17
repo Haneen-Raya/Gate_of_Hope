@@ -4,13 +4,15 @@ namespace Modules\CaseManagement\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // use Modules\CaseManagement\Database\Factories\CaseSupportPlanFactory;
 
 class CaseSupportPlan extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +32,10 @@ class CaseSupportPlan extends Model
     //     // return CaseSupportPlanFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
@@ -43,6 +49,6 @@ class CaseSupportPlan extends Model
      */
     public function casePlansGoals(): HasMany
     {
-        return $this->hasMany(CasePlanGoal::class,'plan_id');
+        return $this->hasMany(CasePlanGoal::class, 'plan_id');
     }
 }

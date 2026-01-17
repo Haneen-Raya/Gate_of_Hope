@@ -4,6 +4,8 @@ namespace Modules\CaseManagement\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Assessments\Models\IssueType;
 use Modules\Beneficiaries\Models\Beneficiary;
@@ -14,7 +16,7 @@ use Modules\Core\Models\User;
 
 class BeneficiaryCase extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +38,10 @@ class BeneficiaryCase extends Model
     //     // return CaseFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */

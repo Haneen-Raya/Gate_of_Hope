@@ -4,6 +4,8 @@ namespace Modules\Entities\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\CaseManagement\Models\CaseReferral;
 use Modules\Core\Models\User;
@@ -15,7 +17,7 @@ use Modules\Reporting\Models\DonorReport;
 
 class Entitiy extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +40,10 @@ class Entitiy extends Model
     //     // return EntitiesFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
@@ -51,7 +57,7 @@ class Entitiy extends Model
      */
     public function caseReferrals(): HasMany
     {
-        return $this->hasMany(CaseReferral::class,'receiver_entity_id');
+        return $this->hasMany(CaseReferral::class, 'receiver_entity_id');
     }
 
     /**
@@ -59,7 +65,7 @@ class Entitiy extends Model
      */
     public function programFundings(): HasMany
     {
-        return $this->hasMany(ProgramFunding::class,'donor_entity_id');
+        return $this->hasMany(ProgramFunding::class, 'donor_entity_id');
     }
 
     /**
@@ -67,7 +73,7 @@ class Entitiy extends Model
      */
     public function donorReports(): HasMany
     {
-        return $this->hasMany(DonorReport::class,'donor_entity_id');
+        return $this->hasMany(DonorReport::class, 'donor_entity_id');
     }
 
     /**
@@ -75,6 +81,6 @@ class Entitiy extends Model
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(Activity::class,'provider_entity_id');
+        return $this->hasMany(Activity::class, 'provider_entity_id');
     }
 }

@@ -4,6 +4,8 @@ namespace Modules\Programs\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Entities\Models\Entitiy;
 use Modules\HumanResources\Models\Profession;
@@ -12,7 +14,7 @@ use Modules\HumanResources\Models\Profession;
 
 class Activity extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -32,12 +34,16 @@ class Activity extends Model
     //     // return ActivityFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
     public function providerEntity()
     {
-        return $this->belongsTo(Entitiy::class,'provider_entity_id');
+        return $this->belongsTo(Entitiy::class, 'provider_entity_id');
     }
 
     /**
