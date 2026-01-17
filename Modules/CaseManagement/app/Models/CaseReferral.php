@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Modules\CaseManagement\Database\Factories\CaseReferralControllerFactory;
 
-class CaseReferralController extends Model
+class CaseReferral extends Model
 {
     use HasFactory;
 
