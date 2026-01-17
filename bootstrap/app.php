@@ -13,6 +13,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+    ->withExceptions(require __DIR__ . '/../Modules/Core/app/Exceptions/ExceptionHandler.php')
+    ->create();
