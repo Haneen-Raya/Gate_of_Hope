@@ -4,11 +4,14 @@ namespace Modules\Beneficiaries\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 // use Modules\Beneficiaries\Database\Factories\EmploymentStatusesFactory;
 
 class EmploymentStatus extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -19,4 +22,9 @@ class EmploymentStatus extends Model
     // {
     //     // return EmploymentStatusesFactory::new();
     // }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
 }

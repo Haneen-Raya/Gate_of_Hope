@@ -4,11 +4,14 @@ namespace Modules\Funding\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 // use Modules\Funding\Database\Factories\ProgramFundingFactory;
 
 class ProgramFunding extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -19,4 +22,9 @@ class ProgramFunding extends Model
     // {
     //     // return ProgramFundingFactory::new();
     // }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
 }
