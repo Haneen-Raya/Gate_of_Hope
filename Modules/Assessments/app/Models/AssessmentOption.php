@@ -13,10 +13,22 @@ class AssessmentOption extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'question_id',
+        'label',
+        'value'
+    ];
 
     // protected static function newFactory(): AssessmentOptionFactory
     // {
     //     // return AssessmentOptionFactory::new();
     // }
+
+    /**
+     *
+     */
+    public function assessmentQuestion()
+    {
+        return $this->belongsTo(AssessmentQuestion::class);
+    }
 }
