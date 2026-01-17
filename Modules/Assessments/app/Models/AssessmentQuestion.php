@@ -4,6 +4,8 @@ namespace Modules\Assessments\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 // use Modules\Assessments\Database\Factories\AssessmentQuestionFactory;
 
 class AssessmentQuestion extends Model
@@ -13,10 +15,34 @@ class AssessmentQuestion extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'issue_type_id',
+        'question_text',
+        'weight',
+        'is_active',
+        'sort_order',
+        'code',
+        'is_active'
+    ];
 
     // protected static function newFactory(): AssessmentQuestionFactory
     // {
     //     // return AssessmentQuestionFactory::new();
     // }
+
+    /**
+     *
+     */
+    public function issueType()
+    {
+        return $this->belongsTo(IssueType::class);
+    }
+
+    /**
+     *
+     */
+    public function assessmentOptions(): HasMany
+    {
+        return $this->hasMany(AssessmentOption::class);
+    }
 }

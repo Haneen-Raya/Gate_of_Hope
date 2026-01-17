@@ -13,10 +13,24 @@ class PriorityRules extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'issue_type_id',
+        'min_score',
+        'max_score',
+        'priority',
+        'is_active'
+    ];
 
     // protected static function newFactory(): PriorityRulesFactory
     // {
     //     // return PriorityRulesFactory::new();
     // }
+
+    /**
+     *
+     */
+    public function issueType()
+    {
+        return $this->belongsTo(IssueType::class);
+    }
 }

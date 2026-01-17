@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('issue_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('label');
+            $table->string('name');
             $table->string('code')->unique()->index();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

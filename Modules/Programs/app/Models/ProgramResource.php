@@ -13,10 +13,25 @@ class ProgramResource extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'program_id',
+        'resource_type',
+        'name',
+        'quantity',
+        'cost',
+        'notes'
+    ];
 
     // protected static function newFactory(): ProgramResourcesFactory
     // {
     //     // return ProgramResourcesFactory::new();
     // }
+
+    /**
+     *
+     */
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
+    }
 }
