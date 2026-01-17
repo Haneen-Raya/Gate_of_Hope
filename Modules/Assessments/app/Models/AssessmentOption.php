@@ -16,7 +16,11 @@ class AssessmentOption extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'question_id',
+        'label',
+        'value'
+    ];
 
     // protected static function newFactory(): AssessmentOptionFactory
     // {
@@ -26,5 +30,12 @@ class AssessmentOption extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
+    }
+    /**
+     *
+     */
+    public function assessmentQuestion()
+    {
+        return $this->belongsTo(AssessmentQuestion::class);
     }
 }

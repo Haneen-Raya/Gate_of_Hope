@@ -16,7 +16,14 @@ class ProgramResource extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'program_id',
+        'resource_type',
+        'name',
+        'quantity',
+        'cost',
+        'notes'
+    ];
 
     // protected static function newFactory(): ProgramResourcesFactory
     // {
@@ -26,5 +33,12 @@ class ProgramResource extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
+    }
+    /**
+     *
+     */
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
     }
 }

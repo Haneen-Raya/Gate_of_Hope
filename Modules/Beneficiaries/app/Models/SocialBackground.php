@@ -16,7 +16,17 @@ class SocialBackground extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'beneficiary_id',
+        'education_level_id',
+        'employment_status_id',
+        'housing_type_id',
+        'housing_tenures',
+        'income_level',
+        'living_standard',
+        'family_size',
+        'family_stability',
+    ];
 
     // protected static function newFactory(): SocialBackgroundsFactory
     // {
@@ -26,5 +36,36 @@ class SocialBackground extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
+    }
+    /**
+     *
+     */
+    public function beneficiary()
+    {
+        return $this->belongsTo(Beneficiary::class);
+    }
+
+    /**
+     *
+     */
+    public function housingType()
+    {
+        return $this->belongsTo(HousingType::class);
+    }
+
+    /**
+     *
+     */
+    public function educationLevel()
+    {
+        return $this->belongsTo(EducationLevel::class);
+    }
+
+    /**
+     *
+     */
+    public function employmentStatus()
+    {
+        return $this->belongsTo(EmploymentStatus::class);
     }
 }

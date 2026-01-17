@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\CaseManagement\Models\BeneficiaryCase;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
 
@@ -16,7 +18,13 @@ class IssueType extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'issue_category_id',
+        'name',
+        'label',
+        'code',
+        'is_active'
+    ];
 
     // protected static function newFactory(): IssueTypeFactory
     // {
@@ -26,5 +34,44 @@ class IssueType extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
+    }
+    /**
+     *
+     */
+    public function issueCategory()
+    {
+        return $this->belongsTo(IssueCategory::class);
+    }
+
+    /**
+     *
+     */
+    public function priorityRules(): HasMany
+    {
+        return $this->hasMany(PriorityRules::class);
+    }
+
+    /**
+     *
+     */
+    public function cases(): HasMany
+    {
+        return $this->hasMany(BeneficiaryCase::class);
+    }
+
+    /**
+     *
+     */
+    public function assessmentResults(): HasMany
+    {
+        return $this->hasMany(AssessmentResult::class);
+    }
+
+    /**
+     *
+     */
+    public function assessmentQuestions(): HasMany
+    {
+        return $this->hasMany(AssessmentQuestion::class);
     }
 }

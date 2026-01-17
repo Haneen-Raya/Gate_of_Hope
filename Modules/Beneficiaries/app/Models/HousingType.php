@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // use Modules\Beneficiaries\Database\Factories\HousingTypesFactory;
 
@@ -16,7 +17,10 @@ class HousingType extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'name',
+        'is_active'
+    ];
 
     // protected static function newFactory(): HousingTypesFactory
     // {
@@ -26,5 +30,12 @@ class HousingType extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
+    }
+    /**
+     *
+     */
+    public function socialBackgrounds(): HasMany
+    {
+        return $this->hasMany(SocialBackground::class);
     }
 }
