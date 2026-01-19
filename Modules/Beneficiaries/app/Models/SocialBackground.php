@@ -4,6 +4,13 @@ namespace Modules\Beneficiaries\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Beneficiaries\Enums\FamilyStability;
+use Modules\Beneficiaries\Enums\HousingTenure;
+use Modules\Beneficiaries\Enums\IncomeLevel;
+use Modules\Beneficiaries\Enums\LivingStandard;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 // use Modules\Beneficiaries\Database\Factories\SocialBackgroundsFactory;
 
 class SocialBackground extends Model
@@ -18,17 +25,29 @@ class SocialBackground extends Model
         'education_level_id',
         'employment_status_id',
         'housing_type_id',
-        'housing_tenures',
+        'housing_tenure',
         'income_level',
         'living_standard',
         'family_size',
         'family_stability',
     ];
 
+    protected $casts = [
+        'housing_tenures' => HousingTenure::class,
+        'income_level'    => IncomeLevel::class,
+        'living_standard' => LivingStandard::class,
+        'family_stability'=> FamilyStability::class,
+    ];
+
     // protected static function newFactory(): SocialBackgroundsFactory
     // {
     //     // return SocialBackgroundsFactory::new();
     // }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
 
     /**
      *

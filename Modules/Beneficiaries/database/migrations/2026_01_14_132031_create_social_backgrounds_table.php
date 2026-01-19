@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('education_level_id')->nullable()->constrained('education_levels')->nullOnDelete();
             $table->foreignId('employment_status_id')->nullable()->constrained('employment_statuses')->nullOnDelete();
             $table->foreignId('housing_type_id')->nullable()->constrained('housing_types')->nullOnDelete();
-            $table->string('housing_tenures');
+            $table->string('housing_tenure');
             $table->string('income_level');
             $table->string('living_standard');
             $table->integer('family_size')->default(1)->unsigned();
