@@ -36,7 +36,12 @@ class EmploymentStatus extends Model
     }
 
     /**
+     * Get the social backgrounds associated with this employment status.
      *
+     * Defines a one-to-many relationship where an employment status
+     * can be linked to multiple social background records.
+     *
+     * @return HasMany
      */
     public function socialBackgrounds(): HasMany
     {

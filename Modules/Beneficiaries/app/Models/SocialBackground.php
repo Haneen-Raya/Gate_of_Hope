@@ -50,7 +50,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the beneficiary that owns this social background.
      *
+     * Defines an inverse one-to-many relationship where a social background
+     * belongs to a single beneficiary.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function beneficiary()
     {
@@ -58,7 +63,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the housing type associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an housing type.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function housingType()
     {
@@ -66,7 +76,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the education level associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an education level.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function educationLevel()
     {
@@ -74,7 +89,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the employment status associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an employment status.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function employmentStatus()
     {

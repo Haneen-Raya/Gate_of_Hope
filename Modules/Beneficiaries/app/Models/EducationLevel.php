@@ -36,7 +36,12 @@ class EducationLevel extends Model
     }
 
     /**
+     * Get the social backgrounds associated with this education level.
      *
+     * Defines a one-to-many relationship where an education level
+     * can be linked to multiple social background records.
+     *
+     * @return HasMany
      */
     public function socialBackgrounds(): HasMany
     {

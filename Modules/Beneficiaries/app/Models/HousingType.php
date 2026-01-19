@@ -37,7 +37,12 @@ class HousingType extends Model
     }
 
     /**
+     * Get the social backgrounds associated with this housing type.
      *
+     * Defines a one-to-many relationship where an housing type
+     * can be linked to multiple social background records.
+     *
+     * @return HasMany
      */
     public function socialBackgrounds(): HasMany
     {
