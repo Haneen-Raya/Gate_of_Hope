@@ -4,6 +4,8 @@ namespace Modules\Programs\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\HumanResources\Models\Trainer;
 
@@ -11,7 +13,7 @@ use Modules\HumanResources\Models\Trainer;
 
 class ActivitySession extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +35,10 @@ class ActivitySession extends Model
     //     // return ActivitySessionFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     public function trainer()
     {
         return $this->belongsTo(Trainer::class);

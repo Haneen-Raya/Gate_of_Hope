@@ -4,6 +4,8 @@ namespace Modules\CaseManagement\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
 
@@ -11,7 +13,7 @@ use Modules\Entities\Models\Entitiy;
 
 class CaseReferral extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +36,10 @@ class CaseReferral extends Model
     //     // return CaseReferralControllerFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
@@ -55,7 +61,7 @@ class CaseReferral extends Model
      */
     public function receiverEntity()
     {
-        return $this->belongsTo(Entitiy::class,'receiver_entity_id');
+        return $this->belongsTo(Entitiy::class, 'receiver_entity_id');
     }
 
     /**
@@ -63,7 +69,7 @@ class CaseReferral extends Model
      */
     public function creator()
     {
-        return $this->belongsTo(User::class,'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
@@ -71,6 +77,6 @@ class CaseReferral extends Model
      */
     public function updater()
     {
-        return $this->belongsTo(User::class,'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

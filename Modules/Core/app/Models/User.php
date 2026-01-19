@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Assessments\Models\AssessmentResult;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Modules\CaseManagement\Models\BeneficiaryCase;
@@ -20,7 +23,7 @@ use PhpParser\Node\Stmt\Case_;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, LogsActivity,HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -31,6 +34,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type',
+        'phone_number',
+        'is_active',
     ];
 
     /**
@@ -56,6 +62,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
@@ -77,7 +87,7 @@ class User extends Authenticatable
      */
     public function assesmentsConducted(): HasMany
     {
-        return $this->hasMany(AssessmentResult::class,'assessed_by');
+        return $this->hasMany(AssessmentResult::class, 'assessed_by');
     }
 
     /**
@@ -85,7 +95,7 @@ class User extends Authenticatable
      */
     public function assesmentsUpdated(): HasMany
     {
-        return $this->hasMany(AssessmentResult::class,'updated_by');
+        return $this->hasMany(AssessmentResult::class, 'updated_by');
     }
 
     /**
@@ -93,7 +103,7 @@ class User extends Authenticatable
      */
     public function cases(): HasMany
     {
-        return $this->hasMany(BeneficiaryCase::class,'case_manager_id');
+        return $this->hasMany(BeneficiaryCase::class, 'case_manager_id');
     }
 
     /**
@@ -117,7 +127,7 @@ class User extends Authenticatable
      */
     public function caseEventCreated(): HasMany
     {
-        return $this->hasMany(CaseEvent::class,'created_by');
+        return $this->hasMany(CaseEvent::class, 'created_by');
     }
 
     /**
@@ -125,7 +135,7 @@ class User extends Authenticatable
      */
     public function referralsCreated(): HasMany
     {
-        return $this->hasMany(CaseReferral::class,'created_by');
+        return $this->hasMany(CaseReferral::class, 'created_by');
     }
 
     /**
@@ -133,7 +143,7 @@ class User extends Authenticatable
      */
     public function referralsUpdated(): HasMany
     {
-        return $this->hasMany(CaseReferral::class,'updated_by');
+        return $this->hasMany(CaseReferral::class, 'updated_by');
     }
 
     /**
@@ -141,6 +151,6 @@ class User extends Authenticatable
      */
     public function programsCreated(): HasMany
     {
-        return $this->hasMany(Program::class,'created_by');
+        return $this->hasMany(Program::class, 'created_by');
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('user_type');
             $table->string('phone_number');
-            $table->foreignId('region_id')->constrained('regions');
+            // $table->foreignId('region_id')->constrained('regions');
             $table->boolean('is_active')->default(1);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

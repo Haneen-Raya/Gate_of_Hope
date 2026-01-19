@@ -4,6 +4,8 @@ namespace Modules\Assessments\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Modules\Core\Models\User;
 
@@ -11,7 +13,7 @@ use Modules\Core\Models\User;
 
 class AssessmentResult extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -36,12 +38,16 @@ class AssessmentResult extends Model
     //     // return AssessmentResultFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
     public function assessor()
     {
-        return $this->belongsTo(User::class,'assessed_by');
+        return $this->belongsTo(User::class, 'assessed_by');
     }
 
     /**
@@ -49,7 +55,7 @@ class AssessmentResult extends Model
      */
     public function updater()
     {
-        return $this->belongsTo(User::class,'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     /**

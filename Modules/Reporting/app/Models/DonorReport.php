@@ -4,6 +4,8 @@ namespace Modules\Reporting\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Entities\Models\Entitiy;
 use Modules\Programs\Models\Program;
 
@@ -11,7 +13,7 @@ use Modules\Programs\Models\Program;
 
 class DonorReport extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -29,12 +31,16 @@ class DonorReport extends Model
     //     // return DonorReportFactory::new();
     // }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
+    }
     /**
      *
      */
     public function donorEntity()
     {
-        return $this->belongsTo(Entitiy::class,'donor_entity_id');
+        return $this->belongsTo(Entitiy::class, 'donor_entity_id');
     }
 
     /**
