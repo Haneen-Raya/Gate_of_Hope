@@ -4,6 +4,10 @@ namespace Modules\Beneficiaries\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Beneficiaries\Enums\FamilyStability;
+use Modules\Beneficiaries\Enums\HousingTenure;
+use Modules\Beneficiaries\Enums\IncomeLevel;
+use Modules\Beneficiaries\Enums\LivingStandard;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -21,11 +25,18 @@ class SocialBackground extends Model
         'education_level_id',
         'employment_status_id',
         'housing_type_id',
-        'housing_tenures',
+        'housing_tenure',
         'income_level',
         'living_standard',
         'family_size',
         'family_stability',
+    ];
+
+    protected $casts = [
+        'housing_tenures' => HousingTenure::class,
+        'income_level'    => IncomeLevel::class,
+        'living_standard' => LivingStandard::class,
+        'family_stability'=> FamilyStability::class,
     ];
 
     // protected static function newFactory(): SocialBackgroundsFactory
@@ -37,8 +48,14 @@ class SocialBackground extends Model
     {
         return LogOptions::defaults()->logAll();
     }
+
     /**
+     * Get the beneficiary that owns this social background.
      *
+     * Defines an inverse one-to-many relationship where a social background
+     * belongs to a single beneficiary.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function beneficiary()
     {
@@ -46,7 +63,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the housing type associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an housing type.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function housingType()
     {
@@ -54,7 +76,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the education level associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an education level.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function educationLevel()
     {
@@ -62,7 +89,12 @@ class SocialBackground extends Model
     }
 
     /**
+     * Get the employment status associated with this social background.
      *
+     * Defines a belongs-to relationship linking the social background
+     * to an employment status.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function employmentStatus()
     {
