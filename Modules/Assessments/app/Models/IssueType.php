@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
 
 class IssueType extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity , SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
