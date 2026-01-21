@@ -18,7 +18,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::get('{id}', [GoogleFormController::class, 'show']);
         Route::put('{id}', [GoogleFormController::class, 'update']);
         Route::delete('{id}', [GoogleFormController::class, 'destroy']);
-
+        Route::get('/issue-type/{issue_type_id}', [GoogleFormController::class, 'getByIssueType']);
         Route::post('/import', [GoogleFormController::class, 'importResults']);
 
 
