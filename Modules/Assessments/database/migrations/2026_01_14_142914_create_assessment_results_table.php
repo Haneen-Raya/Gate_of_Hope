@@ -23,8 +23,8 @@ return new class extends Migration
             $table->text('justification')->nullable();
             $table->boolean('is_latest')->default(1);
             $table->timestamp('assessed_at')->useCurrent();
-            $table->foreignId('assessed_by')->constrained('users')->onDelete('cascade')->nullable();
-            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade')->nullable();
+            $table->foreignId('assessed_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->index(['beneficiary_id', 'issue_type_id', 'is_latest']);
             $table->index(['beneficiary_id', 'assessed_at']);
             $table->index(['normalized_score', 'priority_final']);
