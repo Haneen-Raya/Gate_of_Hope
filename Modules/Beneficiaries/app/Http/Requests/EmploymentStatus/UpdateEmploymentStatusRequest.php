@@ -19,7 +19,7 @@ class UpdateEmploymentStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['nullable','string','unique:education_levels,name','max:255'],
+            'name'       => ['nullable','string','unique:employment_statuses,name','max:255'],
             'is_active'  => ['nullable','boolean'],
         ];
     }

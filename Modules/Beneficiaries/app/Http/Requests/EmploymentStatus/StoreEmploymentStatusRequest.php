@@ -19,7 +19,7 @@ class StoreEmploymentStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['required','string','unique:education_levels,name','max:255'],
+            'name'       => ['required','string','unique:employment_statuses,name','max:255'],
             'is_active'  => ['sometimes','boolean'],
         ];
     }

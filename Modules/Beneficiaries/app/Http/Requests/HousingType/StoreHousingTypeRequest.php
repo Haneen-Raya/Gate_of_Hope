@@ -19,7 +19,7 @@ class StoreHousingTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['required','string','unique:education_levels,name','max:255'],
+            'name'       => ['required','string','unique:housing_types,name','max:255'],
             'is_active'  => ['sometimes','boolean'],
         ];
     }

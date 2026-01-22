@@ -98,7 +98,7 @@ class SocialBackgroundService
     {
         $cacheKey='social_background_'.$socialBackground->id.'_'.app()->getLocale();
         return Cache::tags(['social_backgrounds'])->remember($cacheKey, now()->addDay(), function () use ($socialBackground) {
-            return $socialBackground->load('socialBackgrounds')->toArray();
+            return $socialBackground->load(['beneficiary','housingType','educationLevel','employmentStatus'])->toArray();
         });
     }
 

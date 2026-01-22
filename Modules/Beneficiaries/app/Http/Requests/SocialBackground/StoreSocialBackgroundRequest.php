@@ -31,7 +31,7 @@ class StoreSocialBackgroundRequest extends FormRequest
             'housing_tenure'        => ['required','string', Rule::in(HousingTenure::all())],
             'income_level'          => ['required','string',Rule::in(IncomeLevel::all())],
             'living_standard'       => ['required','string',Rule::in(LivingStandard::all())],
-            'family_size    '       => ['required', 'integer', 'min:1','max:20'],
+            'family_size    '       => ['sometimes', 'integer', 'min:1','max:20'],
             'family_stability'      => ['required','string',Rule::in(FamilyStability::all())],
         ];
     }

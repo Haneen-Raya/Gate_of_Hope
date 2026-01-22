@@ -31,7 +31,7 @@ class UpdateSocialBackgroundRequest extends FormRequest
             'housing_tenure'        => ['nullable','string',Rule::in(HousingTenure::all())],
             'income_level'          => ['nullable','string',Rule::in(IncomeLevel::all())],
             'living_standard'       => ['nullable','string',Rule::in(LivingStandard::all())],
-            'family_size    '       => ['nullable', 'integer', 'min:1','max:20'],
+            'family_size'           => ['nullable', 'integer', 'min:1','max:20'],
             'family_stability'      => ['nullable','string',Rule::in(FamilyStability::all())],
         ];
     }
