@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('beneficiaries', function (Blueprint $table) {
+        Schema::create('beneficiaries', function (Blueprint $table) {   
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('governorate');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('residence_type');
             $table->boolean('is_displaced')->default(0);
             $table->boolean('has_other_provider')->default(0);
-            $table->string('original_hometown');
+            $table->string('original_hometown')->nullable();
             $table->string('disability_type');
             $table->string('system_code')->unique()->index();
             $table->integer('serial_number');
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('is_verified')->default(false);
             $table->timestamp('consent_withdrawn_at')->nullable();
             $table->timestamp('archived_at')->nullable();
-            $table->softDeletes();
+            $table->softDeletes();  
             $table->timestamps();
         });
     }
