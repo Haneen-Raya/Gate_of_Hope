@@ -43,7 +43,42 @@ class ProcessAssessmentSheetJob implements ShouldQueue
      */
     public function handle()
     {
-        // ... (Logic implementation)
+        $data = Excel::toCollection(new AssessmentResultsImport, Storage::path($this->filePath))->first();
+
+
+        $rules = PriorityRules::where('issue_type_id', $this->issueTypeId)->get();
+
+        foreach ($data as $row) {
+
+            $nationalId = $row['enter_your_national_id_number'];
+            $nationalId = hash('sha256', $nationalId);
+            $beneficiary = Beneficiary::where('identity_hash', $nationalId)->first();
+
+            if (!$beneficiary) continue;
+            
+            $scoreData = $this->parseScoreColumn($row['alntyg']);
+            $actualScore = $scoreData['score'];
+            $maxScore = $scoreData['max'];
+
+            $normalized = ($maxScore > 0) ? ($actualScore / $maxScore) * 100 : 0;
+
+            $suggestedPriority = $rules->where('min_score', '<=', $actualScore)
+                ->where('max_score', '>=', $actualScore)
+                ->first()?->priority ?? 'Undefined';
+
+            AssessmentResult::create([
+                'beneficiary_id'     => $beneficiary->id,
+                'issue_type_id'      => $this->issueTypeId,
+                'score'              => $actualScore,
+                'max_score'          => $maxScore,
+                'normalized_score'   => $normalized,
+                'priority_suggested' => $suggestedPriority,
+                'is_latest'          => 1,
+                'assessed_at'        => now(),
+            ]);
+        }
+
+        Storage::delete($this->filePath);
     }
 
     /**
