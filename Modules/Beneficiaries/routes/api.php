@@ -1,8 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Beneficiaries\Http\Controllers\BeneficiariesController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes Entry Point
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('beneficiaries', BeneficiariesController::class)->names('beneficiaries');
+
+    // Register beneficiaries routes
+    require __DIR__ . '/v1/beneficiaries.php';
 });

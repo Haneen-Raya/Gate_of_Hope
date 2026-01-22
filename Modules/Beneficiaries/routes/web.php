@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Beneficiaries\Http\Controllers\BeneficiariesController;
+use Modules\Beneficiaries\Http\Controllers\BeneficiaryController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('beneficiaries', BeneficiariesController::class)->names('beneficiaries');
+    Route::resource('beneficiaries', BeneficiaryController::class)->names('beneficiaries');
 });
