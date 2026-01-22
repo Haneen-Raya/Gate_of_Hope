@@ -34,7 +34,6 @@ class SocialBackgroundController extends Controller
      */
     public function index(FilterSocialBackgroundRequest $request)
     {
-        $filters['page']=request()->get('page',1);
         $filters = $request->validated();
         return $this->successResponse(
             'Operation succcessful',

@@ -15,8 +15,8 @@ class HousingTypeService
      */
     public function getAllHousingTypes(array $filters = [])
     {
-        $perPage=$filters['per_page'] ?? 15;
-        $page=$filters['page'];
+        $page=request()->get('page',1);
+        $perPage=request()->get('perPage',15);
         $cacheKey='social_backgrounds'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
         if (!$filters) {
@@ -85,7 +85,7 @@ class HousingTypeService
     public function updateHousingType(array $data, HousingType $housingType)
     {
         return DB::transaction(function () use ($data,$housingType) {
-            $housingType->update(array_filter($data));
+            $housingType->update($data);
             Cache::tags(['housing_types'])->flush();
             return $housingType;
         });

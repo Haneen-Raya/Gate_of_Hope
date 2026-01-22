@@ -35,7 +35,6 @@ class EmploymentStatusController extends Controller
      */
     public function index(FilterRequest $request)
     {
-        $filters['page']=request()->get('page',1);
         $filters = $request->validated();
         return $this->successResponse(
             'Operation succcessful',

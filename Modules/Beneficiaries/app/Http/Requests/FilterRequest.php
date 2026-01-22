@@ -21,8 +21,6 @@ class FilterRequest extends FormRequest
         return [
         'name'      => ['sometimes','string','max:100'],
         'is_active' => ['sometimes','boolean'],
-        'per_page'  => ['sometimes','integer','min:1','max:100'],
-        'page'      => ['sometimes','integer','min:1','max:100'],
         ];
     }
 }

@@ -15,14 +15,14 @@ class EducationLevelService
      */
     public function getAllEducationLevels(array $filters = [])
     {
-        $perPage=$filters['per_page'] ?? 15;
-        $page=$filters['page'];
+        $page=request()->get('page',1);
+        $perPage=request()->get('perPage',15);
         $cacheKey='social_backgrounds'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
         if (!$filters) {
-            return Cache::tags(['education_levels'])->remember($cacheKey, now()->addDay(), function () {
+            return Cache::tags(['education_levels'])->remember($cacheKey, now()->addDay(), function () use ($perPage) {
                 return EducationLevel::with('socialBackgrounds')
-                    ->paginate(15)
+                    ->paginate($perPage)
                     ->through(fn($level) => $level->toArray());
             });
         }
@@ -85,7 +85,7 @@ class EducationLevelService
     public function updateEducationLevel(array $data, EducationLevel $educationLevel)
     {
         return DB::transaction(function () use ($data,$educationLevel) {
-            $educationLevel->update(array_filter($data));
+            $educationLevel->update($data);
             Cache::tags(['education_levels'])->flush();
             return $educationLevel;
         });

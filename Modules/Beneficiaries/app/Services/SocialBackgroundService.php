@@ -15,8 +15,8 @@ class SocialBackgroundService
      */
     public function getAllSocialBackgrounds(array $filters = [])
     {
-        $perPage=$filters['per_page'] ?? 15;
-        $page=$filters['page'];
+        $page=request()->get('page',1);
+        $perPage=request()->get('perPage',15);
         $cacheKey='social_backgrounds'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
         if (!$filters) {
@@ -113,7 +113,7 @@ class SocialBackgroundService
     public function updateSocialBackground(array $data, $socialBackground)
     {
         return DB::transaction(function () use ($data,$socialBackground) {
-            $socialBackground->update(array_filter($data));
+            $socialBackground->update($data );
             Cache::tags(['social_backgrounds'])->flush();
             return $socialBackground;
         });
