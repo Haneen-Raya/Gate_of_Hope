@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Assessments\Http\Requests;
+namespace Modules\Assessments\Http\Requests\IssueType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +14,6 @@ class StoreIssueTypeRequest extends FormRequest
         return [
             'issue_category_id' => 'required|exists:issue_categories,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:20|unique:issue_types,code',
             'is_active' => 'boolean',
         ];
     }
@@ -24,6 +23,6 @@ class StoreIssueTypeRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('manage_issue_types');
+        return true;
     }
 }

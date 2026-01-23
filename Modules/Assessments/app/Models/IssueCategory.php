@@ -24,7 +24,6 @@ class IssueCategory extends Model
     protected $fillable = [
         'name',
         'label',
-        'code',
         'is_active'
     ];
 

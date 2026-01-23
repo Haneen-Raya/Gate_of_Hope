@@ -4,6 +4,10 @@ namespace Modules\Assessments\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Assessments\Models\IssueCategory;
+use Modules\Assessments\Models\IssueType;
+use Modules\Assessments\Observers\IssueCategoryObserver;
+use Modules\Assessments\Observers\IssueTypeObserver;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +31,9 @@ class AssessmentsServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        // observers
+        IssueCategory::observe(IssueCategoryObserver::class);
+        IssueType::observe(IssueTypeObserver::class);
     }
 
     /**

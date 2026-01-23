@@ -3,14 +3,17 @@
 namespace Modules\Assessments\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Modules\Assessments\Http\Requests\StoreIssueTypeRequest;
-use Modules\Assessments\Http\Requests\UpdateIssueTypeRequest;
+use Modules\Assessments\Http\Requests\IssueType\StoreIssueTypeRequest;
+use Modules\Assessments\Http\Requests\IssueType\UpdateIssueTypeRequest;
 use Modules\Assessments\Models\IssueType;
 use Modules\Assessments\Services\IssueTypeService;
 
 class IssueTypeController extends Controller
 {
+    use AuthorizesRequests;
+
     private IssueTypeService $service;
 
     public function __construct(IssueTypeService $service)
@@ -20,65 +23,83 @@ class IssueTypeController extends Controller
 
     /**
      * Display paginated list of issue types
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
         $this->authorize('viewAny', IssueType::class);
 
-        return response()->json(
-            $this->service->getPaginated($request->issue_category_id)
-        );
+        $data = $this->service->getPaginated($request->issue_category_id);
+
+        return $this->successResponse('Issue types retrieved successfully', $data);
     }
 
     /**
      * Display all active types (for dropdowns)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function active(Request $request)
     {
         $this->authorize('viewAny', IssueType::class);
 
-        return response()->json(
-            $this->service->getAll($request->issue_category_id)
-        );
+        $data = $this->service->getAll($request->issue_category_id);
+
+        return $this->successResponse('Active issue types retrieved successfully', $data);
     }
 
     /**
      * Store a newly created issue type
+     *
+     * @param StoreIssueTypeRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreIssueTypeRequest $request)
     {
         $this->authorize('create', IssueType::class);
 
-        return response()->json(
-            $this->service->create($request->validated()),
-            201
-        );
+        $type = $this->service->create($request->validated());
+
+        return $this->successResponse('Issue type created successfully', $type, 201);
     }
 
     /**
      * Show single type
+     *
+     * @param IssueType $issueType
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(IssueType $issueType)
     {
         $this->authorize('view', $issueType);
 
-        return response()->json($issueType);
+        return $this->successResponse('Issue type retrieved successfully', $issueType);
     }
 
     /**
      * Update type
+     *
+     * @param UpdateIssueTypeRequest $request
+     * @param IssueType $issueType
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdateIssueTypeRequest $request, IssueType $issueType)
     {
         $this->authorize('update', $issueType);
 
-        return response()->json(
-            $this->service->update($issueType, $request->validated())
-        );
+        $updated = $this->service->update($issueType, $request->validated());
+
+        return $this->successResponse('Issue type updated successfully', $updated);
     }
 
     /**
      * Soft delete / deactivate type
+     *
+     * @param IssueType $issueType
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(IssueType $issueType)
     {
@@ -86,13 +107,14 @@ class IssueTypeController extends Controller
 
         $this->service->delete($issueType);
 
-        return response()->json([
-            'message' => 'Issue type deleted successfully'
-        ]);
+        return $this->successResponse('Issue type deleted successfully');
     }
 
     /**
      * Restore soft deleted type
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function restore($id)
     {
@@ -102,14 +124,14 @@ class IssueTypeController extends Controller
 
         $this->service->restore($type);
 
-        return response()->json([
-            'message' => 'Issue type restored successfully',
-            'type' => $type
-        ]);
+        return $this->successResponse('Issue type restored successfully', $type);
     }
 
     /**
      * Deactivate type (alternative)
+     *
+     * @param IssueType $issueType
+     * @return \Illuminate\Http\JsonResponse
      */
     public function deactivate(IssueType $issueType)
     {
@@ -117,6 +139,6 @@ class IssueTypeController extends Controller
 
         $this->service->deactivate($issueType);
 
-        return response()->json(['message' => 'Issue type deactivated']);
+        return $this->successResponse('Issue type deactivated');
     }
 }

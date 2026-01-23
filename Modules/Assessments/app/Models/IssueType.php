@@ -8,6 +8,9 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Assessments\Models\AssessmentQuestion;
+use Modules\Assessments\Models\AssessmentResult;
+use Modules\Assessments\Models\PriorityRules;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
@@ -22,8 +25,6 @@ class IssueType extends Model
     protected $fillable = [
         'issue_category_id',
         'name',
-        'label',
-        'code',
         'is_active'
     ];
 
