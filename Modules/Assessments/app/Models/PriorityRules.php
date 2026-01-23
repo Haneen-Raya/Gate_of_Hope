@@ -2,10 +2,11 @@
 
 namespace Modules\Assessments\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Modules\Assessments\Enums\PriorityLevel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\Assessments\Database\Factories\PriorityRulesFactory;
 
@@ -22,6 +23,10 @@ class PriorityRules extends Model
         'max_score',
         'priority',
         'is_active'
+    ];
+
+    protected $casts = [
+        'priority' => PriorityLevel::class,
     ];
 
     // protected static function newFactory(): PriorityRulesFactory
