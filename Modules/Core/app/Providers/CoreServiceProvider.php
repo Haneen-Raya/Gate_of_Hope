@@ -89,16 +89,13 @@ class CoreServiceProvider extends ServiceProvider
                     $config_key = str_replace([DIRECTORY_SEPARATOR, '.php'], ['.', ''], $config);
                     $segments = explode('.', $this->nameLower.'.'.$config_key);
 
-                    // Remove duplicated adjacent segments
                     $normalized = [];
                     foreach ($segments as $segment) {
                         if (end($normalized) !== $segment) {
                             $normalized[] = $segment;
                         }
                     }
-
                     $key = ($config === 'config.php') ? $this->nameLower : implode('.', $normalized);
-
                     $this->publishes([$file->getPathname() => config_path($config)], 'config');
                     $this->merge_config_from($file->getPathname(), $key);
                 }

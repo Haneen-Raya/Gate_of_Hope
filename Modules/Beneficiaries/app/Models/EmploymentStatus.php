@@ -4,9 +4,9 @@ namespace Modules\Beneficiaries\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
 
 // use Modules\Beneficiaries\Database\Factories\EmploymentStatusesFactory;
 
@@ -22,6 +22,10 @@ class EmploymentStatus extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     // protected static function newFactory(): EmploymentStatusesFactory
     // {
     //     // return EmploymentStatusesFactory::new();
@@ -31,8 +35,14 @@ class EmploymentStatus extends Model
     {
         return LogOptions::defaults()->logAll();
     }
+
     /**
+     * Get the social backgrounds associated with this employment status.
      *
+     * Defines a one-to-many relationship where an employment status
+     * can be linked to multiple social background records.
+     *
+     * @return HasMany
      */
     public function socialBackgrounds(): HasMany
     {

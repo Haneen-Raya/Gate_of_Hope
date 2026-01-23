@@ -22,6 +22,10 @@ class EducationLevel extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     // protected static function newFactory(): EducationLevelFactory
     // {
     //     // return EducationLevelFactory::new();
@@ -31,8 +35,14 @@ class EducationLevel extends Model
     {
         return LogOptions::defaults()->logAll();
     }
+
     /**
+     * Get the social backgrounds associated with this education level.
      *
+     * Defines a one-to-many relationship where an education level
+     * can be linked to multiple social background records.
+     *
+     * @return HasMany
      */
     public function socialBackgrounds(): HasMany
     {
