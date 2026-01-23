@@ -12,7 +12,6 @@ use Modules\Assessments\Models\AssessmentQuestion;
 use Modules\Assessments\Models\AssessmentResult;
 use Modules\Assessments\Models\PriorityRules;
 use Modules\CaseManagement\Models\BeneficiaryCase;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
@@ -74,11 +73,6 @@ class IssueType extends Model
     /**
      *
      */
-    public function assessmentQuestions(): HasMany
-    {
-        return $this->hasMany(AssessmentQuestion::class);
-    }
-
     public function formgoogle(){
         return $this->hasOne(GoogleForm::class);
     }
