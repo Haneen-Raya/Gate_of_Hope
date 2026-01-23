@@ -99,7 +99,7 @@ class IssueCategoryController extends Controller
      */
     public function update(UpdateIssueCategoryRequest $request, IssueCategory $issueCategory)
     {
-        $this->authorize('update', $issueCategory);
+        // $this->authorize('update', $issueCategory);
 
         $updated = $this->service->update(
             $issueCategory,

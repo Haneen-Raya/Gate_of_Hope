@@ -37,5 +37,6 @@ class IssueCategoryPolicy
     {
         return $user->can('issue_categories.archive');
     }
+    
 }
 
