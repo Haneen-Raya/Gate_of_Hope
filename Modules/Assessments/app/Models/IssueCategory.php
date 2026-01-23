@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CaseManagement\Models\Service;
 use Modules\HumanResources\Models\Specialist;
 use Modules\Programs\Models\Program;
@@ -15,7 +16,7 @@ use Modules\Programs\Models\Program;
 
 class IssueCategory extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +24,6 @@ class IssueCategory extends Model
     protected $fillable = [
         'name',
         'label',
-        'code',
         'is_active'
     ];
 
@@ -67,4 +67,25 @@ class IssueCategory extends Model
     {
         return $this->hasMany(Specialist::class);
     }
+
+
+    protected static function booted()
+{
+    static::deleting(function ($category) {
+
+        if ($category->isForceDeleting()) {
+            // If the final version is deleted (rarely)
+            $category->issueTypes()->forceDelete();
+        } else {
+            // Soft delete
+            $category->issueTypes()->delete();
+        }
+    });
+
+    static::restoring(function ($category) {
+        //If you return to the category → the types return
+        $category->issueTypes()->withTrashed()->restore();
+    });
+}
+
 }
