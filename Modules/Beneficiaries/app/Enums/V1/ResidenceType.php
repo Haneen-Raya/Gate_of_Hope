@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Beneficiaries\Enums;
+namespace Modules\Beneficiaries\Enums\V1;
 
 /**
  * @Enum ResidenceType

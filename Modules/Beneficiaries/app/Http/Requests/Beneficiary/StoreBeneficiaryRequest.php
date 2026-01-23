@@ -5,10 +5,10 @@ namespace Modules\Beneficiaries\Http\Requests\Beneficiary;
 use App\Rules\DuplicateExtensionCheck;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Beneficiaries\Enums\DisabilityType;
-use Modules\Beneficiaries\Enums\Gender;
-use Modules\Beneficiaries\Enums\Governorate;
-use Modules\Beneficiaries\Enums\ResidenceType;
+use Modules\Beneficiaries\Enums\V1\DisabilityType;
+use Modules\Beneficiaries\Enums\V1\Gender;
+use Modules\Beneficiaries\Enums\V1\Governorate;
+use Modules\Beneficiaries\Enums\V1\ResidenceType;
 
 /**
  * @class StoreBeneficiaryRequest
