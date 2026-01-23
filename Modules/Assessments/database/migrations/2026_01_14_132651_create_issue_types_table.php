@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('issue_category_id')->constrained('issue_categories');
             $table->string('name');
-            $table->string('label');
             $table->string('code')->unique()->index();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

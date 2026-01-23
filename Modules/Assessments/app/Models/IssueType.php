@@ -6,15 +6,19 @@ use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Assessments\Models\GoogleForm;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Assessments\Models\AssessmentQuestion;
+use Modules\Assessments\Models\AssessmentResult;
+use Modules\Assessments\Models\PriorityRules;
+use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
 
 class IssueType extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity , SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,8 +26,6 @@ class IssueType extends Model
     protected $fillable = [
         'issue_category_id',
         'name',
-        'label',
-        'code',
         'is_active'
     ];
 
@@ -67,7 +69,6 @@ class IssueType extends Model
     {
         return $this->hasMany(AssessmentResult::class);
     }
-
 
     public function formgoogle(){
         return $this->hasOne(GoogleForm::class);
