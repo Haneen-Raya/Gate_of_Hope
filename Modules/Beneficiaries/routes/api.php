@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Beneficiaries\Http\Controllers\EducationLevelController;
-use Modules\Beneficiaries\Http\Controllers\EmploymentStatusController;
-use Modules\Beneficiaries\Http\Controllers\HousingTypeController;
-use Modules\Beneficiaries\Http\Controllers\SocialBackgroundController;
+use Modules\Beneficiaries\Http\Controllers\Api\V1\EducationLevelController;
+use Modules\Beneficiaries\Http\Controllers\Api\V1\EmploymentStatusController;
+use Modules\Beneficiaries\Http\Controllers\Api\V1\HousingTypeController;
+use Modules\Beneficiaries\Http\Controllers\Api\V1\SocialBackgroundController;
 
 /*
 |--------------------------------------------------------------------------

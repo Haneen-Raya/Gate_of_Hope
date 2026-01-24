@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Beneficiaries\Http\Controllers\BeneficiaryController;
+use Modules\Beneficiaries\Http\Controllers\Api\V1\BeneficiaryController;
 
 /*
 |--------------------------------------------------------------------------
