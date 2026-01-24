@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\EmploymentStatus;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\HousingType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEmploymentStatusRequest extends FormRequest
+class StoreHousingTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,7 +19,7 @@ class StoreEmploymentStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['required','string','unique:employment_statuses,name','max:255'],
+            'name'       => ['required','string','unique:housing_types,name','max:255'],
             'is_active'  => ['sometimes','boolean'],
         ];
     }

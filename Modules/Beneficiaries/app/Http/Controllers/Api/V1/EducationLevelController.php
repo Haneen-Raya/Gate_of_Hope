@@ -3,11 +3,10 @@
 namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\EducationLevel\StoreEducationLevelRequest;
-use Modules\Beneficiaries\Http\Requests\EducationLevel\UpdateEducationLevelActivationRequest;
-use Modules\Beneficiaries\Http\Requests\EducationLevel\UpdateEducationLevelRequest;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel\StoreEducationLevelRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel\UpdateEducationLevelActivationRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel\UpdateEducationLevelRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\FilterRequest;
 use Modules\Beneficiaries\Models\EducationLevel;
 use Modules\Beneficiaries\Services\EducationLevelService;
 

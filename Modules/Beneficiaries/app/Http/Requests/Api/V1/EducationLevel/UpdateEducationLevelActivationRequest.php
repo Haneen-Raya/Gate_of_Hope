@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\HousingType;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateHousingTypeActivationRequest extends FormRequest
+class UpdateEducationLevelActivationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

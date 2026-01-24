@@ -3,10 +3,9 @@
 namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\SocialBackground\FilterSocialBackgroundRequest;
-use Modules\Beneficiaries\Http\Requests\SocialBackground\StoreSocialBackgroundRequest;
-use Modules\Beneficiaries\Http\Requests\SocialBackground\UpdateSocialBackgroundRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground\FilterSocialBackgroundRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground\StoreSocialBackgroundRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground\UpdateSocialBackgroundRequest;
 use Modules\Beneficiaries\Models\SocialBackground;
 use Modules\Beneficiaries\Services\SocialBackgroundService;
 

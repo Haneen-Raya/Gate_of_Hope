@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\SocialBackground;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

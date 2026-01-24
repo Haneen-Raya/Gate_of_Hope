@@ -5,8 +5,8 @@ namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Beneficiaries\Services\BeneficiaryService;
-use Modules\Beneficiaries\Http\Requests\Beneficiary\StoreBeneficiaryRequest;
-use Modules\Beneficiaries\Http\Requests\Beneficiary\UpdateBeneficiaryRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\Beneficiary\StoreBeneficiaryRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\Beneficiary\UpdateBeneficiaryRequest;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

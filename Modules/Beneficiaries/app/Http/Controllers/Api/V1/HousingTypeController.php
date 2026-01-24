@@ -3,11 +3,10 @@
 namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
-use Modules\Beneficiaries\Http\Requests\HousingType\StoreHousingTypeRequest;
-use Modules\Beneficiaries\Http\Requests\HousingType\UpdateHousingTypeActivationRequest;
-use Modules\Beneficiaries\Http\Requests\HousingType\UpdateHousingTypeRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\FilterRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\StoreHousingTypeRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\UpdateHousingTypeActivationRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\UpdateHousingTypeRequest;
 use Modules\Beneficiaries\Models\HousingType;
 use Modules\Beneficiaries\Services\HousingTypeService;
 

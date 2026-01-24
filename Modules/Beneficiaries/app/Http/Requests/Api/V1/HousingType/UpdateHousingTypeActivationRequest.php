@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\EducationLevel;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\HousingType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEducationLevelRequest extends FormRequest
+class UpdateHousingTypeActivationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,8 +19,7 @@ class UpdateEducationLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['nullable','string','unique:education_levels,name','max:255'],
-            'is_active'  => ['nullable','boolean'],
+            'is_active'  => ['required','boolean'],
         ];
     }
 }

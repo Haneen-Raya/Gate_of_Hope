@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\Beneficiary;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\Beneficiary;
 
 use App\Rules\DuplicateExtensionCheck;
 use Illuminate\Foundation\Http\FormRequest;

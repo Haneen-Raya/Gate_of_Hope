@@ -3,11 +3,10 @@
 namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\EmploymentStatus\StoreEmploymentStatusRequest;
-use Modules\Beneficiaries\Http\Requests\EmploymentStatus\UpdateEmploymentStatusActivationRequest;
-use Modules\Beneficiaries\Http\Requests\EmploymentStatus\UpdateEmploymentStatusRequest;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus\StoreEmploymentStatusRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus\UpdateEmploymentStatusActivationRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus\UpdateEmploymentStatusRequest;
+use Modules\Beneficiaries\Http\Requests\Api\V1\FilterRequest;
 use Modules\Beneficiaries\Models\EmploymentStatus;
 use Modules\Beneficiaries\Services\EmploymentStatusService;
 

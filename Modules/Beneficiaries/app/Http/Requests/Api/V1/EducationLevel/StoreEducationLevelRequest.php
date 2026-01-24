@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\EmploymentStatus;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEmploymentStatusRequest extends FormRequest
+class StoreEducationLevelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,8 +19,8 @@ class UpdateEmploymentStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['nullable','string','unique:employment_statuses,name','max:255'],
-            'is_active'  => ['nullable','boolean'],
+            'name'       => ['required','string','unique:education_levels,name','max:255'],
+            'is_active'  => ['sometimes','boolean'],
         ];
     }
 }

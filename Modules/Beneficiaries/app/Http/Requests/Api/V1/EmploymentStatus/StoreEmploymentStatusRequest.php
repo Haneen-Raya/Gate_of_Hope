@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests\EmploymentStatus;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEmploymentStatusActivationRequest extends FormRequest
+class StoreEmploymentStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,7 +19,8 @@ class UpdateEmploymentStatusActivationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'is_active'  => ['required','boolean'],
+            'name'       => ['required','string','unique:employment_statuses,name','max:255'],
+            'is_active'  => ['sometimes','boolean'],
         ];
     }
 }

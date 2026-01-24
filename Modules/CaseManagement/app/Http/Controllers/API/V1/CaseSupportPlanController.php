@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\CaseManagement\Http\Controllers;
+namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class CaseReviewController extends Controller
+class CaseSupportPlanController extends Controller
 {
     /**
      * Display a listing of the resource.

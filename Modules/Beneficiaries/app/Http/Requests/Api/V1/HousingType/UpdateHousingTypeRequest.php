@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Beneficiaries\Http\Requests;
+namespace Modules\Beneficiaries\Http\Requests\Api\V1\HousingType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FilterRequest extends FormRequest
+class UpdateHousingTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,8 +19,8 @@ class FilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'name'      => ['sometimes','string','max:100'],
-        'is_active' => ['sometimes','boolean'],
+            'name'       => ['nullable','string','unique:housing_types,name','max:255'],
+            'is_active'  => ['nullable','boolean'],
         ];
     }
 }
