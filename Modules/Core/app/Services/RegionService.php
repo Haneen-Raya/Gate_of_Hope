@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Services;
 
+
 use Modules\Core\Models\Region;
 use Illuminate\Support\Facades\Cache;
 use MatanYadaev\EloquentSpatial\Objects\Point;
@@ -19,33 +20,21 @@ class RegionService
     private const TAG_REGION_PREFIX  = 'region_';
 
     /**
-     * Retrieve active regions with pagination and caching.
-     * Uses the 'active' scope defined in the Region model.
-     * * @param int $perPage
+     * Get a paginated list of regions based on provided filters.
+     * * Handles active, inactive, search, and spatial filtering via RegionBuilder.
+     * * @param array $filters (search, is_active, lat, lng, distance)
+     * @param int $perPage
      * @return LengthAwarePaginator
      */
-    public function getAllPaginated(int $perPage = 15): LengthAwarePaginator
+    public function list(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
+        ksort($filters); // Ensure consistent cache keys
         $page = request('page', 1);
-        $cacheKey = "regions_list_p{$page}_limit_{$perPage}";
+        $cacheKey = "regions_list_" . md5(json_encode($filters) . "_p{$page}_l{$perPage}");
 
-        return Cache::tags([self::TAG_REGIONS_GLOBAL])->remember($cacheKey, self::CACHE_TTL, function() use ($perPage) {
-            return Region::active()->latest()->paginate($perPage);
-        });
-    }
-    /**
-     * Retrieve a paginated list of inactive regions.
-     * * This uses the 'inactive' scope from the Region model and caches the results.
-     * * @param int $perPage Number of items per page.
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     */
-    public function getInactivePaginated(int $perPage = 15)
-    {
-        $page = request('page', 1);
-        $cacheKey = "regions_inactive_list_p{$page}_limit_{$perPage}";
-
-        return Cache::tags([self::TAG_REGIONS_GLOBAL])->remember($cacheKey, self::CACHE_TTL, function() use ($perPage) {
-            return Region::inactive()->latest()->paginate($perPage);
+        return Cache::tags([self::TAG_REGIONS_GLOBAL])->remember($cacheKey, self::CACHE_TTL, function() use ($filters, $perPage) {
+            // Using the Custom Builder's filter method
+            return Region::query()->filter($filters)->latest()->paginate($perPage);
         });
     }
     /**

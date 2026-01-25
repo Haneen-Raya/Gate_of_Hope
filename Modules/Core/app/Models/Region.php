@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Models;
 
+use App\Traits\HasActiveState;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +12,7 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Class Region
@@ -20,7 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Region extends Model
 {
-    use HasFactory, LogsActivity,HasSpatial;
+    use HasActiveState,HasFactory, LogsActivity,HasSpatial;
 
     /**
      * @var array<int, string> The attributes that are mass assignable.
@@ -32,11 +34,29 @@ class Region extends Model
         'code',
         'is_active'
     ];
-
+    /**
+     * @var array Type casting for specific attributes.
+     */
     protected $casts = [
         'location' => Point::class,
         'is_active' => 'boolean',
     ];
+
+   /**
+ * Classic Accessor.
+ * This will NOT run automatically because it's not in $appends.
+ * It will only exist if we manually call it or if 'distance' is in the attributes.
+ */
+public function getDistanceMetersAttribute()
+{
+    if (isset($this->attributes['distance'])) {
+        return round($this->attributes['distance'], 2);
+    }
+    return null;
+}
+
+
+
     /**
      * Define which tags should be flushed when this model is saved or deleted.
      * * @return array
@@ -48,35 +68,18 @@ class Region extends Model
             'region_' . $this->id,
         ];
     }
-    /**
- * Scope to find regions within a certain distance from a point.
- */
-        public function scopeWhereDistanceNearby(Builder $query, float $lat, float $lng, float $distanceInMeters): Builder
-        {
-            $point = new Point($lat, $lng);
-            return $query->whereDistance('location', $point, '<', $distanceInMeters);
-        }
-        /**
-     * Scope a query to only include inactive regions.
-     * * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeInactive($query)
-    {
-        return $query->where('is_active', false);
-    }
-    /**
-     * Scope a query to only include active regions.
-     *
-     * @param Builder $query
-     * @return Builder
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', true);
-    }
 
-    
+/**
+ * Override the default Eloquent query builder.
+ * This tells Laravel to use our custom RegionBuilder instead of the default one.
+ * * @param \Illuminate\Database\Query\Builder $query
+ * @return \Modules\Core\Models\Builders\RegionBuilder
+ */
+public function newEloquentBuilder($query): \Modules\Core\Models\Builders\RegionBuilder
+{
+    return new \Modules\Core\Models\Builders\RegionBuilder($query);
+}
+
 
     /**
      * Mutator: Ensure the code is always stored in uppercase.

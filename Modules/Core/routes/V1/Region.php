@@ -25,15 +25,6 @@ Route::prefix('v1/regions')->group(function () {
      * * @features: Tagged Caching (Redis), Active Scope Filtering, Latest First.
      */
     Route::get('/', [RegionController::class, 'index']);
-
-    /**
-     * @name 2. List Inactive Regions
-     * @path GET /api/v1/regions/inactive
-     * * @description Retrieves regions where is_active is false.
-     * @features: Uses Custom 'inactive' Eloquent Scope, Redis Tagged Caching.
-     */
-    Route::get('/inactive', [RegionController::class, 'inactiveIndex']);
-
     /**
      * @name 3. Store New Region
      * @path POST /api/v1/regions

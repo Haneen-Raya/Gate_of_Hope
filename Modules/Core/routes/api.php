@@ -10,9 +10,11 @@ use Modules\Core\Http\Controllers\Api\RoleManagementController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,5');
 
-// Register beneficiaries routes
+
     require __DIR__ . '/v1/region.php';
     require __DIR__ . '/v1/Role.php';
+
+    
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])

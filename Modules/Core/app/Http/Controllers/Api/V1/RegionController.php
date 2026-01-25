@@ -2,10 +2,12 @@
 
 namespace Modules\Core\Http\Controllers\Api\V1;
 
+
 use Modules\Core\Models\Region;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Modules\Core\Services\RegionService;
+use Modules\Core\Http\Requests\V1\Region\IndexRegionRequest;
 use Modules\Core\Http\Requests\V1\Region\StoreRegionRequest;
 use Modules\Core\Http\Requests\V1\Region\UpdateRegionRequest;
 
@@ -30,32 +32,23 @@ class RegionController extends Controller
         $this->regionService = $regionService;
     }
 
-    /**
-     * Display a listing of active regions.
-     * * @return JsonResponse
+        /**
+     * Display a paginated list of regions with optional spatial and text filters.
+     * * @param IndexRegionRequest $request Handles validation for lat, lng, distance, and search terms.
+     * @return JsonResponse Returns a standardized success response with region data or an empty set.
      */
-    public function index(): JsonResponse
+    public function index(IndexRegionRequest $request): JsonResponse
     {
-        $regions = $this->regionService->getAllPaginated();
+        $regions = $this->regionService->list($request->validated());
 
-        return $this->successResponse(
-            'Active regions retrieved successfully.',
-            $regions
-        );
-    }
+        if ($regions->isEmpty()) {
+            return $this->successResponse('No regions found.', ['data' => []]);
+        }
+        $regions->getCollection()->each(function ($region) {
+            $region->append('distance_meters');
+        });
 
-    /**
-     * Display a listing of inactive regions.
-     * * @return JsonResponse
-     */
-    public function inactiveIndex(): JsonResponse
-    {
-        $regions = $this->regionService->getInactivePaginated();
-
-        return $this->successResponse(
-            'Inactive regions retrieved successfully.',
-            $regions
-        );
+        return $this->successResponse('Regions retrieved successfully.', $regions);
     }
 
     /**

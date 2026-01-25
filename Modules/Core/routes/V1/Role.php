@@ -17,7 +17,7 @@ Route::prefix('role')->group(function () {
 
     /**
      * @name 1. List All Roles
-     * @path GET /api/admin/roles
+     * @path GET /api/role/roles
      * * @description Fetches all available roles (e.g., Admin, Super Admin, User)
      * defined in the system.
      * @return \Illuminate\Http\JsonResponse
@@ -26,7 +26,7 @@ Route::prefix('role')->group(function () {
 
     /**
      * @name 2. Assign Role to User
-     * @path POST /api/admin/users/{user}/roles/assign
+     * @path POST /api/role/users/{user}/roles/assign
      * * @url_params:
      * - user (int): The ID of the target user.
      * * @body_payload (UserRoleRequest):
@@ -37,7 +37,7 @@ Route::prefix('role')->group(function () {
 
     /**
      * @name 3. Revoke Role from User
-     * @path POST /api/admin/users/{user}/roles/revoke
+     * @path POST /api/role/users/{user}/roles/revoke
      * * @description Removes a specific role from a user. If the user does not
      * have the role, it returns a conflict/not-found response.
      */
@@ -45,7 +45,7 @@ Route::prefix('role')->group(function () {
 
     /**
      * @name 4. Sync/Update User Role
-     * @path PUT /api/admin/users/{user}/roles/update
+     * @path PUT /api/role/users/{user}/roles/update
      * * @description Replaces all current user roles with the single role provided.
      * Ideal for strict "One User - One Role" logic.
      */

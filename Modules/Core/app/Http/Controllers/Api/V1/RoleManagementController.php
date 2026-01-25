@@ -2,7 +2,6 @@
 
 namespace Modules\Core\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Core\Models\User;
 use Illuminate\Validation\Rule;
@@ -10,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\Core\Services\RoleManagementService;
-use Modules\Core\Http\Requests\Role\V1\UserRoleRequest;
+use Modules\Core\Http\Requests\V1\Role\UserRoleRequest;
 
 /**
  * Class RoleManagementController
