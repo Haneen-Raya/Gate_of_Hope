@@ -4,6 +4,7 @@ namespace Modules\CaseManagement\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\HasAuditUsers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,7 +43,7 @@ use Modules\Core\Models\User;
  */
 class CaseSupportPlan extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache, HasAuditUsers;
 
     /**
      * The attributes that are mass assignable.
@@ -115,25 +116,5 @@ class CaseSupportPlan extends Model implements CacheInvalidatable
     public function casePlansGoals(): HasMany
     {
         return $this->hasMany(CasePlanGoal::class, 'plan_id');
-    }
-
-    /**
-     * Relationship: The user who created the plan.
-     *
-     * @return BelongsTo
-     */
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    /**
-     * Relationship: The user who last updated the plan.
-     *
-     * @return BelongsTo
-     */
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
     }
 }

@@ -124,13 +124,10 @@ class CaseSupportPlanService
      */
     public function store(array $data): CaseSupportPlan
     {
-        // 1. Set audit trail: Ensure we track the author of the plan.
-        $data['created_by'] = $data['updated_by'] = auth()->id();
-
-        // 2. Execute persistence logic.
+        // 1. Execute persistence logic.
         $caseSupportPlan = CaseSupportPlan::create($data);
 
-        // 3. Return the hydrated model instance.
+        // 2. Return the hydrated model instance.
         return $caseSupportPlan;
     }
 
