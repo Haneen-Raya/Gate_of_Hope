@@ -2,6 +2,8 @@
 
 namespace Modules\Entities\Models;
 
+use App\Traits\AutoFlushCache;
+use App\Traits\HasActiveState;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,9 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\CaseManagement\Models\CaseReferral;
 use Modules\Core\Models\User;
 use Modules\Entities\Enums\EntityType;
-use Modules\Funding\Models\ProgramFunding;
 use Modules\Programs\Models\Activity;
-use Modules\Reporting\Models\DonorReport;
+use Modules\Entities\Models\Builders\EntityBuilder;
+use Illuminate\Database\Query\Builder;
+
 
 // use Modules\Entities\Database\Factories\EntitiesFactory;
 
@@ -37,7 +40,7 @@ use Modules\Reporting\Models\DonorReport;
  */
 class Entitiy extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasActiveState, AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -81,6 +84,69 @@ class Entitiy extends Model
         'is_active'             => 'boolean',
         'entity_type'           => EntityType::class
     ];
+
+    /**
+     * The table associated with the model.
+     *
+     * Laravel automatically assumes the table name by pluralizing the model name.
+     * Since the default pluralization of "Entity" may produce "entitiys", we explicitly
+     * define the correct table name to match the database schema.
+     *
+     * @var string
+     */
+    protected $table = 'entities';
+    
+    /**
+     * Define cache tags to invalidate on model changes.
+     * Implementing the "Ripple Effect" to purge list and detail caches.
+     *
+     * @return array<string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            "entities",
+            "entity_{$this->id}"
+        ];
+    }
+
+    /**
+     * Override the default Eloquent query builder.
+     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     *
+     * @param Builder $query
+     *
+     * @return EntityBuilder
+     */
+    public function newEloquentBuilder($query): EntityBuilder
+    {
+        return new EntityBuilder($query);
+    }
+
+    /**
+     * Mutator: Capitalize the first letter of "name" before storing.
+     * This acts as a safety net for both auto-generated and manually entered codes.
+     *
+     * @param string $value
+     *
+     * @return void
+     */
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = ucfirst($value);
+    }
+
+    /**
+     * Mutator: Ensure the code is always stored in uppercase.
+     * This acts as a safety net for both auto-generated and manually entered codes.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setCodeAttribute($value): void
+    {
+        $this->attributes['code'] = strtoupper($value);
+    }
 
     /**
      * Configure the activity logging options.

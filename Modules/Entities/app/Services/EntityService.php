@@ -9,53 +9,36 @@ use Modules\Entities\Models\Entitiy;
 class EntityService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_ENTITIES_GLOBAL = 'entities';     // Tag for lists of entities
+    private const TAG_ENTIITY_PREFIX = 'entity_';      // Tag for specific entity details
+
+    /**
      * Get all entities from database
      *
      * @return array $arraydata
      */
     public function getAllEntities(array $filters = [])
     {
+        ksort($filters);
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='entities'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
+        $cacheKey='entities_list_'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
-        if (!$filters) {
-            return Cache::tags(['entities'])->remember($cacheKey, now()->addDay(), function () use($perPage) {
-                return Entitiy::with(['user','caseReferrals','programFundings','donorReports','activities'])
-                    ->paginate($perPage)
-                    ->through(fn($entity) => $entity->toArray());
-            });
-        }
 
         $query = Entitiy::with(['user','caseReferrals','programFundings','donorReports','activities']);
 
-        if (isset($filters['issue_category_id'])) {
-            $query->where('issue_category_id', $filters['issue_category_id']);
-        }
-
-        if (isset($filters['name'])) {
-            $query->where('name', $filters['name']);
-        }
-
-        if (isset($filters['description'])) {
-            $query->where('description', $filters['description']);
-        }
-
-        if (isset($filters['direction'])) {
-            $query->where('direction', $filters['direction']);
-        }
-
-        if (isset($filters['unit_cost'])) {
-            $query->where('unit_cost', $filters['unit_cost']);
-        }
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        return Cache::tags(['entities'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($entity) => $entity->toArray());
+        return Cache::tags(['entities'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage,$filters) {
+            return $query
+                ->filter($filters)
+                ->paginate($perPage);
         });
     }
 
@@ -70,9 +53,7 @@ class EntityService
     {
         return DB::transaction(function () use ($data) {
             $data['user_id'] = auth()->id();
-            $data['code'] = 'test';
             $entity = Entitiy::create($data);
-            Cache::tags(['entities'])->flush();
             return $entity;
         });
     }
@@ -86,8 +67,9 @@ class EntityService
      */
     public function showEntity(Entitiy $entity)
     {
-        $cacheKey='entity_'.$entity->id.'_'.app()->getLocale();
-        return Cache::tags(['entities'])->remember($cacheKey, now()->addDay(), function () use ($entity) {
+        $cacheKey=self::TAG_ENTIITY_PREFIX."details_{$entity->id}".'_'.app()->getLocale();
+        $entityTag=self::TAG_ENTIITY_PREFIX.$entity->id;
+        return Cache::tags([self::TAG_ENTITIES_GLOBAL, $entityTag])->remember($cacheKey, self::CACHE_TTL, function () use ($entity) {
             return $entity->load(['user','caseReferrals','programFundings','donorReports','activities'])->toArray();
         });
     }
@@ -104,8 +86,7 @@ class EntityService
     {
         return DB::transaction(function () use ($data,$entity) {
             $entity->update($data);
-            Cache::tags(['entities'])->flush();
-            return $entity;
+            return $entity->refresh();
         });
     }
 
@@ -118,7 +99,6 @@ class EntityService
     public function deleteEntity(Entitiy $entity)
     {
         $entity->delete();
-        Cache::tags(['entities'])->flush();
     }
 }
 

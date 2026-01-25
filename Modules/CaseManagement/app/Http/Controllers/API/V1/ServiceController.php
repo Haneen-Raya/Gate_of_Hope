@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\CaseManagement\Http\Controllers;
+namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\CaseManagement\Http\Requests\Service\StoreServiceRequest;
-use Modules\CaseManagement\Http\Requests\Service\UpdateServiceRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\Service\StoreServiceRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\Service\UpdateServiceRequest;
 use Modules\CaseManagement\Models\Service;
 use Modules\CaseManagement\Services\ServiceService;
 

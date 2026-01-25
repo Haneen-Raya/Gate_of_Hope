@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Entities\Http\Requests\Entity;
+namespace Modules\Entities\Http\Requests\Api\V1\Entity;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -21,13 +21,13 @@ class StoreEntityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => ['required', 'string', 'max:255'],
+            'name'                  => ['required', 'string', 'max:255','unique:entities,name'],
             'entity_type'           => ['required','string',Rule::in(EntityType::all())],
             'can_provide_services'  => ['sometimes','boolean'],
             'can_receive_referrals' => ['sometimes','boolean'],
             'can_fund_programs'     => ['sometimes','boolean'],
-            'contact_person'        => ['required', 'integer', 'max:500'],
-            'address'               => ['required', 'integer', 'max:255'],
+            'contact_person'        => ['required', 'string', 'max:500'],
+            'address'               => ['required', 'string', 'max:255'],
             'is_active'             => ['sometimes','boolean'],
         ];
     }

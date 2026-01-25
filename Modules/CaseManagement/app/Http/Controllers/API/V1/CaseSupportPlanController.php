@@ -5,7 +5,7 @@ namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseSupportPlan\StoreCaseSupportPlanRequest;
-use Modules\CaseManagement\Http\Requests\Api\V1\UpdateCaseSupportPlanRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\CaseSupportPlan\UpdateCaseSupportPlanRequest;
 use Modules\CaseManagement\Models\CaseSupportPlan;
 use Modules\CaseManagement\Services\CaseSupportPlanService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CaseSupportPlanController extends Controller
 {
     /**
-     * Service to handle case-support-plan-related logic 
+     * Service to handle case-support-plan-related logic
      * and separating it from the controller
-     * 
+     *
      * @var CaseSupportPlanService
      */
     protected $caseSupportPlanService;
@@ -36,7 +36,7 @@ class CaseSupportPlanController extends Controller
      *
      * Workflow:
      * 1. **Capture Filters:** Collects dynamic query parameters (e.g., case_id, version).
-     * 2. **Service Delegation:** Passes the filtering array to the Service Layer, 
+     * 2. **Service Delegation:** Passes the filtering array to the Service Layer,
      * which manages the complex tagged caching and database execution.
      *
      * @param Request $request Incoming request with potential filter parameters.
@@ -56,7 +56,7 @@ class CaseSupportPlanController extends Controller
 
     /**
      * Store a newly created support plan in storage.
-     * 
+     *
      * Logic:
      * 1. Data Integrity: Automatic validation via StoreCaseSupportPlanRequest.
      * 2. Persistence: The service handles creation and triggers global cache invalidation.
@@ -101,7 +101,7 @@ class CaseSupportPlanController extends Controller
     /**
      * Update the specified case support plan in storage.
      *
-     * Note: Route Model Binding is used here as we need to verify the resource's 
+     * Note: Route Model Binding is used here as we need to verify the resource's
      * existence and state before performing a destructive update operation.
      *
      * @param UpdateCaseSupportPlanRequest $request Validated update data.

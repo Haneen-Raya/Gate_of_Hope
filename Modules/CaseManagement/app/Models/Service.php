@@ -100,6 +100,32 @@ class Service extends Model
     }
 
     /**
+     * Mutator: Convert "description" to lowercase before storing.
+     * This acts as a safety net for both auto-generated and manually entered codes.
+     *
+     * @param string $value
+     *
+     * @return void
+     */
+    public function setDescriptionAttribute($value): void
+    {
+        $this->attributes['description'] = strtolower($value);
+    }
+
+    /**
+     * Mutator: Capitalize the first letter of "name" before storing.
+     * This acts as a safety net for both auto-generated and manually entered codes.
+     *
+     * @param string $value
+     *
+     * @return void
+     */
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = ucfirst($value);
+    }
+
+    /**
      * Configure the activity logging options.
      */
     public function getActivitylogOptions(): LogOptions
