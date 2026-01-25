@@ -16,7 +16,7 @@ use Modules\Programs\Models\Program;
 
 class IssueCategory extends Model
 {
-    use HasFactory, LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -69,7 +69,7 @@ class IssueCategory extends Model
     }
 
 
-    protected static function booted()
+    /*protected static function booted()
 {
     static::deleting(function ($category) {
 
@@ -86,6 +86,6 @@ class IssueCategory extends Model
         //If you return to the category → the types return
         $category->issueTypes()->withTrashed()->restore();
     });
-}
+}*/
 
 }

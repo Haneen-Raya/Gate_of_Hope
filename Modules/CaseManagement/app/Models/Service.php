@@ -2,14 +2,18 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Traits\AutoFlushCache;
+use App\Traits\HasActiveState;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Modules\Assessments\Models\IssueCategory;
 use Modules\CaseManagement\Enums\ServiceDirection;
+use Modules\CaseManagement\Models\Builders\ServiceBuilder;
 
 // use Modules\CaseManagement\Database\Factories\ServiceFactory;
 
@@ -34,7 +38,7 @@ use Modules\CaseManagement\Enums\ServiceDirection;
  */
 class Service extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,HasActiveState, AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -67,6 +71,33 @@ class Service extends Model
         'is_active' => 'boolean',
         'direction' => ServiceDirection::class
     ];
+
+    /**
+     * Define cache tags to invalidate on model changes.
+     * Implementing the "Ripple Effect" to purge list and detail caches.
+     *
+     * @return array<string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            "services",
+            "service_{$this->id}"
+        ];
+    }
+
+    /**
+     * Override the default Eloquent query builder.
+     * This tells Laravel to use our custom ServiceBuilder instead of the default one.
+     *
+     * @param Builder $query
+     *
+     * @return ServiceBuilder
+     */
+    public function newEloquentBuilder($query): ServiceBuilder
+    {
+        return new ServiceBuilder($query);
+    }
 
     /**
      * Configure the activity logging options.
