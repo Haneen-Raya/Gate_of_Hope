@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Modules\Beneficiaries\Http\Requests\EmploymentStatus\StoreEmploymentStatusRequest;
 use Modules\Beneficiaries\Http\Requests\EmploymentStatus\UpdateEmploymentStatusActivationRequest;
 use Modules\Beneficiaries\Http\Requests\EmploymentStatus\UpdateEmploymentStatusRequest;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
 use Modules\Beneficiaries\Models\EmploymentStatus;
 use Modules\Beneficiaries\Services\EmploymentStatusService;
 
@@ -29,11 +28,11 @@ class EmploymentStatusController extends Controller
     /**
      * This method return all employment statuses from database.
      *
-     * @param FilterRequest $request
+     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(FilterRequest $request)
+    public function index(Request $request)
     {
         $filters = $request->validated();
         return $this->successResponse(

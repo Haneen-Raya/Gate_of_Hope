@@ -4,7 +4,6 @@ namespace Modules\Beneficiaries\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\SocialBackground\FilterSocialBackgroundRequest;
 use Modules\Beneficiaries\Http\Requests\SocialBackground\StoreSocialBackgroundRequest;
 use Modules\Beneficiaries\Http\Requests\SocialBackground\UpdateSocialBackgroundRequest;
 use Modules\Beneficiaries\Models\SocialBackground;
@@ -28,11 +27,11 @@ class SocialBackgroundController extends Controller
     /**
      * This method return all social backgrounds from database.
      *
-     * @param FilterSocialBackgroundRequest $request
+     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(FilterSocialBackgroundRequest $request)
+    public function index(Request $request)
     {
         $filters = $request->validated();
         return $this->successResponse(

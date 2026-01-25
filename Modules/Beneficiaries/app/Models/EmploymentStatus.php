@@ -26,11 +26,9 @@ class EmploymentStatus extends Model
         'is_active' => 'boolean',
     ];
 
-    // protected static function newFactory(): EmploymentStatusesFactory
-    // {
-    //     // return EmploymentStatusesFactory::new();
-    // }
-
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();

@@ -9,6 +9,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\CaseManagement\Models\CaseReferral;
 use Modules\Core\Models\User;
+use Modules\Entities\Enums\EntityType;
 use Modules\Funding\Models\ProgramFunding;
 use Modules\Programs\Models\Activity;
 use Modules\Reporting\Models\DonorReport;
@@ -35,15 +36,22 @@ class Entitiy extends Model
         'is_active',
     ];
 
-    // protected static function newFactory(): EntitiesFactory
-    // {
-    //     // return EntitiesFactory::new();
-    // }
+    protected $casts = [
+        'can_provide_services'  => 'boolean',
+        'can_receive_referrals' => 'boolean',
+        'can_fund_programs'     => 'boolean',
+        'is_active'             => 'boolean',
+        'entity_type'           => EntityType::class
+    ];
 
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
     }
+
     /**
      *
      */

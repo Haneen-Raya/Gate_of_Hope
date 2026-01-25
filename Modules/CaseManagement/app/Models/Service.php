@@ -8,6 +8,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Assessments\Models\IssueCategory;
+use Modules\CaseManagement\Enums\ServiceDirection;
 
 // use Modules\CaseManagement\Database\Factories\ServiceFactory;
 
@@ -27,17 +28,26 @@ class Service extends Model
         'is_active'
     ];
 
-    // protected static function newFactory(): ServiceFactory
-    // {
-    //     // return ServiceFactory::new();
-    // }
+    protected $casts = [
+        'is_active' => 'boolean',
+        'direction' => ServiceDirection::class
+    ];
 
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
     }
+
     /**
+     * Get the issue category that owns this service.
      *
+     * Defines an inverse one-to-many relationship where a service
+     * belongs to a single beneficiary.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function issueCategory()
     {
@@ -45,7 +55,12 @@ class Service extends Model
     }
 
     /**
+     * Get the case referrals associated with this service.
      *
+     * Defines a one-to-many relationship where an service
+     * can be linked to multiple case referral records.
+     *
+     * @return HasMany
      */
     public function caseReferrals(): HasMany
     {
