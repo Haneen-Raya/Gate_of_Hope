@@ -2,11 +2,13 @@
 
 namespace Modules\Core\Providers;
 
+use RecursiveIteratorIterator;
+use Modules\Core\Models\Region;
+use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Modules\Core\Observers\RegionObserver;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Region::observe(RegionObserver::class);
         $this->registerCommands();
         $this->registerCommandSchedules();
         $this->registerTranslations();

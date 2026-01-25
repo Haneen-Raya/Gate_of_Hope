@@ -3,27 +3,29 @@
 namespace Modules\Core\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use PhpParser\Node\Stmt\Case_;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Modules\Assessments\Models\AssessmentResult;
-use Modules\Beneficiaries\Models\Beneficiary;
-use Modules\CaseManagement\Models\BeneficiaryCase;
-use Modules\CaseManagement\Models\CaseEvent;
-use Modules\CaseManagement\Models\CaseReferral;
+use Database\Factories\UserFactory;
 use Modules\Entities\Models\Entitiy;
-use Modules\HumanResources\Models\Specialist;
 use Modules\Programs\Models\Program;
-use PhpParser\Node\Stmt\Case_;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Modules\CaseManagement\Models\CaseEvent;
+use Modules\Beneficiaries\Models\Beneficiary;
+use Modules\HumanResources\Models\Specialist;
+use Modules\CaseManagement\Models\CaseReferral;
+use Modules\Assessments\Models\AssessmentResult;
+use Modules\CaseManagement\Models\BeneficiaryCase;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, LogsActivity,HasApiTokens;
+    use HasFactory, Notifiable, LogsActivity,HasApiTokens,HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -153,4 +155,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Program::class, 'created_by');
     }
+
+        protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
+
 }
