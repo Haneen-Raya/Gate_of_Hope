@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\CaseManagement\Http\Requests\Api\V1;
+namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseSupportPlan;
 
 use Illuminate\Foundation\Http\FormRequest;
 
