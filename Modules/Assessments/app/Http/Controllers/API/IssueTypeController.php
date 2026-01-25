@@ -5,8 +5,8 @@ namespace Modules\Assessments\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Modules\Assessments\Http\Requests\IssueType\StoreIssueTypeRequest;
-use Modules\Assessments\Http\Requests\IssueType\UpdateIssueTypeRequest;
+use Modules\Assessments\Http\Requests\V1\IssueType\StoreIssueTypeRequest;
+use Modules\Assessments\Http\Requests\V1\IssueType\UpdateIssueTypeRequest;
 use Modules\Assessments\Models\IssueType;
 use Modules\Assessments\Services\IssueTypeService;
 

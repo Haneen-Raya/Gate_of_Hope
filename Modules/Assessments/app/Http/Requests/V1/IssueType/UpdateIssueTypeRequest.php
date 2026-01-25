@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Assessments\Http\Requests\IssueType;
+namespace Modules\Assessments\Http\Requests\V1\IssueType;
 
 use Illuminate\Foundation\Http\FormRequest;
 

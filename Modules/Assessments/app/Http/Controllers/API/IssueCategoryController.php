@@ -3,8 +3,8 @@
 namespace Modules\Assessments\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Modules\Assessments\Http\Requests\IssueCategory\StoreIssueCategoryRequest;
-use Modules\Assessments\Http\Requests\IssueCategory\UpdateIssueCategoryRequest;
+use Modules\Assessments\Http\Requests\V1\IssueCategory\StoreIssueCategoryRequest;
+use Modules\Assessments\Http\Requests\V1\IssueCategory\UpdateIssueCategoryRequest;
 use Modules\Assessments\Models\IssueCategory;
 use Modules\Assessments\Services\IssueCategoryService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;

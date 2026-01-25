@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Assessments\Http\Requests\IssueCategory;
+namespace Modules\Assessments\Http\Requests\V1\IssueCategory;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateIssueCategoryRequest extends FormRequest
+class StoreIssueCategoryRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -23,6 +23,7 @@ class UpdateIssueCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+      return true;
     }
+
 }
