@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('beneficiary_case_id')->constrained('beneficiary_cases');
             $table->integer('version');
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(1);
             $table->date('start_date');
             $table->date('end_date');
             $table->foreignId('created_by')->constrained('users');
