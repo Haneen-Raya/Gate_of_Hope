@@ -4,7 +4,6 @@ namespace Modules\Beneficiaries\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
 use Modules\Beneficiaries\Http\Requests\HousingType\StoreHousingTypeRequest;
 use Modules\Beneficiaries\Http\Requests\HousingType\UpdateHousingTypeActivationRequest;
 use Modules\Beneficiaries\Http\Requests\HousingType\UpdateHousingTypeRequest;
@@ -29,11 +28,11 @@ class HousingTypeController extends Controller
     /**
      * This method return all housing types from database.
      *
-     * @param FilterRequest $request
+     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(FilterRequest $request)
+    public function index(Request $request)
     {
         $filters = $request->validated();
         return $this->successResponse(

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Modules\Beneficiaries\Http\Requests\EducationLevel\StoreEducationLevelRequest;
 use Modules\Beneficiaries\Http\Requests\EducationLevel\UpdateEducationLevelActivationRequest;
 use Modules\Beneficiaries\Http\Requests\EducationLevel\UpdateEducationLevelRequest;
-use Modules\Beneficiaries\Http\Requests\FilterRequest;
 use Modules\Beneficiaries\Models\EducationLevel;
 use Modules\Beneficiaries\Services\EducationLevelService;
 
@@ -29,11 +28,11 @@ class EducationLevelController extends Controller
     /**
      * This method return all education levels from database.
      *
-     * @param FilterRequest $request
+     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(FilterRequest $request)
+    public function index(Request $request)
     {
         $filters = $request->validated();
         return $this->successResponse(
