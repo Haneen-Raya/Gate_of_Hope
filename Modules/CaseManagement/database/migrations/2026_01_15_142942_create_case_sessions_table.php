@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('duration_minutes');
             $table->text('notes')->nullable();
             $table->text('recommendations')->nullable();
-            $table->foreignId('conducted_by')->constrained('trainers');
+            $table->foreignId('conducted_by')->constrained('specialists');
             $table->timestamps();
         });
     }
