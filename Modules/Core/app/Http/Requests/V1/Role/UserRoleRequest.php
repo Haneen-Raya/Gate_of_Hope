@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Core\Http\Requests\Role;
+namespace Modules\Core\Http\Requests\Role\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -20,9 +20,9 @@ class UserRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true ;
+        return $this->user()->hasRole('admin') ;
     }
-// $this->user()->hasRole('Super Admin')
+
     /**
      * Get the validation rules that apply to the request.
      * * * Validates:
