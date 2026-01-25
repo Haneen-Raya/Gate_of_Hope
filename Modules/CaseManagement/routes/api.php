@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\CaseManagement\Http\Controllers\CaseManagementController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('casemanagements', CaseManagementController::class)->names('casemanagement');
+
+    // Register Case Support Plans routes
+    require __DIR__ . '/V1/case-support-plans.php';
 });
