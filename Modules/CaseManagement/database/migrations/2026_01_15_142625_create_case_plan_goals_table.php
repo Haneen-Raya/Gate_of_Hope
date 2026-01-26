@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('goal_description');
             $table->string('status');
             $table->date('target_date');
-            $table->date('achieved_at');
+            $table->date('achieved_at')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });
