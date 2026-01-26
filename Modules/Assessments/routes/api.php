@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use Modules\Assessments\Http\Controllers\Api\V1\IssueCategoryController;
 use Modules\Assessments\Http\Controllers\Api\V1\IssueTypeController;
 use Modules\Assessments\Http\Controllers\AssessmentsController;
-use Modules\Assessments\Http\Controllers\Api\V1\GoogleFormController;
-use Modules\Assessments\Http\Controllers\Api\V1\PriorityRuleController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('assessments', AssessmentsController::class)->names('assessments');
+
+    // Register assessment result routes
+    require __DIR__ . '/V1/assessment-results.php';
+
     // ----------------- Issue Categories -----------------
     Route::prefix('assessment/issue-categories')->group(function () {
 
@@ -35,5 +37,5 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 
-    require __DIR__ . '/V1/priority-rules.php';
-    require __DIR__ . '/V1/google-forms.php';
+require __DIR__ . '/V1/priority-rules.php';
+require __DIR__ . '/V1/google-forms.php';
