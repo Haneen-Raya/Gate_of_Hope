@@ -8,4 +8,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Register Case Support Plans routes
     require __DIR__ . '/V1/case-support-plans.php';
+
 });
+require __DIR__ .'/V1/beneficiary-case.php';

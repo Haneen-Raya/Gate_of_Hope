@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('closure_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
+            $table->unique(['beneficiary_id', 'issue_type_id', 'status']);
             $table->index(['status', 'region_id', 'case_manager_id'], 'case_search_index');
             $table->index(['status', 'priority', 'opened_at']);
             $table->index(['region_id', 'priority', 'status']);

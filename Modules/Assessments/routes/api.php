@@ -9,7 +9,6 @@ use Modules\Assessments\Http\Controllers\Api\V1\PriorityRuleController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('assessments', AssessmentsController::class)->names('assessments');
-
     // ----------------- Issue Categories -----------------
     Route::prefix('assessment/issue-categories')->group(function () {
 
@@ -35,17 +34,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 });
 
-Route::prefix('v1')->group(function () {
 
-    Route::apiResource('priority-rules', PriorityRuleController::class);
-
-    Route::prefix('google-forms')->group(function () {
-        Route::get('/', [GoogleFormController::class, 'index']);
-        Route::post('/', [GoogleFormController::class, 'store']);
-        Route::get('{id}', [GoogleFormController::class, 'show']);
-        Route::put('{id}', [GoogleFormController::class, 'update']);
-        Route::delete('{id}', [GoogleFormController::class, 'destroy']);
-        Route::get('/issue-type/{issue_type_id}', [GoogleFormController::class, 'getByIssueType']);
-        Route::post('/import', [GoogleFormController::class, 'importResults']);
-    });
-});
+    require __DIR__ . '/V1/priority-rules.php';
+    require __DIR__ . '/V1/google-forms.php';
