@@ -26,6 +26,10 @@ return new class extends Migration
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->date('followup_date');
+            $table->timestamp('rejected_at')->nullable();
+            $table->text('rejection_reason')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
+            $table->text('cancellation_reason')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();

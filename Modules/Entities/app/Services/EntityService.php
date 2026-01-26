@@ -35,7 +35,7 @@ class EntityService
 
         $query = Entitiy::with(['user','caseReferrals','programFundings','donorReports','activities']);
 
-        return Cache::tags(['entities'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage,$filters) {
+        return Cache::tags([self::TAG_ENTITIES_GLOBAL])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage,$filters) {
             return $query
                 ->filter($filters)
                 ->paginate($perPage);

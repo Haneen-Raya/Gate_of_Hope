@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Entities\Http\Controllers\EntitiesController;
+use Modules\Entities\Http\Controllers\Api\V1\EntitiyController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('entities', EntitiesController::class)->names('entities');
+    Route::resource('entities', EntitiyController::class)->names('entities');
 });

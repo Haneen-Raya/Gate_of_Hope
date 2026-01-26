@@ -4,6 +4,7 @@ namespace Modules\CaseManagement\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Modules\CaseManagement\Models\CaseReferral;
 
 class RouteServiceProvider extends ServiceProvider
 {
