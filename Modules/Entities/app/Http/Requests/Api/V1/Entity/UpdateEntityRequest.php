@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Entities\Http\Requests\Entity;
+namespace Modules\Entities\Http\Requests\Api\V1\Entity;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

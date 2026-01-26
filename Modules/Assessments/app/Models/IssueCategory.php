@@ -16,7 +16,7 @@ use Modules\Programs\Models\Program;
 
 class IssueCategory extends Model
 {
-    use HasFactory, LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

@@ -4,15 +4,22 @@ namespace Modules\Entities\Enums;
 
 
 /**
+ * @Enum EntityType
  *
+ * Defines the classification of entities within the system.
  *
+ * This enum is used to distinguish between different types of entities
+ * such as non-governmental organizations and government institutions.
+ * It is primarily associated with the entities table.
+ *
+ * @method static array all() Returns a flat array of all string values.
  */
 enum EntityType : string
 {
-    /** Service provided internally by the organization.*/
+    /** Non-Governmental Organization (NGO). */
     case NGO = 'ngo';
 
-    /** Service provided externally by a partner or third-party entity. */
+    /** Governmental entity or public institution. */
     case GOVERNMENT = 'government';
 
     /**

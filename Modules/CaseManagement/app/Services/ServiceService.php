@@ -9,6 +9,18 @@ use Modules\CaseManagement\Models\Service;
 class ServiceService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_SERVICES_GLOBAL = 'services';     // Tag for lists of services
+    private const TAG_SERVICE_PREFIX = 'service_';      // Tag for specific service details
+
+    /**
      * Get all services from database
      *
      * @return array $arraydata
@@ -17,45 +29,14 @@ class ServiceService
     {
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='services'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
-
-        if (!$filters) {
-            return Cache::tags(['services'])->remember($cacheKey, now()->addDay(), function () use($perPage) {
-                return Service::with(['issueCategory','caseReferrals'])
-                    ->paginate($perPage)
-                    ->through(fn($service) => $service->toArray());
-            });
-        }
+        $cacheKey='services_list_'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
         $query = Service::with(['issueCategory','caseReferrals']);
 
-        if (isset($filters['issue_category_id'])) {
-            $query->where('issue_category_id', $filters['issue_category_id']);
-        }
-
-        if (isset($filters['name'])) {
-            $query->where('name', $filters['name']);
-        }
-
-        if (isset($filters['description'])) {
-            $query->where('description', $filters['description']);
-        }
-
-        if (isset($filters['direction'])) {
-            $query->where('direction', $filters['direction']);
-        }
-
-        if (isset($filters['unit_cost'])) {
-            $query->where('unit_cost', $filters['unit_cost']);
-        }
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        return Cache::tags(['services'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($service) => $service->toArray());
+        return Cache::tags([self::TAG_SERVICES_GLOBAL])->remember($cacheKey, self::CACHE_TTL, function() use ($query, $perPage, $filters) {
+            return $query
+                    ->filter($filters)
+                    ->paginate($perPage);
         });
     }
 
@@ -70,7 +51,6 @@ class ServiceService
     {
         return DB::transaction(function () use ($data) {
             $service = Service::create($data);
-            Cache::tags(['services'])->flush();
             return $service;
         });
     }
@@ -84,8 +64,9 @@ class ServiceService
      */
     public function showService(Service $service)
     {
-        $cacheKey='service_'.$service->id.'_'.app()->getLocale();
-        return Cache::tags(['services'])->remember($cacheKey, now()->addDay(), function () use ($service) {
+        $cacheKey= self::TAG_SERVICE_PREFIX.$service->id.'_'.app()->getLocale();
+        $serviceTag= self::TAG_SERVICE_PREFIX.$service->id;
+        return Cache::tags([self::TAG_SERVICES_GLOBAL,$serviceTag])->remember($cacheKey, self::CACHE_TTL, function () use ($service) {
             return $service->load(['issueCategory','caseReferrals'])->toArray();
         });
     }
@@ -102,7 +83,7 @@ class ServiceService
     {
         return DB::transaction(function () use ($data,$service) {
             $service->update($data);
-            Cache::tags(['services'])->flush();
+            $service->refresh();
             return $service;
         });
     }
@@ -112,11 +93,11 @@ class ServiceService
      *
      * @param Service $service
      *
+     * @return void
      */
     public function deleteService(Service $service)
     {
         $service->delete();
-        Cache::tags(['services'])->flush();
     }
 }
 

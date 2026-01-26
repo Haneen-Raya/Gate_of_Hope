@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\Entities\Http\Controllers;
+namespace Modules\Entities\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Entities\Http\Requests\Entity\StoreEntityRequest;
-use Modules\Entities\Http\Requests\Entity\UpdateEntityRequest;
+use Modules\Entities\Http\Requests\Api\V1\Entity\StoreEntityRequest;
+use Modules\Entities\Http\Requests\Api\V1\Entity\UpdateEntityRequest;
 use Modules\Entities\Models\Entitiy;
 use Modules\Entities\Services\EntityService;
 
