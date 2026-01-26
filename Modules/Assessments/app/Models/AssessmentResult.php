@@ -2,18 +2,20 @@
 
 namespace Modules\Assessments\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasAuditUsers;
+use Modules\Core\Models\User;
+use App\Traits\AutoFlushCache;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Beneficiaries\Models\Beneficiary;
-use Modules\Core\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\Assessments\Database\Factories\AssessmentResultFactory;
 
 class AssessmentResult extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,HasAuditUsers, AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +39,13 @@ class AssessmentResult extends Model
     // {
     //     // return AssessmentResultFactory::new();
     // }
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            'assessment_results_all',
+            "assessment_result_{$this->id}"
+        ];
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

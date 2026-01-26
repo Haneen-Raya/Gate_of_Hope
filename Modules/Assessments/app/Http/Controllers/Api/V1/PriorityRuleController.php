@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Assessments\Http\Controllers\V1;
+namespace Modules\Assessments\Http\Controllers\Api\V1;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ use Modules\Assessments\Http\Requests\V1\PriorityRule\UpdatePriorityRuleRequest;
  * * This controller manages the scoring logic for assessments. It allows administrators
  * to define thresholds (min/max scores) and link them to priority levels
  * (e.g., Low, High, Critical) for different types of issues.
- * * @package Modules\Assessments\Http\Controllers\V1
+ * * @package Modules\Assessments\Http\Controllers\Api\V1
  */
 class PriorityRuleController extends Controller
 {

@@ -21,3 +21,4 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Register Case Reviews routes
     require __DIR__ . '/V1/case-reviews.php';
 });
+require __DIR__ .'/V1/beneficiary-case.php';
