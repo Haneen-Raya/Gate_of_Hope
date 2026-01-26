@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Modules\CaseManagement\Enums\SessionType;
 use Modules\CaseManagement\Models\CaseSession;
@@ -16,6 +17,7 @@ use Modules\CaseManagement\Models\BeneficiaryCase;
  */
 class CaseSessionController extends Controller
 {
+    use AuthorizesRequests ;
     /**
      * Inject CaseSessionService via constructor
      */
@@ -31,6 +33,10 @@ class CaseSessionController extends Controller
      */
     public function index(int $caseId): JsonResponse
     {
+
+        $beneficiaryCase = BeneficiaryCase::findOrFail($caseId);
+
+        $this->authorize('viewAny', $beneficiaryCase);
         $sessions = $this->caseSessionService->paginateForCase($caseId);
 
         return $this->successResponse(
@@ -50,6 +56,7 @@ class CaseSessionController extends Controller
         StoreCaseSessionRequest $request,
         BeneficiaryCase $beneficiaryCase
     ) {
+        $this->authorize('create', $beneficiaryCase);
         $session = $this->caseSessionService->create(
             $request->validated(),
             $beneficiaryCase
@@ -72,6 +79,7 @@ class CaseSessionController extends Controller
     {
         $caseSession = $this->caseSessionService->findById($id);
 
+        $this->authorize('view', $caseSession);
         return $this->successResponse(
             'Case session retrieved successfully',
             $caseSession
@@ -89,6 +97,7 @@ class CaseSessionController extends Controller
         UpdateCaseSessionRequest $request,
         CaseSession $caseSession
     ): JsonResponse {
+        $this->authorize('update', $caseSession);
         $updatedSession = $this->caseSessionService->update(
             $caseSession,
             $request->validated()
@@ -108,6 +117,7 @@ class CaseSessionController extends Controller
      */
     public function destroy(CaseSession $caseSession): JsonResponse
     {
+        $this->authorize('delete', $caseSession);
         $this->caseSessionService->delete($caseSession);
 
         return $this->successResponse(
@@ -123,6 +133,7 @@ class CaseSessionController extends Controller
      */
     public function bySpecialist(int $specialistId): JsonResponse
     {
+        $this->authorize('viewBySpecialist', [CaseSession::class, $specialistId]);
         $sessions = $this->caseSessionService->getBySpecialist($specialistId);
 
         return $this->successResponse(
@@ -139,6 +150,9 @@ class CaseSessionController extends Controller
      */
     public function count(int $caseId): JsonResponse
     {
+        $beneficiaryCase = BeneficiaryCase::findOrFail($caseId);
+
+        $this->authorize('count', $beneficiaryCase);
         $count = $this->caseSessionService->countForCase($caseId);
 
         return $this->successResponse(
@@ -171,6 +185,10 @@ class CaseSessionController extends Controller
      */
     public function allForCase(int $caseId): JsonResponse
     {
+        $beneficiaryCase = BeneficiaryCase::findOrFail($caseId);
+
+        $this->authorize('viewAny', $beneficiaryCase);
+
         $sessions = $this->caseSessionService->getAllForCase($caseId);
 
         return $this->successResponse(
@@ -192,6 +210,10 @@ class CaseSessionController extends Controller
         string $from,
         string $to
     ): JsonResponse {
+        $beneficiaryCase = BeneficiaryCase::findOrFail($caseId);
+
+        $this->authorize('viewAny', $beneficiaryCase);
+
         $sessions = $this->caseSessionService->getForCaseBetweenDates(
             $caseId,
             $from,

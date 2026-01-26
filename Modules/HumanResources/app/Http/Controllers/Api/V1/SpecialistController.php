@@ -7,6 +7,8 @@ use Modules\HumanResources\Services\SpecialistService;
 use Modules\HumanResources\Http\Requests\StoreSpecialistRequest;
 use Modules\HumanResources\Http\Requests\UpdateSpecialistRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Modules\HumanResources\Policies\SpecialistPolicy;
 
 /**
  * Class SpecialistController
@@ -21,16 +23,19 @@ use App\Http\Controllers\Controller;
  */
 class SpecialistController extends Controller
 {
+    use AuthorizesRequests ;
     protected SpecialistService $service;
+    protected SpecialistPolicy $policy;
 
     /**
      * Constructor
      *
      * @param SpecialistService $service Service class for handling business logic and caching.
      */
-    public function __construct(SpecialistService $service)
+    public function __construct(SpecialistService $service , SpecialistPolicy $policy)
     {
         $this->service = $service;
+        $this->policy = $policy;
     }
 
     /**
@@ -46,6 +51,7 @@ class SpecialistController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Specialist::class);
         $specialists = $this->service->all();
         return $this->successResponse('Specialists retrieved successfully', $specialists);
     }
@@ -82,6 +88,7 @@ class SpecialistController extends Controller
      */
     public function store(StoreSpecialistRequest $request)
     {
+        $this->authorize('create', Specialist::class);
         $specialist = $this->service->create($request->validated());
         return $this->successResponse('Specialist created successfully', $specialist, 201);
     }
@@ -101,6 +108,7 @@ class SpecialistController extends Controller
      */
     public function update(UpdateSpecialistRequest $request, Specialist $specialist)
     {
+        $this->authorize('update', $specialist);
         $specialist = $this->service->update($specialist, $request->validated());
         return $this->successResponse('Specialist updated successfully', $specialist);
     }
@@ -119,6 +127,7 @@ class SpecialistController extends Controller
      */
     public function destroy(Specialist $specialist)
     {
+        $this->authorize('delete', $specialist);
         // Prevent deleting specialist if they have related case sessions
         if ($specialist->caseSessions()->exists()) {
             return response()->json([

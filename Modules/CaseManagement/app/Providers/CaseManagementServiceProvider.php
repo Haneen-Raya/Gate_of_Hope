@@ -3,7 +3,10 @@
 namespace Modules\CaseManagement\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Modules\CaseManagement\Models\CaseSession;
+use Modules\CaseManagement\Policies\CaseSessionPolicy;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +30,8 @@ class CaseManagementServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        Gate::policy(CaseSession::class, CaseSessionPolicy::class);
+
     }
 
     /**
