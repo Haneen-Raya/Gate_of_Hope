@@ -2,19 +2,20 @@
 
 namespace Modules\HumanResources\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Core\Models\User;
+use App\Traits\AutoFlushCache;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Programs\Models\ActivitySession;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\HumanResources\Database\Factories\TrainerFactory;
 
 class Trainer extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.

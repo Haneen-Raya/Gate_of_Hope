@@ -4,17 +4,19 @@ namespace Modules\Assessments\Services\V1;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\Assessments\Models\PriorityRules;
+
 /**
  * Class PriorityRuleService
- * * Manages the business logic for assessment priority rules.
+ *
+ * Manages the business logic for assessment priority rules.
  * This service handles scoring thresholds (min/max) and matches them
  * with priority levels (Low, Medium, High, Critical) while utilizing
  * a tagged caching system for high-speed retrieval.
- * * @package Modules\Assessments\Services\V1
+ *
+ * @package Modules\Assessments\Services\V1
  */
 class PriorityRuleService
 {
-
     /**
      * Cache expiration time in seconds (1 hour).
      * @var int
@@ -35,7 +37,8 @@ class PriorityRuleService
 
     /**
      * Retrieve all active priority rules with their associated issue types.
-     * * @return \Illuminate\Database\Eloquent\Collection|PriorityRules[]
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|PriorityRules[]
      */
     public function getAll()
     {
@@ -48,9 +51,11 @@ class PriorityRuleService
 
     /**
      * Get a specific priority rule by ID.
-     * * Uses double-tagging to ensure that updating a single rule only
+     *
+     * Uses double-tagging to ensure that updating a single rule only
      * invalidates its own specific cache and the global list.
-     * * @param int $id The unique identifier of the rule.
+     *
+     * @param int $id The unique identifier of the rule.
      * @return PriorityRules
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
@@ -65,20 +70,22 @@ class PriorityRuleService
     }
 
     /**
-     * Create a new priority rule and invalidate the global cache.
-     * * @param array $data Validated rule data (issue_type_id, min_score, max_score, priority).
+     * Create a new priority rule.
+     * Note: Global cache is automatically invalidated via AutoFlushCache trait in the model.
+     *
+     * @param array $data Validated rule data (issue_type_id, min_score, max_score, priority).
      * @return PriorityRules
      */
     public function create(array $data)
     {
-        $rule = PriorityRules::create($data);
-        $this->clearGlobalCache();
-        return $rule;
+        return PriorityRules::create($data);
     }
 
     /**
-     * Update an existing priority rule and refresh its specific cache.
-     * * @param int $id The ID of the rule to update.
+     * Update an existing priority rule.
+     * Note: Specific cache tags are automatically invalidated via AutoFlushCache trait in the model.
+     *
+     * @param int $id The ID of the rule to update.
      * @param array $data The updated attributes.
      * @return PriorityRules
      */
@@ -87,39 +94,19 @@ class PriorityRuleService
         $rule = PriorityRules::findOrFail($id);
         $rule->update($data);
 
-        $this->clearSpecificCache($id);
         return $rule;
     }
 
     /**
-     * Remove a priority rule and clean up associated cache tags.
-     * * @param int $id The ID of the rule to delete.
+     * Remove a priority rule.
+     * Note: Cache cleanup is automatically handled by the model's AutoFlushCache trait.
+     *
+     * @param int $id The ID of the rule to delete.
      * @return bool|null
      */
     public function delete(int $id)
     {
         $rule = PriorityRules::findOrFail($id);
-        $this->clearSpecificCache($id);
         return $rule->delete();
-    }
-
-    /**
-     * Invalidate cache tags for a specific rule and the global rules list.
-     * * @param int $id The ID of the specific rule.
-     * @return void
-     */
-    public function clearSpecificCache(int $id)
-    {
-        $specificTag = self::TAG_RULE_PREFIX . $id;
-        Cache::tags([$specificTag, self::TAG_RULES_GLOBAL])->flush();
-    }
-
-    /**
-     * Invalidate all priority rule-related cache entries.
-     * * @return void
-     */
-    public function clearGlobalCache()
-    {
-        Cache::tags([self::TAG_RULES_GLOBAL])->flush();
     }
 }

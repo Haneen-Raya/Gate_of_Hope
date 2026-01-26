@@ -44,7 +44,7 @@ class RegionBuilder extends Builder
         return $this->when($term, function ($q) use ($term) {
             $q->where(function ($query) use ($term) {
                 $query->where('name', 'like', "%{$term}%")
-                      ->orWhere('code', strtoupper($term));
+                    ->orWhere('code', strtoupper($term));
             });
         });
     }

@@ -2,34 +2,63 @@
 
 namespace Modules\Assessments\Models;
 
+use App\Traits\AutoFlushCache;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Assessments\Models\IssueType;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Assessments\Database\Factories\FormGoogleFactory;
 
+/**
+ * Class GoogleForm
+ * * Maps external Google Form URLs to specific Issue Types for data collection.
+ * Utilizes AutoFlushCache to ensure URLs are always up-to-date in cache.
+ * * @property int $id
+ * @property string $url
+ * @property int $issue_type_id
+ */
 class GoogleForm extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity, AutoFlushCache;
 
     /**
-     * The attributes that are mass assignable.
+     * @var array<int, string>
      */
     protected $fillable = [
-    'url',
-    'issue_type_id'
+        'url',
+        'issue_type_id'
     ];
 
-    public function issueType(){
+    /**
+     * Define cache tags for automatic invalidation.
+     * * @return array<int, string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            'google_forms_global',
+            "google_form_issue_{$this->issue_type_id}"
+        ];
+    }
+
+    /**
+     * Get the linked issue type.
+     * * @return BelongsTo
+     */
+    public function issueType(): BelongsTo
+    {
         return $this->belongsTo(IssueType::class);
     }
 
-     public function getActivitylogOptions(): LogOptions
+    /**
+     * Activity log configuration.
+     * * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logAll();
+        return LogOptions::defaults()
+            ->logOnly(['url', 'issue_type_id'])
+            ->logOnlyDirty()
+            ->useLogName('google_forms');
     }
-    // protected static function newFactory(): FormGoogleFactory
-    // {
-    //     // return FormGoogleFactory::new();
-    // }
 }
