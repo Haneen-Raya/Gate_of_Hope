@@ -2,8 +2,10 @@
 
 namespace Modules\CaseManagement\Services;
 
+use DomainException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Modules\CaseManagement\Enums\CaseReferralStatus;
 use Modules\CaseManagement\Models\CaseReferral;
 
 use function Symfony\Component\Clock\now;
@@ -59,10 +61,6 @@ class CaseReferralService
     public function createCaseReferral(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $data['created_by'] =auth()->id();
-            $data['updated_by'] =auth()->id();
-            $data['referral_date'] =now();
-            $data['followup_date'] =now();
             $caseReferral = CaseReferral::create($data);
             return $caseReferral;
         });
@@ -95,7 +93,6 @@ class CaseReferralService
     public function updateCaseReferral(array $data, CaseReferral $caseReferral)
     {
         return DB::transaction(function () use ($data,$caseReferral) {
-            $data['updated_by'] =auth()->id();
             $caseReferral->update($data);
             return $caseReferral->refresh();
         });
@@ -110,6 +107,36 @@ class CaseReferralService
     public function deleteCaseReferral(CaseReferral $caseReferral)
     {
         $caseReferral->delete();
+    }
+
+    /**
+     * Change the status of a case referral.
+     *
+     * This method is responsible only for:
+     * - Validating the transition logic
+     * - Persisting the new status
+     *
+     * @param CaseReferral $caseReferral
+     * @param CaseReferralStatus $newStatus
+     *
+     * @throws \DomainException If the status transition is not allowed.
+     *
+     * @return CaseReferral $caseReferral
+     */
+    public function changeStatus(CaseReferral $caseReferral,CaseReferralStatus $newStatus): CaseReferral
+    {
+        //Validate the requested status transition against
+        // the current referral status lifecycle rules.
+        // The logic is centralized inside the CaseReferralStatus enum.
+        if (! $caseReferral->status->canTransitionTo($newStatus)) {
+            throw new DomainException('Invalid status transition.');
+        }
+
+        //Update status to new status
+        $caseReferral->update([
+            'status' => $newStatus,
+        ]);
+        return $caseReferral;
     }
 }
 

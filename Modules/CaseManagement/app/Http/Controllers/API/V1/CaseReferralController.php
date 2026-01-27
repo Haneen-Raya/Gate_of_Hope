@@ -3,14 +3,18 @@
 namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Modules\CaseManagement\Enums\CaseReferralStatus;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\StoreCaseReferralRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\UpdateCaseReferralRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\UpdateCaseReferralStatusRequest;
 use Modules\CaseManagement\Models\CaseReferral;
 use Modules\CaseManagement\Services\CaseReferralService;
 
 class CaseReferralController extends Controller
 {
+    use AuthorizesRequests;
     protected CaseReferralService $caseReferralService;
 
     /**
@@ -105,6 +109,36 @@ class CaseReferralController extends Controller
         return $this->successResponse(
             'Deleted succcessful',
             null
+        );
+    }
+
+    /**
+     * Update the status of a case referral.
+     *
+     * This endpoint allows authorized users to change the status
+     * of an existing case referral while enforcing business rules
+     * and lifecycle transitions.
+     *
+     * @param UpdateCaseReferralStatusRequest $request
+     * @param CaseReferral $caseReferral
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStatus(UpdateCaseReferralStatusRequest $request,CaseReferral $caseReferral)
+    {
+        // Convert the validated status value into an enum instance.
+        // This ensures type safety and prevents invalid states.
+        $data=$request->validated();
+        $newStatus = CaseReferralStatus::from($data['status']);
+
+        // Authorize the status update action.
+        // Role-based permissions are enforced via policy.
+        $this->authorize('updateStatus', $caseReferral,$newStatus);
+
+
+        return $this->successResponse(
+            'Case referral status updated successfully.',
+            $this->caseReferralService->changeStatus( $caseReferral,$newStatus)
         );
     }
 }

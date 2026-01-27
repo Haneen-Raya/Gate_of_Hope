@@ -33,14 +33,7 @@ class UpdateCaseReferralRequest extends FormRequest
             'urgency_level'       => ['nullable','string',Rule::in(CaseReferralUrgencyLevel::all())],
             'reason'              => ['nullable', 'string', 'max:1000'],
             'notes'               => ['nullable', 'string', 'max:1000'],
-            'referral_date'       => ['nullable', 'date'],
             'followup_date'       => ['nullable', 'date','after_or_equal:referral_date'],
-            'accepted_at'         => ['nullable', 'date','after_or_equal:referral_date'],
-            'completed_at'        => ['nullable', 'date','after_or_equal:accepted_at'],
-            'rejected_at'         => ['nullable', 'date','after_or_equal:referral_date'],
-            'cancelled_at'        => ['nullable', 'date','after_or_equal:referral_date'],
-            'rejection_reason'    => ['nullable', 'string', 'max:1000'],
-            'cancellation_reason' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }
