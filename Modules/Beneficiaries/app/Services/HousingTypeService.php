@@ -17,7 +17,7 @@ class HousingTypeService
     {
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='social_backgrounds'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
+        $cacheKey='housing_types'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
 
         if (!$filters) {
             return Cache::tags(['housing_types'])->remember($cacheKey, now()->addDay(), function () use($perPage) {

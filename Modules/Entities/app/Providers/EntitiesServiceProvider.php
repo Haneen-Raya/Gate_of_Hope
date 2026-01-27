@@ -4,6 +4,8 @@ namespace Modules\Entities\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Entities\Models\Entitiy;
+use Modules\Entities\Observers\EntitiyObserver;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -21,6 +23,7 @@ class EntitiesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Entitiy::observe(EntitiyObserver::class);
         $this->registerCommands();
         $this->registerCommandSchedules();
         $this->registerTranslations();

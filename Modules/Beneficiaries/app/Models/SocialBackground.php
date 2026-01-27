@@ -4,10 +4,11 @@ namespace Modules\Beneficiaries\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Beneficiaries\Enums\FamilyStability;
-use Modules\Beneficiaries\Enums\HousingTenure;
-use Modules\Beneficiaries\Enums\IncomeLevel;
-use Modules\Beneficiaries\Enums\LivingStandard;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Beneficiaries\Enums\V1\FamilyStability;
+use Modules\Beneficiaries\Enums\V1\HousingTenure;
+use Modules\Beneficiaries\Enums\V1\IncomeLevel;
+use Modules\Beneficiaries\Enums\V1\LivingStandard;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -15,7 +16,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class SocialBackground extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -36,14 +37,12 @@ class SocialBackground extends Model
         'housing_tenures' => HousingTenure::class,
         'income_level'    => IncomeLevel::class,
         'living_standard' => LivingStandard::class,
-        'family_stability'=> FamilyStability::class,
+        'family_stability' => FamilyStability::class,
     ];
 
-    // protected static function newFactory(): SocialBackgroundsFactory
-    // {
-    //     // return SocialBackgroundsFactory::new();
-    // }
-
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();

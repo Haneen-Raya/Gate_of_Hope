@@ -26,11 +26,9 @@ class EducationLevel extends Model
         'is_active' => 'boolean',
     ];
 
-    // protected static function newFactory(): EducationLevelFactory
-    // {
-    //     // return EducationLevelFactory::new();
-    // }
-
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();

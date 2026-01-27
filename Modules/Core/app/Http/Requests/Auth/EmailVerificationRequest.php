@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Core\Http\Requests;
+namespace Modules\Core\Http\Requests\Auth;
 
 use App\Facades\Logger;
 use Illuminate\Foundation\Http\FormRequest;

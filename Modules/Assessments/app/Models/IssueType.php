@@ -70,9 +70,6 @@ class IssueType extends Model
         return $this->hasMany(AssessmentResult::class);
     }
 
-    /**
-     *
-     */
     public function formgoogle(){
         return $this->hasOne(GoogleForm::class);
     }

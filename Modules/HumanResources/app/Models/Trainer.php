@@ -2,19 +2,23 @@
 
 namespace Modules\HumanResources\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Core\Models\User;
+use App\Traits\AutoFlushCache;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Programs\Models\ActivitySession;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Models\Builders\TrainerBuilder;
 
 // use Modules\HumanResources\Database\Factories\TrainerFactory;
 
 class Trainer extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +32,12 @@ class Trainer extends Model
         'certification_level',
         'hourly_rate',
         'is_external'
+    ];
+
+    protected $casts = [
+        'gender' => Gender::class,
+        'is_external' => 'boolean',
+        'date_of_birth' => 'date',
     ];
 
     // protected static function newFactory(): TrainerFactory
@@ -61,5 +71,12 @@ class Trainer extends Model
     public function activitySessions(): HasMany
     {
         return $this->hasMany(ActivitySession::class);
+    }
+    /**
+     * Create a new Eloquent query builder for the model.
+     */
+    public function newEloquentBuilder($query): Builder
+    {
+        return new TrainerBuilder($query);
     }
 }

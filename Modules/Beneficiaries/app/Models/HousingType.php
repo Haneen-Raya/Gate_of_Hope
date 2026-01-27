@@ -26,12 +26,9 @@ class HousingType extends Model
         'is_active' => 'boolean',
     ];
 
-    // protected static function newFactory(): HousingTypesFactory
-    // {
-    //     // return HousingTypesFactory::new();
-    // }
-
-
+    /**
+     * Configure the activity logging options.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();

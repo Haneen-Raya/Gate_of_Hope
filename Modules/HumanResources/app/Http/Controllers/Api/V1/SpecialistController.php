@@ -4,10 +4,10 @@ namespace Modules\HumanResources\Http\Controllers\Api\V1;
 
 use Modules\HumanResources\Models\Specialist;
 use Modules\HumanResources\Services\SpecialistService;
-use Modules\HumanResources\Http\Requests\StoreSpecialistRequest;
-use Modules\HumanResources\Http\Requests\UpdateSpecialistRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Modules\HumanResources\Http\Requests\V1\Specialist\StoreSpecialistRequest;
+use Modules\HumanResources\Http\Requests\V1\Specialist\UpdateSpecialistRequest;
 use Modules\HumanResources\Policies\SpecialistPolicy;
 
 /**
