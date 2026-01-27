@@ -99,7 +99,7 @@ class PermissionsSeeder extends Seeder
 
             'case.event.create','case.event.read','case.event.update',
 
-            'case.referral.create','case.referral.read',
+            'case.referral.create','case.referral.read','case.referral.update.status',
             'case.referral.update','case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',

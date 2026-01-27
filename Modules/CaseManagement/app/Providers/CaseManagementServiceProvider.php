@@ -4,6 +4,8 @@ namespace Modules\CaseManagement\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\CaseManagement\Models\CaseReferral;
+use Modules\CaseManagement\Observers\CaseReferralObserver;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -21,6 +23,7 @@ class CaseManagementServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        CaseReferral::observe(CaseReferralObserver::class);
         $this->registerCommands();
         $this->registerCommandSchedules();
         $this->registerTranslations();

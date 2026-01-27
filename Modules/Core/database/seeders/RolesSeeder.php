@@ -39,6 +39,7 @@ class RolesSeeder extends Seeder
                 'activities.sessions.create','activities.sessions.read',
                 'activities.sessions.update','activities.sessions.delete',
                 'activity.beneficiary.read_minimal',
+                'case.referral.update.status',
             ]);
 
         // Donor
@@ -75,7 +76,7 @@ class RolesSeeder extends Seeder
                 'case.plan.goal.create','case.plan.goal.read',
                 'case.plan.goal.update','case.plan.goal.delete',
                 'case.event.create','case.event.read','case.event.update',
-                'case.referral.create','case.referral.read','case.referral.update',
+                'case.referral.create','case.referral.read','case.referral.update','case.referral.update.status',
                 'case.specialist.assign','case.specialist.revoke',
                 'service.create','service.read','service.update','service.delete',
             ]);
