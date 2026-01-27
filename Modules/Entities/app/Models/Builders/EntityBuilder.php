@@ -29,7 +29,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by user.
      *
-     * @param string|null $type
+     * @param int|null $userId
      *
      * @return self
      */
@@ -55,7 +55,9 @@ class EntityBuilder extends Builder
     /**
      * Filter by capabilities.
      *
-     * @param string|null $type
+     * @param bool|null $provide
+     * @param bool|null $receive
+     * @param bool|null $fund
      *
      * @return self
      */
@@ -69,7 +71,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by minimum number of case referrals.
      *
-     * @param string|null $type
+     * @param int|null $min
      *
      * @return self
      */
@@ -81,7 +83,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by minimum number of program fundings .
      *
-     * @param string|null $type
+     * @param int|null $min
      *
      * @return self
      */
@@ -93,7 +95,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by minimum number of donor reports.
      *
-     * @param string|null $type
+     * @param int|null $min
      *
      * @return self
      */
@@ -105,7 +107,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by minimum number of activities.
      *
-     * @param string|null $type
+     * @param int|null $min
      *
      * @return self
      */
@@ -117,7 +119,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by name.
      *
-     * @param string|null $type
+     * @param string|null $name
      *
      * @return self
      */
@@ -129,7 +131,7 @@ class EntityBuilder extends Builder
     /**
      * Filter by name.
      *
-     * @param string|null $type
+     * @param string|null $code
      *
      * @return self
      */
