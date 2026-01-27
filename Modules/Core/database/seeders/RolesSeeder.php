@@ -15,19 +15,27 @@ class RolesSeeder extends Seeder
         $admin->syncPermissions(Permission::all());
 
         // Beneficiary
+       $beneficiaryPermissions = Permission::where('name','like','beneficiary.%')
+        ->orWhere('name','like','assessment%')
+        ->orWhere('name','like','activity.%')
+        ->orWhere('name','like','case.%self%')
+        ->orWhereIn('name', [
+            'case_session.view_any',
+            'case_session.view',
+            'case_session.count',
+        ])
+        ->get();
+
         Role::firstOrCreate(['name' => 'beneficiary'])
-            ->syncPermissions(Permission::where('name','like','beneficiary.%')
-                ->orWhere('name','like','assessment%')
-                ->orWhere('name','like','activity.%')
-                ->orWhere('name','like','case.%self%')
-                ->get()
-            );
+            ->syncPermissions($beneficiaryPermissions);
 
         // Specialist
         Role::firstOrCreate(['name' => 'specialist'])
             ->syncPermissions([
                 'file.read','file.update',
-                'sessions.create','sessions.read','sessions.update','sessions.delete',
+                'case_session.view_any','case_session.view_all','case_session.view_by_date',
+                'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
+                'case_session.view_by_specialist', 'case_session.count', 
                 'case.review.create','case.review.read','case.review.update',
             ]);
 
@@ -68,6 +76,7 @@ class RolesSeeder extends Seeder
         // Case Coordinator
         Role::firstOrCreate(['name' => 'case_coordinator'])
             ->syncPermissions([
+                'case_session.view_any','case_session.view', 'case_session.count','case_session.view_all','case_session.view_by_date',
                 'file.read','file.update',
                 'case.create','case.read','case.update',
                 'case.support.plan.create','case.support.plan.read',
@@ -81,3 +90,4 @@ class RolesSeeder extends Seeder
             ]);
     }
 }
+            
