@@ -16,9 +16,10 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Register beneficiaries routes
     require __DIR__ . '/V1/beneficiaries.php';
+    require __DIR__ . '/V1/education_levels.php';
 
-    Route::apiResource('education_levels', EducationLevelController::class)->names('educationlevels');
-    Route::patch('education_levels/{education_level}/updateActivation', [EducationLevelController::class, 'updateActivation']);
+    //Route::apiResource('education_levels', EducationLevelController::class)->names('educationlevels');
+    //Route::patch('education_levels/{education_level}/updateActivation', [EducationLevelController::class, 'updateActivation']);
     Route::apiResource('housing_types', HousingTypeController::class)->names('housingtypes');
     Route::patch('housing_types/{housing_type}/updateActivation', [HousingTypeController::class, 'updateActivation']);
     Route::apiResource('employment_statuses', EmploymentStatusController::class)->names('employmentstatuses');

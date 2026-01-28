@@ -2,6 +2,7 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +37,7 @@ use Modules\CaseManagement\Models\Builders\ServiceBuilder;
  *
  * @package Modules\Services\Models
  */
-class Service extends Model
+class Service extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,HasActiveState, AutoFlushCache;
 

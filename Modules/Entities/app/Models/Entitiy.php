@@ -2,6 +2,7 @@
 
 namespace Modules\Entities\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +39,7 @@ use Illuminate\Database\Query\Builder;
  *
  * @package Modules\Entities\Models
  */
-class Entitiy extends Model
+class Entitiy extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity, HasActiveState, AutoFlushCache;
 
@@ -95,7 +96,7 @@ class Entitiy extends Model
      * @var string
      */
     protected $table = 'entities';
-    
+
     /**
      * Define cache tags to invalidate on model changes.
      * Implementing the "Ripple Effect" to purge list and detail caches.

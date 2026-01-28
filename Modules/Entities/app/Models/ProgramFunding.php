@@ -2,6 +2,7 @@
 
 namespace Modules\Entities\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,7 @@ use Modules\Programs\Models\Program;
  *
  * @package Modules\Entities\Models
  */
-class ProgramFunding extends Model
+class ProgramFunding extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,AutoFlushCache;
 

@@ -45,8 +45,7 @@ Route::prefix('program-fundings')->group(function () {
      * - currency (string/required): The currency of this funding.
      * - amount (int/required): The amount of this funding.
      *
-     * @description Persists a new plan, assigns current auth user to audit fields,
-     * and invalidates global list cache.
+     * @description Persists a new funding,and invalidates global list cache.
      */
     Route::post('/', [ProgramFundingController::class, 'store']);
 

@@ -2,6 +2,7 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +37,7 @@ use Modules\Entities\Models\Entitiy;
  *
  * @package Modules\Cases\Models
  */
-class CaseReferral extends Model
+class CaseReferral extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity, AutoFlushCache;
 
