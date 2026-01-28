@@ -4,6 +4,7 @@ namespace Modules\Beneficiaries\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
@@ -55,6 +56,23 @@ class EducationLevel extends Model implements CacheInvalidatable
     public function newEloquentBuilder($query): EducationLevelBuilder
     {
         return new EducationLevelBuilder($query);
+    }
+
+    /**
+     * Accessor & Mutator for the "name" attribute.
+     *
+     * - Getter: Capitalizes the first character when accessing the name.
+     *
+     * - Setter: Converts the value to lowercase before storing in the database.
+     *
+     * @return Attribute
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
     }
 
     /**
