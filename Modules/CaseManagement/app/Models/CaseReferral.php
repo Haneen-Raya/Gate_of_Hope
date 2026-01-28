@@ -107,7 +107,7 @@ class CaseReferral extends Model implements CacheInvalidatable
 
     /**
      * Override the default Eloquent query builder.
-     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     * This tells Laravel to use our custom CaseReferralBuilder instead of the default one.
      *
      * @param Builder $query
      *

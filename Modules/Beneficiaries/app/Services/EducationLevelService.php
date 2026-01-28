@@ -57,7 +57,6 @@ class EducationLevelService
     {
         return DB::transaction(function () use ($data) {
             $educationLevel = EducationLevel::create($data);
-            Cache::tags([self::TAG_EDUCATION_LEVELS_GLOBAL])->flush();
             return $educationLevel;
         });
     }

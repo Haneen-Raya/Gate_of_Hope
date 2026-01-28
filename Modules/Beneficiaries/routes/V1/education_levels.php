@@ -10,76 +10,160 @@ use Modules\Beneficiaries\Http\Controllers\Api\V1\EducationLevelController;
 | Controller: EducationLevelController
 | Model: EducationLevel
 | Base Path: /api/v1/education-levels
+|
+| This module manages education level reference data
+| used inside beneficiary social background records.
+|
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('education-levels')->group(function () {
 
     /**
-     * @name 1. List & Search education levels
-     * @path GET /api/v1/education-levels
+     * ----------------------------------------------------------------------
+     * 1. List & Filter Education Levels
+     * ----------------------------------------------------------------------
      *
-     * @query_params:
-     * - @param name (string): Filter by name.
-     * - @param is_active (bool): Filter by activtion status (0/1).
-     * - @param page (int): Pagination page number (default: 1).
+     * @name   Education Level Index
+     * @route  GET /api/v1/education-levels
      *
-     * @features: Tagged Caching, Dynamic Scopes, Custom Builder.
+     * @description
+     * Returns a paginated list of education levels.
+     * Supports searching and filtering through EducationLevelBuilder.
+     *
+     * @queryParams
+     * - term (string|null)
+     *      Search by education level name (LIKE %term%).
+     *
+     * - is_active (bool|null)
+     *      Filter by activation status (0 or 1).
+     *
+     * - page (int)
+     *      Pagination page number (default: 1).
+     *
+     * @features
+     * - Custom Query Builder Filtering
+     * - Tagged Caching Support
+     * - Activity Logging
      */
     Route::get('/', [EducationLevelController::class, 'index'])
         ->name('education-levels.index');
 
     /**
-     * @name 2. Store New Education Level
-     * @path POST /api/v1/education-levels
+     * ----------------------------------------------------------------------
+     * 2. Store New Education Level
+     * ----------------------------------------------------------------------
      *
-     * @body_payload (EducationLevelRequest):
-     * - name (string/required/unique): name of the Education Level.
-     * - is_active (bool/nullable): activation state for the education level , it is true by defualtt.
+     * @name   Education Level Store
+     * @route  POST /api/v1/education-levels
      *
-     * @description Persists a new education level,and invalidates global list cache.
+     * @description
+     * Creates a new education level record.
+     * Automatically invalidates cached list data (Ripple Effect).
+     *
+     * @bodyParams (StoreEducationLevelRequest)
+     * - name (string|required|unique)
+     *      The education level name.
+     *
+     * - is_active (bool|nullable)
+     *      Activation state (default: true).
+     *
+     * @return
+     * Newly created EducationLevel JSON resource.
      */
     Route::post('/', [EducationLevelController::class, 'store'])
         ->name('education-levels.store');
 
     /**
-     * @name 3. Get Education Level Profile
-     * @path GET /api/v1/education-levels/{education_level}
+     * ----------------------------------------------------------------------
+     * 3. Show Education Level Details
+     * ----------------------------------------------------------------------
      *
-     * @url_params:
-     * - education_level (int): The ID of the education_level.
+     * @name   Education Level Show
+     * @route  GET /api/v1/education-levels/{education_level}
      *
-     * @return Full JSON object.
+     * @description
+     * Retrieves a single education level record by its ID.
+     *
+     * @urlParams
+     * - education_level (int|required)
+     *      Education level ID.
+     *
+     * @return
+     * Full EducationLevel JSON object.
      */
     Route::get('{education_level}', [EducationLevelController::class, 'show'])
         ->name('education-levels.show');
 
     /**
-     * @name 4. Full/Partial Update
-     * @path PUT /api/v1/education-levels/{education_level}
+     * ----------------------------------------------------------------------
+     * 4. Update Education Level
+     * ----------------------------------------------------------------------
      *
-     * @description Updates the education_level record and purges all related cache tags
-     * to prevent stale data in the list view (Ripple Effect Invalidation).
+     * @name   Education Level Update
+     * @route  PUT /api/v1/education-levels/{education_level}
+     *
+     * @description
+     * Updates an existing education level record (full or partial update).
+     * Flushes all related cache tags to prevent stale list/detail responses.
+     *
+     * @urlParams
+     * - education_level (int|required)
+     *
+     * @bodyParams
+     * - name (string|nullable)
+     * - is_active (bool|nullable)
+     *
+     * @return
+     * Updated EducationLevel JSON resource.
      */
     Route::put('{education_level}', [EducationLevelController::class, 'update'])
         ->name('education-levels.update');
 
     /**
-     * @name 5. Delete Education Level
-     * @path DELETE /api/v1/education-levels/{education_level}
+     * ----------------------------------------------------------------------
+     * 5. Delete Education Level
+     * ----------------------------------------------------------------------
      *
-     * @description Permanently or Soft deletes the record. Triggers cache flush
-     * for the specific resource and all paginated lists.
+     * @name   Education Level Delete
+     * @route  DELETE /api/v1/education-levels/{education_level}
+     *
+     * @description
+     * Deletes an education level record (soft/permanent depending on setup).
+     * Triggers cache invalidation for both the resource and list caches.
+     *
+     * @urlParams
+     * - education_level (int|required)
+     *
+     * @return
+     * Success response message.
      */
     Route::delete('{education_level}', [EducationLevelController::class, 'destroy'])
         ->name('education-levels.destroy');
 
-    /**
-     * @name 4. Update the Activation state for the education level
-     * @path PUT /api/v1/education-levels/{education_level}
+     /**
+     * ----------------------------------------------------------------------
+     * 6. Update Education Level Activation State
+     * ----------------------------------------------------------------------
      *
-     * @description Updates the education_level record and purges all related cache tags
-     * to prevent stale data in the list view (Ripple Effect Invalidation).
+     * @name   Education Level Activation Update
+     * @route  PUT /api/v1/education-levels/{education_level}/updateActivation
+     *
+     * @description
+     * Updates only the activation status of an education level.
+     * Useful for enabling/disabling reference values without deletion.
+     *
+     * Automatically flushes cache tags (Ripple Effect).
+     *
+     * @urlParams
+     * - education_level (int|required)
+     *
+     * @bodyParams
+     * - is_active (bool|required)
+     *      New activation state (true/false).
+     *
+     * @return
+     * Updated EducationLevel JSON resource.
      */
     Route::put('{education_level}/updateActivation', [EducationLevelController::class, 'updateActivation'])
         ->name('education-levels.updateActivation');

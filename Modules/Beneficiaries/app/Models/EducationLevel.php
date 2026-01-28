@@ -13,8 +13,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Modules\Beneficiaries\Models\Builders\EducationLevelBuilder;
 
-// use Modules\Beneficiaries\Database\Factories\EducationLevelFactory;
-
+/**
+ * Class EducationLevel
+ *
+ * Represents an education level record used to classify beneficiaries
+ * based on their academic background.
+ *
+ * Features:
+ * - Automatically flushes related caches when updated.
+ * - Logs all model changes using Spatie Activitylog.
+ * - Uses a custom query builder (EducationLevelBuilder).
+ *
+ * @package Modules\Beneficiaries\Models
+ *
+ * @property int $id
+ * @property string $name
+ * @property bool $is_active
+ *
+ * @method static EducationLevelBuilder query()
+ */
 class EducationLevel extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,AutoFlushCache;
@@ -47,7 +64,7 @@ class EducationLevel extends Model implements CacheInvalidatable
 
     /**
      * Override the default Eloquent query builder.
-     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     * This tells Laravel to use our custom EducationLevelBuilder instead of the default one.
      *
      * @param Builder $query
      *
