@@ -2,8 +2,10 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +38,7 @@ use Modules\CaseManagement\Models\Builders\ServiceBuilder;
  *
  * @package Modules\Services\Models
  */
-class Service extends Model
+class Service extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,HasActiveState, AutoFlushCache;
 
@@ -113,16 +115,20 @@ class Service extends Model
     }
 
     /**
-     * Mutator: Capitalize the first letter of "name" before storing.
-     * This acts as a safety net for both auto-generated and manually entered codes.
+     * Accessor & Mutator for the "name" attribute.
      *
-     * @param string $value
+     * - Getter: Capitalizes the first character when accessing the name.
      *
-     * @return void
+     * - Setter: Converts the value to lowercase before storing in the database.
+     *
+     * @return Attribute
      */
-    public function setNameAttribute($value): void
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucfirst($value);
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
     }
 
     /**

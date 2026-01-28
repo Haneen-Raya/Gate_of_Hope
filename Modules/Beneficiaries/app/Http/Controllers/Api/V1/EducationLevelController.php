@@ -34,7 +34,7 @@ class EducationLevelController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->validated();
+        $filters = $request->all();
         return $this->successResponse(
             'Operation succcessful',
             $this->educationLevelService->getAllEducationLevels($filters),

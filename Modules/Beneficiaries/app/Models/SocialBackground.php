@@ -2,21 +2,59 @@
 
 namespace Modules\Beneficiaries\Models;
 
+use App\Contracts\CacheInvalidatable;
+use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 use Modules\Beneficiaries\Enums\V1\FamilyStability;
 use Modules\Beneficiaries\Enums\V1\HousingTenure;
 use Modules\Beneficiaries\Enums\V1\IncomeLevel;
 use Modules\Beneficiaries\Enums\V1\LivingStandard;
+use Modules\CaseManagement\Models\Builders\SocialBackgroundBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-// use Modules\Beneficiaries\Database\Factories\SocialBackgroundsFactory;
-
-class SocialBackground extends Model
+/**
+ * Class SocialBackground
+ *
+ * Represents the social background information
+ * related to a beneficiary.
+ *
+ * This model stores details such as:
+ * - Education level
+ * - Employment status
+ * - Housing type and tenure
+ * - Income level and living standard
+ * - Family size and stability
+ *
+ * Features:
+ * - Supports soft deletes.
+ * - Automatically flushes related caches when updated.
+ * - Logs all model changes using Spatie Activitylog.
+ * - Uses a custom query builder (SocialBackgroundBuilder).
+ *
+ * @package Modules\Beneficiaries\Models
+ *
+ * @property int $id
+ * @property int $beneficiary_id
+ * @property int|null $education_level_id
+ * @property int|null $employment_status_id
+ * @property int|null $housing_type_id
+ *
+ * @property HousingTenure|null $housing_tenure
+ * @property IncomeLevel|null $income_level
+ * @property LivingStandard|null $living_standard
+ * @property FamilyStability|null $family_stability
+ *
+ * @property int|null $family_size
+ *
+ * @method static SocialBackgroundBuilder query()
+ */
+class SocialBackground extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes, AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -33,12 +71,44 @@ class SocialBackground extends Model
         'family_stability',
     ];
 
+    /**
+     * The attributes that should be cast to enums.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'housing_tenures' => HousingTenure::class,
         'income_level'    => IncomeLevel::class,
         'living_standard' => LivingStandard::class,
         'family_stability' => FamilyStability::class,
     ];
+
+    /**
+     * Define cache tags to invalidate on model changes.
+     * Implementing the "Ripple Effect" to purge list and detail caches.
+     *
+     * @return array<string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            "social_backgrounds",
+            "social_background_{$this->id}"
+        ];
+    }
+
+    /**
+     * Override the default Eloquent query builder.
+     * This tells Laravel to use our custom SocialBackgroundBuilder instead of the default one.
+     *
+     * @param Builder $query
+     *
+     * @return SocialBackgroundBuilder
+     */
+    public function newEloquentBuilder($query): SocialBackgroundBuilder
+    {
+        return new SocialBackgroundBuilder($query);
+    }
 
     /**
      * Configure the activity logging options.

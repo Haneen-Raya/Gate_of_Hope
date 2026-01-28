@@ -9,38 +9,41 @@ use Modules\Beneficiaries\Models\HousingType;
 class HousingTypeService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_HOUSING_TYPES_GLOBAL = 'housing_types';     // Tag for lists of housingTypes
+    private const TAG_HOUSING_TYPE_PREFIX = 'housing_type_';      // Tag for specific housingType details
+
+    /**
      * Get all housing types from database
      *
      * @return array $arraydata
      */
     public function getAllHousingTypes(array $filters = [])
     {
+        ksort($filters);
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='housing_types'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
-
-        if (!$filters) {
-            return Cache::tags(['housing_types'])->remember($cacheKey, now()->addDay(), function () use($perPage) {
-                return HousingType::with('socialBackgrounds')
-                    ->paginate($perPage)
-                    ->through(fn($housingType) => $housingType->toArray());
-            });
-        }
+        $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
+        $cacheKey = 'housing_types_list_' . md5($cacheBase);
 
         $query = HousingType::with('socialBackgrounds');
 
-        if (isset($filters['name'])) {
-            $query->where('name', $filters['name']);
-        }
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        return Cache::tags(['housing_types'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($housingType) => $housingType->toArray());
-        });
+        return Cache::tags([self::TAG_HOUSING_TYPES_GLOBAL])->remember(
+            $cacheKey,
+            self::CACHE_TTL,
+            function () use ($filters, $perPage,$query) {
+                return $query
+                    ->filter($filters)      // Executes the specialized HousingTypeBuilder orchestration.
+                    ->paginate($perPage);   // Returns a paginated instance with metadata.
+            }
+        );
     }
 
     /**
@@ -54,7 +57,6 @@ class HousingTypeService
     {
         return DB::transaction(function () use ($data) {
             $housingType = HousingType::create($data);
-            Cache::tags(['housing_types'])->flush();
             return $housingType;
         });
     }
@@ -68,8 +70,10 @@ class HousingTypeService
      */
     public function showHousingType(HousingType $housingType)
     {
-        $cacheKey='housing_type_'.$housingType->id.'_'.app()->getLocale();
-        return Cache::tags(['housing_types'])->remember($cacheKey, now()->addDay(), function () use ($housingType) {
+        $cacheKey=self::TAG_HOUSING_TYPE_PREFIX. "details_{$housingType->id}";
+        $housingTypeTag = self::TAG_HOUSING_TYPE_PREFIX . $housingType->id;
+        
+        return Cache::tags([self::TAG_HOUSING_TYPES_GLOBAL, $housingTypeTag])->remember($cacheKey, self::CACHE_TTL, function () use ($housingType) {
             return $housingType->load('socialBackgrounds')->toArray();
         });
     }
@@ -86,7 +90,6 @@ class HousingTypeService
     {
         return DB::transaction(function () use ($data,$housingType) {
             $housingType->update($data);
-            Cache::tags(['housing_types'])->flush();
             return $housingType;
         });
     }
@@ -100,7 +103,6 @@ class HousingTypeService
     public function deleteHousingType(HousingType $housingType)
     {
         $housingType->delete();
-        Cache::tags(['housing_types'])->flush();
     }
 
     /**
@@ -118,7 +120,6 @@ class HousingTypeService
     {
         return DB::transaction(function () use ($data,$housingType) {
             $housingType->update(['is_active'=>$data['is_active']]);
-            Cache::tags(['housing_types'])->flush();
             return $housingType;
         });
     }

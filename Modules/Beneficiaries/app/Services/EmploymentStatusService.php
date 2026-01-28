@@ -9,38 +9,42 @@ use Modules\Beneficiaries\Models\EmploymentStatus;
 class EmploymentStatusService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_EMPLOYMENT_STATUSES_GLOBAL = 'employment_statuses';     // Tag for lists of employmentStatuses
+    private const TAG_EMPLOYMENT_STATUS_PREFIX = 'employment_status_';      // Tag for specific employmentStatus details
+
+    /**
      * Get all employment statuses from database
      *
      * @return array $arraydata
      */
     public function getAllEmploymentStatuses(array $filters = [])
     {
+        ksort($filters);
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='employment_statuses'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
+        $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
+        $cacheKey = 'employment_statuses_list_' . md5($cacheBase);
 
-        if (!$filters) {
-            return Cache::tags(['emplyoment_statuses'])->remember($cacheKey, now()->addDay(), function () use($perPage) {
-                return EmploymentStatus::with('socialBackgrounds')
-                    ->paginate($perPage)
-                    ->through(fn($status) => $status->toArray());
-            });
-        }
 
         $query = EmploymentStatus::with('socialBackgrounds');
 
-        if (isset($filters['name'])) {
-            $query->where('name', $filters['name']);
-        }
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        return Cache::tags(['emplyoment_statuses'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($status) => $status->toArray());
-        });
+        return Cache::tags([self::TAG_EMPLOYMENT_STATUSES_GLOBAL])->remember(
+            $cacheKey,
+            self::CACHE_TTL,
+            function () use ($filters, $perPage,$query) {
+                return $query
+                    ->filter($filters)      // Executes the specialized EmploymentStatusBuilder orchestration.
+                    ->paginate($perPage);   // Returns a paginated instance with metadata.
+            }
+        );
     }
 
     /**
@@ -54,7 +58,6 @@ class EmploymentStatusService
     {
         return DB::transaction(function () use ($data) {
             $employmentStatus = EmploymentStatus::create($data);
-            Cache::tags(['emplyoment_statuses'])->flush();
             return $employmentStatus;
         });
     }
@@ -68,8 +71,9 @@ class EmploymentStatusService
      */
     public function showEmploymentStatus(EmploymentStatus $employmentStatus)
     {
-        $cacheKey='emplyoment_status_'.$employmentStatus->id.'_'.app()->getLocale();
-        return Cache::tags(['emplyoment_statuses'])->remember($cacheKey, now()->addDay(), function () use ($employmentStatus) {
+        $cacheKey=self::TAG_EMPLOYMENT_STATUS_PREFIX. "details_{$employmentStatus->id}";
+        $employmentStatusTag = self::TAG_EMPLOYMENT_STATUS_PREFIX . $employmentStatus->id;
+        return Cache::tags([self::TAG_EMPLOYMENT_STATUSES_GLOBAL, $employmentStatusTag])->remember($cacheKey, self::CACHE_TTL, function () use ($employmentStatus) {
             return $employmentStatus->load('socialBackgrounds')->toArray();
         });
     }

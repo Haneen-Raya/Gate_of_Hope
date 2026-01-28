@@ -2,6 +2,7 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\CacheInvalidatable;
 use Carbon\Carbon;
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
@@ -35,7 +36,7 @@ use Modules\CaseManagement\Models\Builders\BeneficiaryCaseBuilder;
  * @property Carbon $updated_at
  * * @package Modules\CaseManagement\Models
  */
-class BeneficiaryCase extends Model
+class BeneficiaryCase extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity, AutoFlushCache;
 

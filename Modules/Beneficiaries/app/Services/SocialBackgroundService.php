@@ -9,66 +9,42 @@ use Modules\Beneficiaries\Models\SocialBackground;
 class SocialBackgroundService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_SOCIAL_BACKGROUNDS_GLOBAL = 'social_backgrounds';     // Tag for lists of socialBackgrounds
+    private const TAG_SOCIAL_BACKGROUND_PREFIX = 'social_background_';      // Tag for specific socialBackground details
+
+    /**
      * Get all social backgrounds from database
      *
      * @return array $arraydata
      */
     public function getAllSocialBackgrounds(array $filters = [])
     {
+        ksort($filters);
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='social_backgrounds'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
+        $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
+        $cacheKey = 'social_backgrounds_list_' . md5($cacheBase);
 
-        if (!$filters) {
-            return Cache::tags(['social_backgrounds'])->remember($cacheKey, now()->addDay(), function () use ($perPage) {
-                return SocialBackground::with(['beneficiary','housingType','educationLevel','employmentStatus'])
-                    ->paginate($perPage)
-                    ->through(fn($socialBackground) => $socialBackground->toArray());
-            });
-        }
 
         $query = SocialBackground::with(['beneficiary','housingType','educationLevel','employmentStatus']) ;
 
-        if (isset($filters['education_level_id'])) {
-            $query->where('education_level_id', $filters['education_level_id']);
-        }
-
-        if (isset($filters['employment_status_id'])) {
-            $query->where('employment_status_id', $filters['employment_status_id']);
-        }
-
-        if (isset($filters['housing_type_id'])) {
-            $query->where('housing_type_id', $filters['housing_type_id']);
-        }
-
-        if (isset($filters['housing_tenure'])) {
-            $query->where('housing_tenure', $filters['housing_tenure']);
-        }
-
-        if (isset($filters['income_level'])) {
-            $query->where('income_level', $filters['income_level']);
-        }
-
-        if (isset($filters['living_standard'])) {
-            $query->where('living_standard', $filters['living_standard']);
-        }
-
-        if (isset($filters['family_size_min'])) {
-            $query->where('family_size','>=', $filters['family_size_min']);
-        }
-
-        if (isset($filters['family_size_max'])) {
-            $query->where('family_size','<=', $filters['family_size_max']);
-        }
-
-        if (isset($filters['family_stability'])) {
-            $query->where('family_stability', $filters['family_stability']);
-        }
-
-        return Cache::tags(['social_backgrounds'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($socialBackground) => $socialBackground->toArray());
-        });
+        return Cache::tags([self::TAG_SOCIAL_BACKGROUNDS_GLOBAL])->remember(
+            $cacheKey,
+            self::CACHE_TTL,
+            function () use ($filters, $perPage,$query) {
+                return $query
+                    ->filter($filters)      // Executes the specialized SocialBackgroundsBuilder orchestration.
+                    ->paginate($perPage);   // Returns a paginated instance with metadata.
+            }
+        );
     }
 
     /**
@@ -82,7 +58,6 @@ class SocialBackgroundService
     {
         return DB::transaction(function () use ($data) {
             $socialBackground = SocialBackground::create($data);
-            Cache::tags(['social_backgrounds'])->flush();
             return $socialBackground;
         });
     }
@@ -96,8 +71,10 @@ class SocialBackgroundService
      */
     public function showSocialBackground(SocialBackground $socialBackground)
     {
-        $cacheKey='social_background_'.$socialBackground->id.'_'.app()->getLocale();
-        return Cache::tags(['social_backgrounds'])->remember($cacheKey, now()->addDay(), function () use ($socialBackground) {
+        $cacheKey=self::TAG_SOCIAL_BACKGROUND_PREFIX. "details_{$socialBackground->id}";
+        $socialBackgroundTag = self::TAG_SOCIAL_BACKGROUND_PREFIX . $socialBackground->id;
+
+        return Cache::tags([self::TAG_SOCIAL_BACKGROUNDS_GLOBAL, $socialBackgroundTag])->remember($cacheKey, self::CACHE_TTL, function () use ($socialBackground) {
             return $socialBackground->load(['beneficiary','housingType','educationLevel','employmentStatus'])->toArray();
         });
     }
@@ -114,7 +91,6 @@ class SocialBackgroundService
     {
         return DB::transaction(function () use ($data,$socialBackground) {
             $socialBackground->update($data );
-            Cache::tags(['social_backgrounds'])->flush();
             return $socialBackground;
         });
     }
@@ -128,7 +104,6 @@ class SocialBackgroundService
     public function deleteSocialBackground(SocialBackground $socialBackground)
     {
         $socialBackground->delete();
-        Cache::tags(['social_backgrounds'])->flush();
     }
 
 }

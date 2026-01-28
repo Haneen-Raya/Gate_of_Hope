@@ -70,7 +70,7 @@ Route::prefix('case-referrals')->group(function () {
 
     /**
      * @name 4. Full/Partial Update
-     * @path PUT /api/v1/case-referrals-plans/{case_referral}
+     * @path PUT /api/v1/case-referrals/{case_referral}
      *
      * @description Updates referral attributes and purges dual-tag cache:
      * 1. Individual record tag (case_referral_{id})
@@ -80,7 +80,7 @@ Route::prefix('case-referrals')->group(function () {
 
     /**
      * @name 5. Delete Case Referral
-     * @path DELETE /api/v1/case-referrals-plans/{case_referral}
+     * @path DELETE /api/v1/case-referrals/{case_referral}
      *
      * @description Permanently or Soft deletes the record. Triggers cache flush
      * for the specific resource and all paginated lists.

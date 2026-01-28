@@ -2,6 +2,7 @@
 
 namespace Modules\Entities\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,7 @@ use Modules\Programs\Models\Program;
  *
  * @package Modules\Entities\Models
  */
-class ProgramFunding extends Model
+class ProgramFunding extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,AutoFlushCache;
 
@@ -76,7 +77,7 @@ class ProgramFunding extends Model
 
     /**
      * Override the default Eloquent query builder.
-     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     * This tells Laravel to use our custom ProgramFundingBuilder instead of the default one.
      *
      * @param Builder $query
      *

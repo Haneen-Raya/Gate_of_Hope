@@ -9,38 +9,41 @@ use Illuminate\Support\Facades\DB;
 class EducationLevelService
 {
     /**
+     * Cache Time-To-Live: 1 Hour (in seconds).
+     */
+    private const CACHE_TTL = 3600;
+
+    /**
+     * Centralized Cache Tags.
+     * Defined as constants to prevent hardcoded string typos.
+     */
+    private const TAG_EDUCATION_LEVELS_GLOBAL = 'education_levels';     // Tag for lists of educationLevels
+    private const TAG_EDUCATION_LEVEL_PREFIX = 'education_level_';      // Tag for specific educationLevel details
+
+    /**
      * Get all education levels from database
      *
      * @return array $arraydata
      */
     public function getAllEducationLevels(array $filters = [])
     {
+        ksort($filters);
         $page=request()->get('page',1);
         $perPage=request()->get('perPage',15);
-        $cacheKey='education_levels'.app()->getLocale().'_page_'.$page.'_per_'.$perPage.md5(json_encode($filters));
-
-        if (!$filters) {
-            return Cache::tags(['education_levels'])->remember($cacheKey, now()->addDay(), function () use ($perPage) {
-                return EducationLevel::with('socialBackgrounds')
-                    ->paginate($perPage)
-                    ->through(fn($level) => $level->toArray());
-            });
-        }
+        $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
+        $cacheKey = 'education_levels_list_' . md5($cacheBase);
 
         $query = EducationLevel::with('socialBackgrounds');
 
-        if (isset($filters['name'])) {
-            $query->where('name', $filters['name']);
-        }
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        return Cache::tags(['education_levels'])->remember($cacheKey, now()->addDay(), function() use ($query, $perPage) {
-            return $query->paginate($perPage)
-                ->through(fn($level) => $level->toArray());
-        });
+        return Cache::tags([self::TAG_EDUCATION_LEVELS_GLOBAL])->remember(
+            $cacheKey,
+            self::CACHE_TTL,
+            function () use ($filters, $perPage,$query) {
+                return $query
+                    ->filter($filters)      // Executes the specialized EducationLevelBuilder orchestration.
+                    ->paginate($perPage);   // Returns a paginated instance with metadata.
+            }
+        );
     }
 
     /**
@@ -54,7 +57,6 @@ class EducationLevelService
     {
         return DB::transaction(function () use ($data) {
             $educationLevel = EducationLevel::create($data);
-            Cache::tags(['education_levels'])->flush();
             return $educationLevel;
         });
     }
@@ -68,8 +70,9 @@ class EducationLevelService
      */
     public function showEducationLevel(EducationLevel $educationLevel)
     {
-        $cacheKey='education_level_'.$educationLevel->id.'_'.app()->getLocale();
-        return Cache::tags(['education_levels'])->remember($cacheKey, now()->addDay(), function () use ($educationLevel) {
+        $cacheKey = self::TAG_EDUCATION_LEVEL_PREFIX . "details_{$educationLevel->id}";
+        $educationLevelTag = self::TAG_EDUCATION_LEVEL_PREFIX . $educationLevel->id;
+        return Cache::tags([self::TAG_EDUCATION_LEVELS_GLOBAL, $educationLevelTag])->remember($cacheKey, self::CACHE_TTL, function () use ($educationLevel) {
             return $educationLevel->load('socialBackgrounds')->toArray();
         });
     }
@@ -86,7 +89,7 @@ class EducationLevelService
     {
         return DB::transaction(function () use ($data,$educationLevel) {
             $educationLevel->update($data);
-            Cache::tags(['education_levels'])->flush();
+            $educationLevel->refresh();
             return $educationLevel;
         });
     }
@@ -100,7 +103,6 @@ class EducationLevelService
     public function deleteEducationLevel(EducationLevel $educationLevel)
     {
         $educationLevel->delete();
-        Cache::tags(['education_levels'])->flush();
     }
 
     /**
@@ -118,7 +120,6 @@ class EducationLevelService
     {
         return DB::transaction(function () use ($data,$educationLevel) {
             $educationLevel->update(['is_active'=>$data['is_active']]);
-            Cache::tags(['education_levels'])->flush();
             return $educationLevel;
         });
     }
