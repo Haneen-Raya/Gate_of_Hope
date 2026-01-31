@@ -40,7 +40,7 @@ class PermissionsSeeder extends Seeder
 
             // Social Backgrounds
             'social_backgrounds.create.self','social_backgrounds.read',
-            'social_backgrounds.update.self','',
+            'social_backgrounds.update.self','social_backgrounds.delete.self',
 
             // Assessments
             'assessments.create','assessments.read','assessments.update','assessments.delete',
@@ -50,7 +50,7 @@ class PermissionsSeeder extends Seeder
             'case_assignments.update','case_assignments.delete',
 
             'cases.read','case_support_plans.read','case_sessions.read',
-            'case_reviews.read','case_referrals.read',
+            'case_reviews.read',
 
             // Issues
             'issue_categories.create','issue_categories.read',
@@ -114,7 +114,8 @@ class PermissionsSeeder extends Seeder
             'case.event.create','case.event.read','case.event.update',
 
             'case.referral.create','case.referral.read','case.referral.update.status',
-            'case.referral.update','case.specialist.assign','case.specialist.revoke',
+            'case.referral.update','case.referral.delete',
+            'case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',
         ];

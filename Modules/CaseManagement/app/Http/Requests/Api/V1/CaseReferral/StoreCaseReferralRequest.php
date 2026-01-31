@@ -3,10 +3,12 @@
 namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\CaseManagement\Enums\V1\CaseReferralDirection;
 use Modules\CaseManagement\Enums\V1\CaseReferralType;
 use Modules\CaseManagement\Enums\V1\CaseReferralUrgencyLevel;
+use Modules\CaseManagement\Rules\CaseManagerOwnsCase;
 
 class StoreCaseReferralRequest extends FormRequest
 {
@@ -15,7 +17,8 @@ class StoreCaseReferralRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('case.referral.create');
     }
     /**
      * Get the validation rules that apply to the request.
@@ -23,7 +26,7 @@ class StoreCaseReferralRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'beneficiary_case_id' => ['required','integer','exists:beneficiary_cases,id'],
+            'beneficiary_case_id' => ['required','integer','exists:beneficiary_cases,id', new CaseManagerOwnsCase()],
             'service_id'          => ['required','integer','exists:services,id'],
             'receiver_entity_id'  => ['required','integer','exists:entities,id'],
             'referral_type'       => ['required','string',Rule::in(CaseReferralType::all())],

@@ -20,7 +20,8 @@ class RolesSeeder extends Seeder
                 ->orWhere('name','like','assessment%')
                 ->orWhere('name','like','activity.%')
                 ->orWhere('name','like','case.%self%')
-                ->orWhere('name','like','social_backgrounds.%self%')
+                ->orWhere('name','like','social_backgrounds.%')
+                ->orWhere('name','like','case_referral.read')
                 ->get()
             );
 
@@ -42,6 +43,7 @@ class RolesSeeder extends Seeder
                 'activities.sessions.update','activities.sessions.delete',
                 'activity.beneficiary.read_minimal',
                 'case.referral.update.status',
+                'case_referral.read'
             ]);
 
         // Donor
@@ -70,6 +72,7 @@ class RolesSeeder extends Seeder
                 'housing_types.read',
                 'employment_statuses.read',
                 'social_backgrounds.read',
+                'case.referral.update.status',
             ]);
 
         // Case Coordinator
@@ -86,7 +89,8 @@ class RolesSeeder extends Seeder
                 'case.plan.goal.create','case.plan.goal.read',
                 'case.plan.goal.update','case.plan.goal.delete',
                 'case.event.create','case.event.read','case.event.update',
-                'case.referral.create','case.referral.read','case.referral.update','case.referral.update.status',
+                'case.referral.create','case.referral.read','case.referral.update',
+                'case.referral.update.status','case.referral.delete',
                 'case.specialist.assign','case.specialist.revoke',
                 'service.create','service.read','service.update','service.delete',
             ]);

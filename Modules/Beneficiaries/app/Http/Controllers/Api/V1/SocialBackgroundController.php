@@ -22,7 +22,7 @@ class SocialBackgroundController extends Controller
     {
         return [
             new Middleware('can:social_backgrounds.create.self', only: ['store']),
-            new Middleware('can:social_backgrounds.read', only: ['index','show']),
+            new Middleware('can:    ', only: ['index','show']),
             new Middleware('can:social_backgrounds.update.self', only: ['update']),
             new Middleware('can:social_backgrounds.delete.self', only: ['destroy']),
         ];

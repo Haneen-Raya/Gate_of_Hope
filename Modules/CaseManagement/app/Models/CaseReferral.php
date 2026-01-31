@@ -205,4 +205,49 @@ class CaseReferral extends Model implements CacheInvalidatable
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    /**
+     * Determine if this referral belongs to a given beneficiary user.
+     *
+     * This method checks whether the currently authenticated user
+     * is the owner of the beneficiary linked to this referral.
+     *
+     * @param User $user The user to check against the referral's beneficiary
+     *
+     * @return bool True if the user is the beneficiary, false otherwise
+     */
+    public function isForBeneficiary(User $user): bool
+    {
+        return $this->beneficiaryCase->beneficiary->user_id === $user->id;
+    }
+
+    /**
+     * Determine if this referral is managed by a specific case manager.
+     *
+     * Checks if the provided user is the case manager responsible
+     * for the beneficiary case linked to this referral.
+     *
+     * @param User $user The user to check as case manager
+     *
+     * @return bool True if the user is the case manager, false otherwise
+     */
+    public function isManagedBy(User $user): bool
+    {
+        return $this->beneficiaryCase->case_manager_id === $user->id;
+    }
+
+    /**
+     * Determine if this referral is assigned to the entity of a specific user.
+     *
+     * Checks if the referral's receiving entity is associated with the given user.
+     * Useful for verifying whether a user’s organization is responsible for handling the referral.
+     *
+     * @param User $user The user whose entity is being checked
+     * 
+     * @return bool True if the referral is assigned to the user's entity, false otherwise
+     */
+    public function isAssignedToEntity(User $user): bool
+    {
+        return $this->receiver_entity_id === $user->entitiy->user_id;
+    }
 }
