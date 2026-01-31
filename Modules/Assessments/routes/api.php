@@ -10,6 +10,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Register assessment result routes
     require __DIR__ . '/V1/assessment-results.php';
+    require __DIR__ . '/V1/priority-rules.php';
+    require __DIR__ . '/V1/google-forms.php';
 
     // ----------------- Issue Categories -----------------
     Route::prefix('assessment/issue-categories')->group(function () {
@@ -37,5 +39,3 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 
-require __DIR__ . '/V1/priority-rules.php';
-require __DIR__ . '/V1/google-forms.php';

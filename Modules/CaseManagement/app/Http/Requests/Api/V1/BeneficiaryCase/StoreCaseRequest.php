@@ -20,7 +20,7 @@ class StoreCaseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasAnyPermission(['case.create', 'admin']);
     }
 
     /**
@@ -32,7 +32,6 @@ class StoreCaseRequest extends FormRequest
         return [
             'beneficiary_id'  => 'required|exists:beneficiaries,id',
             'issue_type_id'   => 'required|exists:issue_types,id',
-            'case_manager_id' => 'required|exists:users,id',
             'region_id'       => 'required|exists:regions,id',
             'status'          => ['required', Rule::in(CaseStatus::all())],
             'priority'        => 'required|string',

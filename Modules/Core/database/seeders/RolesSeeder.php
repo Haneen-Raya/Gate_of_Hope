@@ -35,8 +35,8 @@ class RolesSeeder extends Seeder
                 'file.read','file.update',
                 'case_session.view_any','case_session.view_all','case_session.view_by_date',
                 'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
-                'case_session.view_by_specialist', 'case_session.count', 
-                'case.review.create','case.review.read','case.review.update',
+                'case_session.view_by_specialist', 'case_session.count',
+                'case.review.create','case.review.read','case.review.update','google_forms.read',
             ]);
 
         // Community Provider
@@ -71,7 +71,11 @@ class RolesSeeder extends Seeder
                 'programs.create','programs.read','programs.update','programs.delete','programs.approve',
                 'activities.create','activities.read','activities.update','activities.delete',
                 'resources.allocate','resources.read','resources.update',
-                'reports.read','statistics.read',
+                'reports.read','statistics.read','google_forms.read',
+                'google_forms.create','google_forms.update',
+                'google_forms.delete','google_forms.import',
+                'priority_rules.read','priority_rules.create',
+                'priority_rules.update','priority_rules.delete',
             ]);
 
         // Case Coordinator
@@ -87,8 +91,9 @@ class RolesSeeder extends Seeder
                 'case.event.create','case.event.read','case.event.update',
                 'case.referral.create','case.referral.read','case.referral.update','case.referral.update.status',
                 'case.specialist.assign','case.specialist.revoke',
-                'service.create','service.read','service.update','service.delete',
+                'service.create','service.read','service.update','service.delete','google_forms.read',
+                'google_forms.import',
             ]);
     }
 }
-            
+

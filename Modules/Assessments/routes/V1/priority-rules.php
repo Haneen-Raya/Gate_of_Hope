@@ -13,7 +13,7 @@ use Modules\Assessments\Http\Controllers\Api\V1\PriorityRuleController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1/priority-rules')->group(function () {
+Route::prefix('priority-rules')->group(function () {
 
     /**
      * @name 1. List All Priority Rules

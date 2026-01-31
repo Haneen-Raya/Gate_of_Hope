@@ -21,6 +21,19 @@ class PermissionsSeeder extends Seeder
             'system_settings.read','system_settings.update',
             'audit_logs.read',
 
+            //Google forms
+            'google_forms.read',
+            'google_forms.create',
+            'google_forms.update',
+            'google_forms.delete',
+            'google_forms.import',
+
+            //Priority Rules
+            'priority_rules.read',
+            'priority_rules.create',
+            'priority_rules.update',
+            'priority_rules.delete',
+
             // Beneficiaries
             'beneficiaries.create','beneficiaries.read','beneficiaries.read_sensitive',
             'beneficiaries.update','beneficiaries.delete','beneficiaries.archive',
@@ -70,7 +83,7 @@ class PermissionsSeeder extends Seeder
             'file.read','file.update',
             'case_session.view_any','case_session.view_all','case_session.view_by_date',
             'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
-            'case_session.view_by_specialist', 'case_session.count', 
+            'case_session.view_by_specialist', 'case_session.count',
             'case.review.create','case.review.read','case.review.update',
 
             // Community provider
@@ -106,6 +119,8 @@ class PermissionsSeeder extends Seeder
             'case.referral.update','case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',
+
+            'regions.create','regions.read','regions.update','regions.delete',
         ];
 
         foreach ($permissions as $permission) {
