@@ -3,6 +3,7 @@
 namespace Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Beneficiaries\Enums\V1\FamilyStability;
 use Modules\Beneficiaries\Enums\V1\HousingTenure;
@@ -16,7 +17,8 @@ class UpdateSocialBackgroundRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('social_backgrounds.update.self');
     }
     /**
      * Get the validation rules that apply to the request.

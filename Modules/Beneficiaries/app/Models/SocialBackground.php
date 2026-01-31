@@ -6,6 +6,7 @@ use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Modules\Beneficiaries\Enums\V1\FamilyStability;
@@ -124,9 +125,9 @@ class SocialBackground extends Model implements CacheInvalidatable
      * Defines an inverse one-to-many relationship where a social background
      * belongs to a single beneficiary.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function beneficiary()
+    public function beneficiary():BelongsTo
     {
         return $this->belongsTo(Beneficiary::class);
     }

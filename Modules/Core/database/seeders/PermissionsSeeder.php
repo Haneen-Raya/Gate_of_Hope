@@ -40,7 +40,7 @@ class PermissionsSeeder extends Seeder
 
             // Social Backgrounds
             'social_backgrounds.create.self','social_backgrounds.read',
-            'social_backgrounds.update.self','social_backgrounds.delete.self',
+            'social_backgrounds.update.self','',
 
             // Assessments
             'assessments.create','assessments.read','assessments.update','assessments.delete',
