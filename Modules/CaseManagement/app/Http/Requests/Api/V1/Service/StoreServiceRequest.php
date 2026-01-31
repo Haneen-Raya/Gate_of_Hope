@@ -4,7 +4,7 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\Service;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\ServiceDirection;
+use Modules\CaseManagement\Enums\V1\ServiceDirection;
 
 class StoreServiceRequest extends FormRequest
 {

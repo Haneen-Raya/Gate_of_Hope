@@ -4,7 +4,7 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 
 class UpdateCaseReferralStatusRequest extends FormRequest
 {

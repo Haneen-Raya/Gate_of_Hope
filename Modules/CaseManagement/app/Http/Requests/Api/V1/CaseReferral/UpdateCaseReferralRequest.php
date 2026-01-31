@@ -4,10 +4,10 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\CaseReferralDirection;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
-use Modules\CaseManagement\Enums\CaseReferralType;
-use Modules\CaseManagement\Enums\CaseReferralUrgencyLevel;
+use Modules\CaseManagement\Enums\V1\CaseReferralDirection;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralType;
+use Modules\CaseManagement\Enums\V1\CaseReferralUrgencyLevel;
 
 class UpdateCaseReferralRequest extends FormRequest
 {

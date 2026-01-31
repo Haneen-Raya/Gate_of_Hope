@@ -14,7 +14,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Modules\Assessments\Models\IssueCategory;
-use Modules\CaseManagement\Enums\ServiceDirection;
+use Modules\CaseManagement\Enums\V1\ServiceDirection;
 use Modules\CaseManagement\Models\Builders\ServiceBuilder;
 
 // use Modules\CaseManagement\Database\Factories\ServiceFactory;
