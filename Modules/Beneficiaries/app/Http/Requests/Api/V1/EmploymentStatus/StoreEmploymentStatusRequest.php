@@ -3,6 +3,7 @@
 namespace Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreEmploymentStatusRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StoreEmploymentStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('employment_statuses.create');
     }
     /**
      * Get the validation rules that apply to the request.

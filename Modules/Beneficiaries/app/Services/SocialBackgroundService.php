@@ -34,7 +34,7 @@ class SocialBackgroundService
         $cacheKey = 'social_backgrounds_list_' . md5($cacheBase);
 
 
-        $query = SocialBackground::with(['beneficiary','housingType','educationLevel','employmentStatus']) ;
+        $query = SocialBackground::query();
 
         return Cache::tags([self::TAG_SOCIAL_BACKGROUNDS_GLOBAL])->remember(
             $cacheKey,
@@ -75,7 +75,7 @@ class SocialBackgroundService
         $socialBackgroundTag = self::TAG_SOCIAL_BACKGROUND_PREFIX . $socialBackground->id;
 
         return Cache::tags([self::TAG_SOCIAL_BACKGROUNDS_GLOBAL, $socialBackgroundTag])->remember($cacheKey, self::CACHE_TTL, function () use ($socialBackground) {
-            return $socialBackground->load(['beneficiary','housingType','educationLevel','employmentStatus'])->toArray();
+            return $socialBackground;
         });
     }
 

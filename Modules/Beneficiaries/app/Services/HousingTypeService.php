@@ -33,7 +33,7 @@ class HousingTypeService
         $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
         $cacheKey = 'housing_types_list_' . md5($cacheBase);
 
-        $query = HousingType::with('socialBackgrounds');
+        $query = HousingType::query();
 
         return Cache::tags([self::TAG_HOUSING_TYPES_GLOBAL])->remember(
             $cacheKey,
@@ -72,9 +72,9 @@ class HousingTypeService
     {
         $cacheKey=self::TAG_HOUSING_TYPE_PREFIX. "details_{$housingType->id}";
         $housingTypeTag = self::TAG_HOUSING_TYPE_PREFIX . $housingType->id;
-        
+
         return Cache::tags([self::TAG_HOUSING_TYPES_GLOBAL, $housingTypeTag])->remember($cacheKey, self::CACHE_TTL, function () use ($housingType) {
-            return $housingType->load('socialBackgrounds')->toArray();
+            return $housingType;
         });
     }
 

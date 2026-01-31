@@ -34,7 +34,7 @@ class EmploymentStatusService
         $cacheKey = 'employment_statuses_list_' . md5($cacheBase);
 
 
-        $query = EmploymentStatus::with('socialBackgrounds');
+        $query = EmploymentStatus::query();
 
         return Cache::tags([self::TAG_EMPLOYMENT_STATUSES_GLOBAL])->remember(
             $cacheKey,
@@ -74,7 +74,7 @@ class EmploymentStatusService
         $cacheKey=self::TAG_EMPLOYMENT_STATUS_PREFIX. "details_{$employmentStatus->id}";
         $employmentStatusTag = self::TAG_EMPLOYMENT_STATUS_PREFIX . $employmentStatus->id;
         return Cache::tags([self::TAG_EMPLOYMENT_STATUSES_GLOBAL, $employmentStatusTag])->remember($cacheKey, self::CACHE_TTL, function () use ($employmentStatus) {
-            return $employmentStatus->load('socialBackgrounds')->toArray();
+            return $employmentStatus;
         });
     }
 

@@ -9,9 +9,25 @@ use Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel\UpdateEducationLev
 use Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel\UpdateEducationLevelRequest;
 use Modules\Beneficiaries\Models\EducationLevel;
 use Modules\Beneficiaries\Services\EducationLevelService;
+use Illuminate\Routing\Controllers\Middleware;
 
 class EducationLevelController extends Controller
 {
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:education_levels.create', only: ['store']),
+            new Middleware('can:education_levels.read', only: ['index','show']),
+            new Middleware('can:education_levels.update', only: ['update']),
+            new Middleware('can:education_levels.activation.update', only: ['updateActivation']),
+            new Middleware('can:education_levels.delete', only: ['destroy']),
+        ];
+    }
+
     protected EducationLevelService $educationLevelService;
 
     /**

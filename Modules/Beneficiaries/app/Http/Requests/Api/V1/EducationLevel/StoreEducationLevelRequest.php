@@ -3,6 +3,7 @@
 namespace Modules\Beneficiaries\Http\Requests\Api\V1\EducationLevel;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreEducationLevelRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StoreEducationLevelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('education_levels.create');
     }
     /**
      * Get the validation rules that apply to the request.

@@ -20,6 +20,7 @@ class RolesSeeder extends Seeder
                 ->orWhere('name','like','assessment%')
                 ->orWhere('name','like','activity.%')
                 ->orWhere('name','like','case.%self%')
+                ->orWhere('name','like','social_backgrounds.%self%')
                 ->get()
             );
 
@@ -29,6 +30,7 @@ class RolesSeeder extends Seeder
                 'file.read','file.update',
                 'sessions.create','sessions.read','sessions.update','sessions.delete',
                 'case.review.create','case.review.read','case.review.update',
+                'social_backgrounds.read'
             ]);
 
         // Community Provider
@@ -64,12 +66,20 @@ class RolesSeeder extends Seeder
                 'activities.create','activities.read','activities.update','activities.delete',
                 'resources.allocate','resources.read','resources.update',
                 'reports.read','statistics.read',
+                'education_levels.read',
+                'housing_types.read',
+                'employment_statuses.read',
+                'social_backgrounds.read',
             ]);
 
         // Case Coordinator
         Role::firstOrCreate(['name' => 'case_coordinator'])
             ->syncPermissions([
                 'file.read','file.update',
+                'social_backgrounds.read',
+                'education_levels.read',
+                'housing_types.read',
+                'employment_statuses.read',
                 'case.create','case.read','case.update',
                 'case.support.plan.create','case.support.plan.read',
                 'case.support.plan.update','case.support.plan.delete',

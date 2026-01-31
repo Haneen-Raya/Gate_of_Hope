@@ -28,6 +28,20 @@ class PermissionsSeeder extends Seeder
             'beneficiary_documents.create','beneficiary_documents.read',
             'beneficiary_documents.update','beneficiary_documents.delete',
 
+            // Reference Data (Lookup Tables)
+            'education_levels.create','education_levels.read',
+            'education_levels.update','education_levels.activation.update','education_levels.delete',
+
+            'housing_types.create','housing_types.read',
+            'housing_types.update','housing_types.activation.update','housing_types.delete',
+
+            'employment_statuses.create','employment_statuses.read',
+            'employment_statuses.update','employment_statuses.activation.update','employment_statuses.delete',
+
+            // Social Backgrounds
+            'social_backgrounds.create.self','social_backgrounds.read',
+            'social_backgrounds.update.self','social_backgrounds.delete.self',
+
             // Assessments
             'assessments.create','assessments.read','assessments.update','assessments.delete',
 

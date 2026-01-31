@@ -33,7 +33,7 @@ class EducationLevelService
         $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
         $cacheKey = 'education_levels_list_' . md5($cacheBase);
 
-        $query = EducationLevel::with('socialBackgrounds');
+        $query = EducationLevel::query();
 
         return Cache::tags([self::TAG_EDUCATION_LEVELS_GLOBAL])->remember(
             $cacheKey,
@@ -73,7 +73,7 @@ class EducationLevelService
         $cacheKey = self::TAG_EDUCATION_LEVEL_PREFIX . "details_{$educationLevel->id}";
         $educationLevelTag = self::TAG_EDUCATION_LEVEL_PREFIX . $educationLevel->id;
         return Cache::tags([self::TAG_EDUCATION_LEVELS_GLOBAL, $educationLevelTag])->remember($cacheKey, self::CACHE_TTL, function () use ($educationLevel) {
-            return $educationLevel->load('socialBackgrounds')->toArray();
+            return $educationLevel;
         });
     }
 
