@@ -106,6 +106,10 @@ class PermissionsSeeder extends Seeder
             'case.referral.update','case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',
+
+            // trainer 
+            'trainer.profile.read','trainer.profile.update','trainer.schedule.read',
+            'trainer.session.read','trainer.session.create','trainer.session.update',
         ];
 
         foreach ($permissions as $permission) {
