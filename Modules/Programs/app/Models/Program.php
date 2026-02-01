@@ -15,14 +15,33 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Programs\Models\Builders\ProgramBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-// use Modules\Programs\Database\Factories\ProgramFactory;
-
+/**
+ * Class Program
+ * * Represents a rehabilitation or humanitarian program within the Hope Gate system.
+ * This model integrates advanced features like automated audit logging, intelligent
+ * cache invalidation, and custom query building.
+ * * @package Modules\Programs\Models
+ * * @property int $id
+ * @property int $issue_category_id
+ * @property string $name
+ * @property string|null $description
+ * @property array $objectives
+ * @property string $target_groups
+ * @property \Carbon\Carbon $start_date
+ * @property \Carbon\Carbon $end_date
+ * @property float $budget
+ * @property ProgramStatus $status
+ * @property int $created_by
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Program extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,AutoFlushCache, HasAuditUsers;
+    use HasFactory, LogsActivity, AutoFlushCache, HasAuditUsers;
 
     /**
      * The attributes that are mass assignable.
+     * * @var array<int, string>
      */
     protected $fillable = [
         'issue_category_id',
@@ -36,14 +55,18 @@ class Program extends Model implements CacheInvalidatable
         'status',
         'created_by'
     ];
-    protected $updatedByField = null;
-    // protected static function newFactory(): ProgramFactory
-    // {
-    //     // return ProgramFactory::new();
-    // }
+
     /**
-     * The attributes that should be cast.
-     * This automatically converts the database string into a ProgramStatus Enum.
+     * Disable the default 'updated_by' behavior from HasAuditUsers trait.
+     * Set to null because the table structure only tracks the creator.
+     * * @var string|null
+     */
+    protected $updatedByField = null;
+
+    /**
+     * The attributes that should be cast to native types or Enums.
+     * * Handles automatic serialization for JSON (objectives) and
+     * mapping status strings to the ProgramStatus Enum.
      *
      * @var array<string, string>
      */
@@ -56,7 +79,9 @@ class Program extends Model implements CacheInvalidatable
     ];
 
     /**
-     * Cache invalidation tags.
+     * Define the tags used for intelligent cache invalidation.
+     * * When a program is updated, these specific tags will be flushed via AutoFlushCache.
+     * * @return array<int, string>
      */
     public function getCacheTagsToInvalidate(): array
     {
@@ -66,17 +91,31 @@ class Program extends Model implements CacheInvalidatable
         ];
     }
 
+    /**
+     * Configure the activity logging options.
+     * * @return LogOptions
+     */
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logAll()->useLogName('programs');
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('programs')
+            ->logOnlyDirty();
     }
 
+    /**
+     * Override the default Eloquent query builder.
+     * * @param \Illuminate\Database\Query\Builder $query
+     * @return ProgramBuilder
+     */
     public function newEloquentBuilder($query): ProgramBuilder
     {
         return new ProgramBuilder($query);
     }
+
     /**
-     *
+     * Relationship: The issue category this program belongs to.
+     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function issueCategory()
     {
@@ -84,7 +123,8 @@ class Program extends Model implements CacheInvalidatable
     }
 
     /**
-     *
+     * Relationship: List of activities associated with this program.
+     * * @return HasMany
      */
     public function activities(): HasMany
     {
@@ -92,7 +132,8 @@ class Program extends Model implements CacheInvalidatable
     }
 
     /**
-     *
+     * Relationship: Resources (materials/staff) assigned to this program.
+     * * @return HasMany
      */
     public function programResources(): HasMany
     {
@@ -100,7 +141,8 @@ class Program extends Model implements CacheInvalidatable
     }
 
     /**
-     *
+     * Relationship: The user who created the program.
+     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function creator()
     {

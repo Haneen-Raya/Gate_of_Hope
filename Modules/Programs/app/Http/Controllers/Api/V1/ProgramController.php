@@ -13,13 +13,22 @@ use Modules\Programs\Http\Requests\V1\Program\StoreProgramRequest;
 use Modules\Programs\Http\Requests\V1\Program\UpdateProgramRequest;
 
 /**
- * @class ProgramController
- * * API Controller for managing Hope Gate Programs.
- * Utilizes ProgramService for business logic and ProgramPolicy for security.
+ * Class ProgramController
+ * * API Controller responsible for orchestrating the lifecycle of Hope Gate Programs.
+ * This controller acts as a thin layer that delegates complex business logic to
+ * the ProgramService and ensures all operations are authorized via ProgramPolicy.
+ * * @package Modules\Programs\Http\Controllers\Api\V1
+ * @version 1.0.0
  */
 class ProgramController extends Controller
 {
-    use AuthorizesRequests ;
+    use AuthorizesRequests;
+
+    /**
+     * Define the middleware for the controller.
+     * * Applies Spatie/Laravel policy checks to specific methods using the 'can' middleware.
+     * * @return array<int, Middleware>
+     */
     public static function middleware(): array
     {
         return [
@@ -30,15 +39,20 @@ class ProgramController extends Controller
             new Middleware('can:delete,program', only: ['destroy']),
         ];
     }
+
+    /**
+     * ProgramController constructor.
+     * * @param ProgramService $programService The service layer handling core business logic.
+     */
     public function __construct(protected ProgramService $programService)
     {
-        // Automatically maps controller methods to Policy methods
-        // $this->authorizeResource(Program::class, 'program');
     }
 
     /**
-     * Display a paginated list of programs.
-     * @path GET /api/v1/programs
+     * Display a paginated list of programs based on provided filters.
+     * * @path GET /api/v1/programs
+     * @param Request $request Includes filters: search, status, and per_page.
+     * @return JsonResponse Returns a success status with paginated program data.
      */
     public function index(Request $request): JsonResponse
     {
@@ -47,8 +61,10 @@ class ProgramController extends Controller
     }
 
     /**
-     * Store a newly created program in storage.
-     * @path POST /api/v1/programs
+     * Store a newly created program in the database.
+     * * @path POST /api/v1/programs
+     * @param StoreProgramRequest $request Contains validated data for creation.
+     * @return JsonResponse Returns 201 Created on success with the program object.
      */
     public function store(StoreProgramRequest $request): JsonResponse
     {
@@ -57,8 +73,10 @@ class ProgramController extends Controller
     }
 
     /**
-     * Display the specified program.
-     * @path GET /api/v1/programs/{id}
+     * Display the details of a specific program.
+     * * @path GET /api/v1/programs/{id}
+     * @param int|string $id The unique identifier of the program.
+     * @return JsonResponse Returns the detailed program model with relations.
      */
     public function show($id): JsonResponse
     {
@@ -67,8 +85,11 @@ class ProgramController extends Controller
     }
 
     /**
-     * Update the specified program in storage.
-     * @path PUT /api/v1/programs/{program}
+     * Update an existing program's information.
+     * * @path PUT /api/v1/programs/{program}
+     * @param UpdateProgramRequest $request Validated update data.
+     * @param int|string $id The ID of the program to be updated.
+     * @return JsonResponse Returns a success message and the updated program.
      */
     public function update(UpdateProgramRequest $request, $id): JsonResponse
     {
@@ -77,8 +98,10 @@ class ProgramController extends Controller
     }
 
     /**
-     * Remove the specified program from storage.
-     * @path DELETE /api/v1/programs/{program}
+     * Remove a program from storage (soft or hard delete based on model config).
+     * * @path DELETE /api/v1/programs/{program}
+     * @param int|string $id The unique identifier of the program.
+     * @return JsonResponse Success notification after deletion.
      */
     public function destroy($id): JsonResponse
     {
