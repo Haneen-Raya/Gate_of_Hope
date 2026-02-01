@@ -2,19 +2,24 @@
 
 namespace Modules\Programs\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\Assessments\Models\IssueCategory;
+use App\Traits\HasAuditUsers;
 use Modules\Core\Models\User;
+use App\Traits\AutoFlushCache;
+use Spatie\Activitylog\LogOptions;
+use App\Contracts\CacheInvalidatable;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Modules\Assessments\Models\IssueCategory;
+use Modules\Programs\Enums\Program\ProgramStatus;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Programs\Models\Builders\ProgramBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // use Modules\Programs\Database\Factories\ProgramFactory;
 
-class Program extends Model
+class Program extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,AutoFlushCache, HasAuditUsers;
 
     /**
      * The attributes that are mass assignable.
@@ -31,15 +36,44 @@ class Program extends Model
         'status',
         'created_by'
     ];
-
+    protected $updatedByField = null;
     // protected static function newFactory(): ProgramFactory
     // {
     //     // return ProgramFactory::new();
     // }
+    /**
+     * The attributes that should be cast.
+     * This automatically converts the database string into a ProgramStatus Enum.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'status'     => ProgramStatus::class,
+        'start_date' => 'date',
+        'end_date'   => 'date',
+        'budget'     => 'float',
+        'objectives' => 'json',
+    ];
+
+    /**
+     * Cache invalidation tags.
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            'programs_list',
+            'program_detail_' . $this->id
+        ];
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logAll();
+        return LogOptions::defaults()->logAll()->useLogName('programs');
+    }
+
+    public function newEloquentBuilder($query): ProgramBuilder
+    {
+        return new ProgramBuilder($query);
     }
     /**
      *

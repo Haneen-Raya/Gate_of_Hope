@@ -27,7 +27,7 @@ trait HasAuditUsers
 
     /**
      * Boot the trait.
-     * 
+     *
      * Hooks into the Eloquent lifecycle to automatically assign Auth::id()
      * to the designated audit columns during 'creating' and 'updating' events.
      *
@@ -41,9 +41,10 @@ trait HasAuditUsers
             $updaterField = $model->getUpdatedByField();
 
             // Set the ID only if the field exists and hasn't been manually set
-            if (($creatorField && empty($model->{$creatorField})) && ($updaterField && empty($model->{$updaterField}))) {
-                $model->{$creatorField} = $model->{$updaterField} = Auth::id();
+                        if (($creatorField && empty($model->{$creatorField}))) {
+                $model->{$creatorField}  = Auth::id();
             }
+
         });
 
         // Handle the updating event
@@ -58,7 +59,7 @@ trait HasAuditUsers
 
     /**
      * Retrieve the column name for the creator.
-     * 
+     *
      * Checks if a custom 'createdByField' property is defined in the model,
      * otherwise defaults to 'created_by'.
      *
@@ -73,7 +74,7 @@ trait HasAuditUsers
 
     /**
      * Retrieve the column name for the updater.
-     * 
+     *
      * Checks if a custom 'updatedByField' property is defined in the model,
      * otherwise defaults to 'updated_by'.
      *
@@ -88,9 +89,9 @@ trait HasAuditUsers
 
     /**
      * Get the user who created the record.
-     * 
+     *
      * @uses getCreatedByField() To resolve the foreign key dynamically.
-     * 
+     *
      * @return BelongsTo
      */
     public function creator(): BelongsTo
@@ -100,9 +101,9 @@ trait HasAuditUsers
 
     /**
      * Get the user who last updated the record.
-     * 
+     *
      * @uses getUpdatedByField() To resolve the foreign key dynamically.
-     * 
+     *
      * @return BelongsTo
      */
     public function updater(): BelongsTo
