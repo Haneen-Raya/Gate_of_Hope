@@ -4,8 +4,8 @@ namespace Modules\Programs\Http\Requests\V1\Program;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Programs\Enums\V1\ProgramStatus;
 use Illuminate\Contracts\Validation\Validator;
-use Modules\Programs\Enums\Program\ProgramStatus;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**

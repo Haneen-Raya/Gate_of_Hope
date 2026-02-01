@@ -6,7 +6,7 @@ use App\Services\LoggerService;
 use Illuminate\Support\Facades\DB;
 use Modules\Programs\Models\Program;
 use Illuminate\Support\Facades\Cache;
-use Modules\Programs\Enums\Program\ProgramStatus;
+use Modules\Programs\Enums\V1\ProgramStatus;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**

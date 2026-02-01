@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Programs\Enums\Program;
+namespace Modules\Programs\Enums\V1;
 
 /**
  * Enum ProgramStatus
