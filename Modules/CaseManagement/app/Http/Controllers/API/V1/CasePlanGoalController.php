@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Modules\CaseManagement\Http\Requests\Api\V1\CasePlanGoal\StoreCasePlanGoalRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CasePlanGoal\UpdateCasePlanGoalRequest;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CasePlanGoalController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Service to handle case-plan-goal-related logic 
      * and separating it from the controller
@@ -44,13 +47,16 @@ class CasePlanGoalController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Filter Extraction: Gather all dynamic filter criteria from the request.
+        // 1. authorization
+        $this->authorize('viewAny', CasePlanGoal::class);
+
+        // 2. Filter Extraction: Gather all dynamic filter criteria from the request.
         $filters = $request->all();
 
-        // 2. Execution: Fetch cached and filtered data through the service layer.
+        // 3. Execution: Fetch cached and filtered data through the service layer.
         $casePlanGoals = $this->casePlanGoalService->list($filters);
 
-        // 3. Response
+        // 4. Response
         return self::successResponse('Case Plan Goals fetched successfully', $casePlanGoals);
     }
 
@@ -66,10 +72,13 @@ class CasePlanGoalController extends Controller
      */
     public function store(StoreCasePlanGoalRequest $request)
     {
-        // 1. Service Logic.
+        // 1. authorization
+        $this->authorize('create', CasePlanGoal::class);
+
+        // 2. Service Logic.
         $casePlanGoal = $this->casePlanGoalService->store($request->validated());
 
-        // 2. Response (HTTP 201 Created)
+        // 3. Response (HTTP 201 Created)
         return self::successResponse('Case plan goal created successfully', $casePlanGoal, 201);
     }
 
@@ -94,6 +103,9 @@ class CasePlanGoalController extends Controller
         // 1. Retrieve Data: Handled by service with "Dual-Tag" caching strategy.
         $casePlanGoal = $this->casePlanGoalService->getById($id);
 
+        // 2. authorization
+        $this->authorize('view', $casePlanGoal);
+
         // 2. Response
         return self::successResponse('Case plan goal fetched successfully', $casePlanGoal);
     }
@@ -110,10 +122,13 @@ class CasePlanGoalController extends Controller
      */
     public function update(UpdateCasePlanGoalRequest $request, CasePlanGoal $casePlanGoal)
     {
-        // 1. Service Logic: Updates the record and purges specific cache tags.
+        // 1. authorization
+        $this->authorize('update', $casePlanGoal);
+
+        // 2. Service Logic: Updates the record and purges specific cache tags.
         $casePlanGoal = $this->casePlanGoalService->update($casePlanGoal, $request->validated());
 
-        // 2. Response
+        // 3. Response
         return self::successResponse('Case plan goal created successfully', $casePlanGoal);
     }
 
@@ -125,10 +140,13 @@ class CasePlanGoalController extends Controller
      */
     public function destroy(CasePlanGoal $casePlanGoal)
     {
-        // 1. Service Logic
+        // 1. authorization
+        $this->authorize('delete', $casePlanGoal);
+
+        // 2. Service Logic
         $this->casePlanGoalService->delete($casePlanGoal);
 
-        // 2. Response
+        // 3. Response
         return self::successResponse('Case plan goal deleted successfully');
     }
 }

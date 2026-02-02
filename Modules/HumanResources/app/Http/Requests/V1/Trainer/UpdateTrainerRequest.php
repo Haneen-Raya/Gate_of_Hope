@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use Modules\HumanResources\Enums\CertificationLevel;
 use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\TrainerStatus;
 
 class UpdateTrainerRequest extends FormRequest
 {
@@ -18,12 +19,13 @@ class UpdateTrainerRequest extends FormRequest
     {
         return [
             'profession_id'        => 'sometimes|exists:professions,id',
-            'gender' => ['required' , 'sometimes' , new Enum(Gender::class)],
+            'gender' => ['sometimes' , new Enum(Gender::class)],
             'date_of_birth'        => 'sometimes|date',
             'bio'                  => 'sometimes|nullable|string',
-            'certification_level' => ['required', new Enum(CertificationLevel::class)],
+            'certification_level' => ['sometimes', new Enum(CertificationLevel::class)],
             'hourly_rate'          => 'sometimes|numeric|min:0',
             'is_external'          => 'sometimes|boolean',
+            'status' => ['sometimes', new Enum(TrainerStatus::class)],
         ];
     }
 }

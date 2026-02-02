@@ -6,12 +6,35 @@ use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
+ * Class ProgramFundingBuilder
  *
+ * Custom query builder responsible for applying
+ * dynamic filters and search conditions on the ProgramFunding model.
+ *
+ * This builder provides a fluent interface to filter program fundings
+ * based on request parameters such as:
+ *
+ * - program ID
+ * - donor entity ID
+ * - funding date range
+ * - funding amount range
+ * - currency
+ *
+ * @package Modules\Entities\Models\Builders
+ *
+ * @method self filterProgram(?int $programId)
+ * @method self filterDonorEntity(?int $donorEntityId)
+ * @method self filterProgramFundingDate(?string $start, ?string $end)
+ * @method self filterAmount(?int $min, ?int $max)
+ * @method self filterCurrency(?string $currency)
+ * @method self filter(array $filters)
  */
 class ProgramFundingBuilder extends Builder
 {
     /**
-     * Filter by program.
+     * Filter program fundings by program ID.
+     *
+     * Applies filtering using the foreign key program_id.
      *
      * @param int|null $programId
      *
@@ -23,7 +46,9 @@ class ProgramFundingBuilder extends Builder
     }
 
     /**
-     * Filter by donor entity .
+     * Filter program fundings by donor entity ID.
+     *
+     * Applies filtering using the foreign key donor_entity_id.
      *
      * @param int|null $donorEntityId
      *
@@ -36,9 +61,15 @@ class ProgramFundingBuilder extends Builder
     }
 
     /**
-     * Filter by program funding date range.
+     * Filter program fundings by funding date range.
+     *
+     * Filters fundings between a start and end date.
+     *
      * @param string|null $start
+     *      Start date (inclusive).
+     *
      * @param string|null $end
+     *      End date (inclusive).
      *
      * @return self
      */
@@ -50,7 +81,10 @@ class ProgramFundingBuilder extends Builder
     }
 
     /**
-     * Filter by program funding amount range.
+     * Filter program fundings by amount range.
+     *
+     * Applies minimum and maximum funding amount constraints.
+     *
      * @param int|null $min
      * @param int|null $max
      *
@@ -64,7 +98,9 @@ class ProgramFundingBuilder extends Builder
     }
 
     /**
-     * Filter by currency .
+     * Filter program fundings by currency.
+     *
+     * This filter matches the currency column exactly.
      *
      * @param string|null $currency
      *
@@ -77,10 +113,19 @@ class ProgramFundingBuilder extends Builder
     }
 
     /**
-     * Entry point to apply dynamic filters.
+     * Apply dynamic filters on program fundings.
      *
-     * This method provides a clean, fluent interface to conditionally apply
-     * various search parameters from a user request.
+     * This is the main entry point for applying multiple filters
+     * based on request parameters.
+     *
+     * Supported filters:
+     * - program_id       : int|null
+     * - donor_entity_id  : int|null
+     * - start_date       : string|null
+     * - end_date         : string|null
+     * - min_amount       : int|null
+     * - max_amount       : int|null
+     * - currency         : string|null
      *
      * @param array<string, mixed> $filters
      *

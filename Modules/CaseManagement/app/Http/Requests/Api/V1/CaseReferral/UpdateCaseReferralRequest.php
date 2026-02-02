@@ -3,11 +3,13 @@
 namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\CaseReferralDirection;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
-use Modules\CaseManagement\Enums\CaseReferralType;
-use Modules\CaseManagement\Enums\CaseReferralUrgencyLevel;
+use Modules\CaseManagement\Enums\V1\CaseReferralDirection;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralType;
+use Modules\CaseManagement\Enums\V1\CaseReferralUrgencyLevel;
+use Modules\CaseManagement\Rules\CaseManagerOwnsCase;
 
 class UpdateCaseReferralRequest extends FormRequest
 {
@@ -16,7 +18,8 @@ class UpdateCaseReferralRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('case.referral.update');
     }
     /**
      * Get the validation rules that apply to the request.
@@ -24,7 +27,7 @@ class UpdateCaseReferralRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'beneficiary_case_id' => ['nullable','integer','exists:beneficiary_cases,id'],
+            'beneficiary_case_id' => ['nullable','integer','exists:beneficiary_cases,id',new CaseManagerOwnsCase()],
             'service_id'          => ['nullable','integer','exists:services,id'],
             'receiver_entity_id'  => ['nullable','integer','exists:entities,id'],
             'referral_type'       => ['nullable','string',Rule::in(CaseReferralType::all())],

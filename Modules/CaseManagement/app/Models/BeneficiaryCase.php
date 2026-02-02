@@ -2,9 +2,12 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\HasCaseEvents;
+use App\Contracts\CacheInvalidatable;
 use Carbon\Carbon;
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
+use App\Traits\LogsCaseEvents;
 use Modules\Core\Models\Region;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\CaseManagement\Models\Builders\BeneficiaryCaseBuilder;
+use Modules\CaseManagement\Services\CaseEvent\Formatter\BeneficiaryCaseFormatter;
 
 /**
  * Class BeneficiaryCase
@@ -35,9 +39,9 @@ use Modules\CaseManagement\Models\Builders\BeneficiaryCaseBuilder;
  * @property Carbon $updated_at
  * * @package Modules\CaseManagement\Models
  */
-class BeneficiaryCase extends Model
+class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents;
 
     /**
      * The attributes that are mass assignable.
@@ -66,6 +70,19 @@ class BeneficiaryCase extends Model
         'opened_at' => 'datetime',
         'closed_at' => 'datetime',
     ];
+
+    /**
+     * Map the Model to its dedicated Event Formatter.
+     * * This method acts as the structural link required by the `HasCaseEvents` contract. 
+     * It instructs the central EventManager to use the specified formatter for 
+     * transforming raw Eloquent mutations into domain-specific timeline events.
+     *
+     * @return string The fully qualified class name of the formatter.
+     */
+    public function caseEventFormatter(): string
+    {
+        return BeneficiaryCaseFormatter::class;
+    }
 
     /**
      * Define the cache tags that should be invalidated when this model is updated.
@@ -153,13 +170,15 @@ class BeneficiaryCase extends Model
     }
 
     /**
-     * History of events related to this case.
+     * Get all timeline events associated with this specific case.
+     * * This provides a chronological audit trail of all actions, 
+     * sessions, and status changes linked to the beneficiary's file.
      *
      * @return HasMany
      */
     public function caseEvents(): HasMany
     {
-        return $this->hasMany(CaseEvent::class);
+        return $this->hasMany(CaseEvent::class, 'beneficiary_case_id');
     }
 
     /**

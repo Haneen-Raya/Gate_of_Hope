@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Modules\Beneficiaries\Services\BeneficiaryService;
 use Modules\Beneficiaries\Http\Requests\Api\V1\Beneficiary\StoreBeneficiaryRequest;
 use Modules\Beneficiaries\Http\Requests\Api\V1\Beneficiary\UpdateBeneficiaryRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BeneficiaryController extends Controller
 {
-
+    use AuthorizesRequests;
     /**
      * Service to handle beneficiary-related logic 
      * and separating it from the controller
@@ -46,13 +47,16 @@ class BeneficiaryController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Filter Extraction: Get all dynamic filter values from the URL query string.
+        // 1. authorization
+        $this->authorize('viewAny', Beneficiary::class);
+
+        // 2. Filter Extraction: Get all dynamic filter values from the URL query string.
         $filters = $request->all();
 
-        // 2. Execution: Fetch cached and filtered data through the service layer.
+        // 3. Execution: Fetch cached and filtered data through the service layer.
         $beneficiaries = $this->beneficiaryService->list($filters);
 
-        // 3. Response
+        // 4. Response
         return self::successResponse('Beneficiary fetched successfully', $beneficiaries);
     }
 
@@ -67,10 +71,13 @@ class BeneficiaryController extends Controller
      */
     public function store(StoreBeneficiaryRequest $request)
     {
-        // 1. Service Logic
+        // 1. authorization
+        $this->authorize('create', Beneficiary::class);
+
+        // 2. Service Logic
         $beneficiary = $this->beneficiaryService->store($request->validated());
 
-        // 2. Response (HTTP 201 Created)
+        // 3. Response (HTTP 201 Created)
         return self::successResponse('Beneficiary added successfully', $beneficiary, 201);
     }
 
@@ -92,10 +99,14 @@ class BeneficiaryController extends Controller
      */
     public function show(int $id)
     {
+
         // 1. Retrieve Data (Cache Hit or DB Query via Service)
         $beneficiary = $this->beneficiaryService->getById($id);
 
-        // 2. Response
+        // 2. authorization
+        $this->authorize('view', $beneficiary);
+
+        // 3. Response
         return self::successResponse('Beneficiary fetched successfully', $beneficiary);
     }
 
@@ -112,11 +123,13 @@ class BeneficiaryController extends Controller
      */
     public function update(UpdateBeneficiaryRequest $request, Beneficiary $beneficiary)
     {
-        // 1. Service Logic: Updates DB and invalidates specific cache tags.
+        // 1. authorization
+        $this->authorize('update', $beneficiary);
+
+        // 2. Service Logic: Updates DB and invalidates specific cache tags.
         $beneficiary = $this->beneficiaryService->update($beneficiary, $request->validated());
 
-
-        // 2. Response
+        // 3. Response
         return self::successResponse('Beneficiary updated successfully', $beneficiary);
     }
 
@@ -128,10 +141,13 @@ class BeneficiaryController extends Controller
      */
     public function destroy(Beneficiary $beneficiary)
     {
-        // 1. Service Logic
+        // 1. authorization
+        $this->authorize('delete', $beneficiary);
+
+        // 2. Service Logic
         $this->beneficiaryService->delete($beneficiary);
 
-        // 2. Response
+        // 3. Response
         return self::successResponse('Beneficiary deleted successfully');
     }
 

@@ -5,7 +5,8 @@ namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
+use Illuminate\Routing\Controllers\Middleware;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\StoreCaseReferralRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\UpdateCaseReferralRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral\UpdateCaseReferralStatusRequest;
@@ -15,6 +16,21 @@ use Modules\CaseManagement\Services\CaseReferralService;
 class CaseReferralController extends Controller
 {
     use AuthorizesRequests;
+
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:case.referral.create', only: ['store']),
+            new Middleware('can:case.referral.read', only: ['index','show']),
+            new Middleware('can:case.referral.update', only: ['update']),
+            new Middleware('can:case.referral.delete', only: ['destroy']),
+            new Middleware('can:case.referral.update.status', only: ['updateStatus']),
+        ];
+    }
     protected CaseReferralService $caseReferralService;
 
     /**
@@ -72,6 +88,7 @@ class CaseReferralController extends Controller
      */
     public function show(CaseReferral $caseReferral)
     {
+        $this->authorize('view', $caseReferral);
         return $this->successResponse(
             'Operation succcessful',
             $this->caseReferralService->showCaseReferral($caseReferral),
@@ -90,6 +107,7 @@ class CaseReferralController extends Controller
      */
     public function update(UpdateCaseReferralRequest $request, CaseReferral $caseReferral)
     {
+        $this->authorize('update', $caseReferral);
         return $this->successResponse(
             'Updated succcessful',
             $this->caseReferralService->updateCaseReferral($request->validated(), $caseReferral)
@@ -105,6 +123,7 @@ class CaseReferralController extends Controller
      */
     public function destroy(CaseReferral $caseReferral)
     {
+        $this->authorize('delete', $caseReferral);
         $this->caseReferralService->deleteCaseReferral($caseReferral);
         return $this->successResponse(
             'Deleted succcessful',

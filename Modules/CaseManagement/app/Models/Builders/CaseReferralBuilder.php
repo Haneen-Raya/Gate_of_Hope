@@ -6,12 +6,44 @@ use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
+ * Class CaseReferralBuilder
  *
+ * Custom query builder responsible for applying
+ * dynamic filters and search conditions on the
+ * CaseReferral model.
+ *
+ * This builder provides a fluent interface to filter referrals
+ * based on multiple parameters such as:
+ * - beneficiary case
+ * - service
+ * - receiver entity
+ * - referral type & direction
+ * - status & urgency level
+ * - referral date range
+ * - referral lifecycle states (accepted, rejected, completed, cancelled)
+ *
+ * @package Modules\CaseManagement\Models\Builders
+ *
+ * @method self filterBeneficiaryCase(?int $beneficiaryCaseId)
+ * @method self filterService(?int $serviceId)
+ * @method self filterReceiverEntity(?int $receiverEntityId)
+ * @method self filterReferralType(?string $type)
+ * @method self filterDirection(?string $direction)
+ * @method self filterStatus(?string $status)
+ * @method self filterUrgencyLevel(?string $urgencyLevel)
+ * @method self filterReferralDate(?string $from, ?string $to)
+ * @method self filterRejected(?bool $rejected)
+ * @method self filterAccepted(?bool $accepted)
+ * @method self filterCompleted(?bool $completed)
+ * @method self filterCancelled(?bool $cancelled)
+ * @method self filter(array $filters)
  */
 class CaseReferralBuilder extends Builder
 {
     /**
-     * Filter by beneficiary case.
+     * Filter referrals by beneficiary case ID.
+     *
+     * Applies filtering using the foreign key beneficiary_case_id.
      *
      * @param int|null $beneficiaryCaseId
      *
@@ -23,7 +55,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by service.
+     * Filter referrals by service ID.
+     *
+     * Applies filtering using the foreign key service_id.
      *
      * @param int|null $serviceId
      *
@@ -35,7 +69,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by receiver entity.
+     * Filter referrals by receiver entity ID.
+     *
+     * Applies filtering using the foreign key receiver_entity_id.
      *
      * @param int|null $receiverEntityId
      *
@@ -47,7 +83,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by referral type .
+     * Filter referrals by referral type.
+     *
+     * This filter matches the referral_type column exactly.
      *
      * @param string|null $type
      *
@@ -60,7 +98,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by referral direction .
+     * Filter referrals by direction.
+     *
+     * This filter matches the direction column exactly.
      *
      * @param string|null $direction
      *
@@ -72,7 +112,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by referral status .
+     * Filter referrals by status.
+     *
+     * This filter matches the status column exactly.
      *
      * @param string|null $status
      *
@@ -84,7 +126,9 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by referral urgency level .
+     * Filter referrals by urgency level.
+     *
+     * This filter matches the urgency_level column exactly.
      *
      * @param string|null $urgencyLevel
      *
@@ -96,10 +140,14 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Filter by referral date range.
-     * @param string|null $from
-     * @param string|null $to
+     * Filter referrals by referral date range.
      *
+     * Applies date filtering using referral_date.
+     *
+     * @param string|null $from
+     *      Start date (inclusive).
+     * @param string|null $to
+     *       End date (inclusive).
      * @return self
      */
     public function filterReferralDate(?string $from,?string $to ) : self
@@ -111,6 +159,8 @@ class CaseReferralBuilder extends Builder
 
     /**
      * Filter only rejected referrals.
+     *
+     * Checks if rejected_at is not null.
      *
      * @param bool|null $rejected
      *
@@ -124,6 +174,8 @@ class CaseReferralBuilder extends Builder
     /**
      * Filter only accepted referrals.
      *
+     * Checks if accepted_at is not null.
+     *
      * @param bool|null $accepted
      *
      * @return self
@@ -135,6 +187,8 @@ class CaseReferralBuilder extends Builder
 
     /**
      * Filter only completed referrals.
+     *
+     * Checks if completed_at is not null.
      *
      * @param bool|null $completed
      *
@@ -148,6 +202,8 @@ class CaseReferralBuilder extends Builder
     /**
      * Filter only cancelled referrals.
      *
+     * Checks if cancelled_at is not null.
+     *
      * @param bool|null $cancelled
      *
      * @return self
@@ -158,10 +214,25 @@ class CaseReferralBuilder extends Builder
     }
 
     /**
-     * Entry point to apply dynamic filters.
+      * Apply dynamic filters on case referrals.
      *
-     * This method provides a clean, fluent interface to conditionally apply
-     * various search parameters from a user request.
+     * This is the main entry point for applying multiple filters
+     * based on request parameters.
+     *
+     * Supported filters:
+     * - beneficiary_case_id   : int|null
+     * - service_id            : int|null
+     * - receiver_entity_id    : int|null
+     * - referral_type         : string|null
+     * - direction             : string|null
+     * - status                : string|null
+     * - urgency_level         : string|null
+     * - referral_date_from    : string|null
+     * - referral_date_to      : string|null
+     * - rejected              : bool|null
+     * - accepted              : bool|null
+     * - completed             : bool|null
+     * - cancelled             : bool|null
      *
      * @param array<string, mixed> $filters
      *
@@ -179,8 +250,8 @@ class CaseReferralBuilder extends Builder
             ->filterUrgencyLevel($filters['urgency_level'] ?? null)
             ->filterReferralDate($filters['referral_date_from'] ?? null,$filters['referral_date_to'] ?? null)
             ->filterRejected($filters['rejected'] ?? null)
+            ->filterAccepted($filters['accepted'] ?? null)
             ->filterCompleted($filters['completed'] ?? null)
-            ->filterCancelled($filters['cancelled'] ?? null)
-            ->filterAccepted($filters['accepted'] ?? null);
+            ->filterCancelled($filters['cancelled'] ?? null);
     }
 }
