@@ -2,10 +2,11 @@
 
 namespace Modules\Programs\Services;
 
+use Modules\Programs\Models\Program;
 use Illuminate\Support\Facades\Cache;
 use Modules\Programs\Models\ProgramResource;
-use Modules\Programs\Models\Program;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Programs\Services\ProgramAlertService;
 
 /**
  * Class ProgramResourceService
@@ -15,6 +16,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class ProgramResourceService
 {
+
+    public function __construct(protected ProgramAlertService $alertService) {}
     /**
      * @var int CACHE_TTL Cache duration in seconds (1 hour).
      */
@@ -73,30 +76,56 @@ class ProgramResourceService
 
         return ProgramResource::create($data);
     }
-
-    /**
-     * Update an existing resource and re-calculate the budget impact.
-     * * @param ProgramResource $resource The resource model to update
-     * @param array $data The updated attributes
-     * @return ProgramResource|null The updated resource or null if the budget is exceeded
+/**
+     * Update an existing program resource and re-evaluate budget constraints.
+     *
+     * This method performs a critical budget integrity check before persisting updates.
+     * It calculates the projected total cost of the program by summing the expenses
+     * of all other resources with the newly proposed costs of the current resource.
+     * If the update exceeds the allocated program budget, the operation is aborted.
+     * * Upon successful persistence, it triggers the Alert Service to audit
+     * inventory levels and notify the Program Manager if necessary.
+     *
+     * @param \Modules\Programs\Models\ProgramResource $resource The resource instance to be updated.
+     * @param array $data Validated attributes (cost, quantity, etc.) to apply.
+     * * @return \Modules\Programs\Models\ProgramResource|null The updated and refreshed resource model,
+     * or null if the budget validation fails.
+     * * @throws \Exception If any database-level integrity constraint is violated.
+     * * @uses \Modules\Programs\Services\ProgramAlertService::checkAndNotify To initiate the notification workflow.
+     * @uses \Illuminate\Database\Eloquent\Model::update To persist changes.
      */
     public function update(ProgramResource $resource, array $data): ?ProgramResource
     {
-        // Prevent changing the program ID for consistency and security
+        // Security Constraint: Prevent re-assignment of resources to different programs
         unset($data['program_id']);
 
         $program = $resource->program;
+
+        // Determine projected values, falling back to existing attributes if not provided in $data
         $newCost = $data['cost'] ?? $resource->cost;
         $newQuantity = $data['quantity'] ?? $resource->quantity;
 
-        // Calculate cost of other resources excluding the current one being updated
-        $othersExpenses = $program->programResources()->where('id', '!=', $resource->id)->sum(\DB::raw('cost * quantity'));
+        /** * Budget Validation Logic:
+         * Calculate the total cost of all OTHER resources assigned to this program.
+         */
+        $othersExpenses = $program->programResources()
+            ->where('id', '!=', $resource->id)
+            ->sum(\DB::raw('cost * quantity'));
 
+        // Check if the new projected total exceeds the program's financial limit
         if (($othersExpenses + ($newCost * $newQuantity)) > $program->budget) {
             return null;
         }
 
+        // Apply changes to the database
         $resource->update($data);
+
+        /**
+         * Post-Update Workflow:
+         * Trigger the Alert Service to check for inventory shortages or date warnings.
+         */
+        $this->alertService->checkAndNotify($program->id);
+
         return $resource->refresh();
     }
 
