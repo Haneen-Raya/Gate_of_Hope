@@ -52,7 +52,6 @@ class EntityService
     public function createEntity(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $data['user_id'] = auth()->id();
             $entity = Entitiy::create($data);
             return $entity;
         });
@@ -99,6 +98,25 @@ class EntityService
     public function deleteEntity(Entitiy $entity)
     {
         $entity->delete();
+    }
+
+    /**
+     * Update the activation status of the given entity.
+     *
+     * Executes the update inside a database transaction and clears
+     * related cache entries upon success.
+     *
+     * @param  array  $data
+     * @param  Entitiy $entity
+     *
+     * @return Entitiy $entity
+     */
+    public function updateActivationStatus(array $data, Entitiy $entity)
+    {
+        return DB::transaction(function () use ($data,$entity) {
+            $entity->update(['is_active'=>$data['is_active']]);
+            return $entity->refresh();
+        });
     }
 }
 

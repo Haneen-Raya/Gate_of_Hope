@@ -21,6 +21,7 @@ use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Modules\HumanResources\Models\Trainer;
 
 class User extends Authenticatable
 {
@@ -82,6 +83,14 @@ class User extends Authenticatable
     public function specialist()
     {
         return $this->hasOne(Specialist::class);
+    }
+
+    /**
+     *
+     */
+    public function trainer()
+    {
+        return $this->hasOne(Trainer::class);
     }
 
     /**

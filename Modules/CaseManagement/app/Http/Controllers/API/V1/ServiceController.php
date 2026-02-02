@@ -3,7 +3,9 @@
 namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\CaseManagement\Http\Requests\Api\V1\Service\StoreServiceRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\Service\UpdateServiceRequest;
 use Modules\CaseManagement\Models\Service;
@@ -11,6 +13,21 @@ use Modules\CaseManagement\Services\ServiceService;
 
 class ServiceController extends Controller
 {
+    use AuthorizesRequests;
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:service.create', only: ['store']),
+            new Middleware('can:service.read', only: ['index','show']),
+            new Middleware('can:service.update', only: ['update']),
+            new Middleware('can:service.delete', only: ['destroy']),
+        ];
+    }
+
     protected ServiceService $serviceService;
 
     /**

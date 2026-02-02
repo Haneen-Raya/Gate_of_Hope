@@ -3,7 +3,9 @@
 namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground\StoreSocialBackgroundRequest;
 use Modules\Beneficiaries\Http\Requests\Api\V1\SocialBackground\UpdateSocialBackgroundRequest;
 use Modules\Beneficiaries\Models\SocialBackground;
@@ -11,6 +13,21 @@ use Modules\Beneficiaries\Services\SocialBackgroundService;
 
 class SocialBackgroundController extends Controller
 {
+    use AuthorizesRequests;
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:social_backgrounds.create.self', only: ['store']),
+            new Middleware('can:    ', only: ['index','show']),
+            new Middleware('can:social_backgrounds.update.self', only: ['update']),
+            new Middleware('can:social_backgrounds.delete.self', only: ['destroy']),
+        ];
+    }
+
     protected SocialBackgroundService $socialBackgroundService;
 
     /**
@@ -33,7 +50,7 @@ class SocialBackgroundController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->validated();
+        $filters = $request->all();
         return $this->successResponse(
             'Operation succcessful',
             $this->socialBackgroundService->getAllSocialBackgrounds($filters),
@@ -68,6 +85,7 @@ class SocialBackgroundController extends Controller
      */
     public function show(SocialBackground $socialBackground)
     {
+        $this->authorize('view',$socialBackground);
         return $this->successResponse(
             'Operation succcessful',
             $this->socialBackgroundService->showSocialBackground($socialBackground),
@@ -86,6 +104,7 @@ class SocialBackgroundController extends Controller
      */
     public function update(UpdateSocialBackgroundRequest $request, SocialBackground $socialBackground)
     {
+        $this->authorize('update',$socialBackground);
         return $this->successResponse(
             'Updated succcessful',
             $this->socialBackgroundService->updateSocialBackground($request->validated(), $socialBackground)
@@ -101,6 +120,7 @@ class SocialBackgroundController extends Controller
      */
     public function destroy(SocialBackground $socialBackground)
     {
+        $this->authorize('delete',$socialBackground);
         $this->socialBackgroundService->deleteSocialBackground($socialBackground);
         return $this->successResponse(
             'Deleted succcessful',

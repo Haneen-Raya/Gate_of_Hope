@@ -2,17 +2,20 @@
 
 namespace Modules\Beneficiaries\Models;
 
+use App\Contracts\CacheInvalidatable;
+use App\Traits\AutoFlushCache;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
+use Modules\Beneficiaries\Models\Builders\HousingTypeBuilder;
 use Spatie\Activitylog\LogOptions;
 
-// use Modules\Beneficiaries\Database\Factories\HousingTypesFactory;
-
-class HousingType extends Model
+class HousingType extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity ,AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +28,50 @@ class HousingType extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Define cache tags to invalidate on model changes.
+     * Implementing the "Ripple Effect" to purge list and detail caches.
+     *
+     * @return array<string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            "housing_types",
+            "housing_type_{$this->id}"
+        ];
+    }
+
+    /**
+     * Override the default Eloquent query builder.
+     * This tells Laravel to use our custom HousingTypeBuilder instead of the default one.
+     *
+     * @param Builder $query
+     *
+     * @return HousingTypeBuilder
+     */
+    public function newEloquentBuilder($query): HousingTypeBuilder
+    {
+        return new HousingTypeBuilder($query);
+    }
+
+    /**
+     * Accessor & Mutator for the "name" attribute.
+     *
+     * - Getter: Capitalizes the first character when accessing the name.
+     *
+     * - Setter: Converts the value to lowercase before storing in the database.
+     *
+     * @return Attribute
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
+    }
 
     /**
      * Configure the activity logging options.

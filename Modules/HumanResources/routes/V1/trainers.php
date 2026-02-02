@@ -19,41 +19,14 @@ Route::middleware(['auth:sanctum'])->prefix('human-resources')->group(function (
      * ----------------------------------------------------------------------
      * 1. List Trainers (Paginated)
      * ----------------------------------------------------------------------
-     * @name trainers.index
-     * @path GET /api/v1/human-resources/trainers
-     *
-     * @query_params:
-     * - profession_id (int): Filter by profession
-     * - gender (enum): male | female
-     * - is_external (bool)
-     * - page (int)
-     *
-     * @features:
-     * - Custom Builder
-     * - Tagged Caching
      */
     Route::get('trainers',[TrainerController::class, 'index'])
         ->name('trainers.index');
 
     /**
      * ----------------------------------------------------------------------
-     * 2. Store New Trainer
+     * 2. Store New Trainer (Self Apply)
      * ----------------------------------------------------------------------
-     * @name trainers.store
-     * @path POST /api/v1/human-resources/trainers
-     *
-     * @body_payload (StoreTrainerRequest):
-     * - user_id (int/required)
-     * - profession_id (int/required)
-     * - gender (enum/required)
-     * - date_of_birth (date/required)
-     * - bio (string/nullable)
-     * - certification_level (string/required)
-     * - hourly_rate (decimal/required)
-     * - is_external (bool/required)
-     *
-     * @description:
-     * Creates a trainer and invalidates trainers cache.
      */
     Route::post('trainers',[TrainerController::class, 'store'])
         ->name('trainers.store');
@@ -62,14 +35,6 @@ Route::middleware(['auth:sanctum'])->prefix('human-resources')->group(function (
      * ----------------------------------------------------------------------
      * 3. Show Trainer Profile
      * ----------------------------------------------------------------------
-     * @name trainers.show
-     * @path GET /api/v1/human-resources/trainers/{trainer}
-     *
-     * @url_params:
-     * - trainer (int): Trainer ID
-     *
-     * @features:
-     * - Route Model Binding
      */
     Route::get('trainers/{trainer}',[TrainerController::class, 'show'])
         ->whereNumber('trainer')
@@ -79,20 +44,6 @@ Route::middleware(['auth:sanctum'])->prefix('human-resources')->group(function (
      * ----------------------------------------------------------------------
      * 4. Update Trainer
      * ----------------------------------------------------------------------
-     * @name trainers.update
-     * @path PUT /api/v1/human-resources/trainers/{trainer}
-     *
-     * @body_payload (UpdateTrainerRequest):
-     * - profession_id (sometimes)
-     * - gender (sometimes)
-     * - date_of_birth (sometimes)
-     * - bio (sometimes)
-     * - certification_level (sometimes)
-     * - hourly_rate (sometimes)
-     * - is_external (sometimes)
-     *
-     * @description:
-     * Updates trainer and clears cache.
      */
     Route::put('trainers/{trainer}',[TrainerController::class, 'update'])
         ->whereNumber('trainer')
@@ -102,14 +53,40 @@ Route::middleware(['auth:sanctum'])->prefix('human-resources')->group(function (
      * ----------------------------------------------------------------------
      * 5. Delete Trainer
      * ----------------------------------------------------------------------
-     * @name trainers.destroy
-     * @path DELETE /api/v1/human-resources/trainers/{trainer}
-     *
-     * @description:
-     * Soft delete (if enabled) and invalidate cache.
      */
     Route::delete('trainers/{trainer}',[TrainerController::class, 'destroy'])
         ->whereNumber('trainer')
         ->name('trainers.destroy');
+
+    /**
+     * ----------------------------------------------------------------------
+     * 6. Approve Trainer (Admin Only)
+     * ----------------------------------------------------------------------
+     * @name trainers.approve
+     * @path POST /api/v1/human-resources/trainers/{trainer}/approve
+     *
+     * @description:
+     * - Changes trainer status to APPROVED
+     * - Assigns trainer role to user
+     * - Sends approval notification
+     */
+    Route::post('trainers/{trainer}/approve',[TrainerController::class, 'approve'])
+        ->whereNumber('trainer')
+        ->name('trainers.approve');
+
+    /**
+     * ----------------------------------------------------------------------
+     * 7. Reject Trainer (Admin Only)
+     * ----------------------------------------------------------------------
+     * @name trainers.reject
+     * @path POST /api/v1/human-resources/trainers/{trainer}/reject
+     *
+     * @description:
+     * - Changes trainer status to REJECTED
+     * - Optional rejection reason
+     */
+    Route::post('trainers/{trainer}/reject',[TrainerController::class, 'reject'])
+        ->whereNumber('trainer')
+        ->name('trainers.reject');
 
 });

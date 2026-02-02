@@ -169,4 +169,60 @@ class TrainerController extends Controller
             'Trainer deleted successfully'
         );
     }
+
+        /**
+     * Approve a trainer
+     *
+     * Admin-only action
+     *
+     * @param Trainer $trainer
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Trainer approved successfully",
+     *   "data": { ... }
+     * }
+     */
+    public function approve(Trainer $trainer)
+    {
+        $this->authorize('approve', $trainer);
+
+        $trainer = $this->service->approve($trainer);
+
+        return $this->successResponse(
+            'Trainer approved successfully',
+            $trainer
+        );
+    }
+        /**
+     * Reject a trainer
+     *
+     * Admin-only action
+     *
+     * @param Trainer $trainer
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Trainer rejected successfully",
+     *   "data": { ... }
+     * }
+     */
+    public function reject(Trainer $trainer)
+    {
+        $this->authorize('reject', $trainer);
+
+        $trainer = $this->service->reject(
+            $trainer,
+            // request('reason') // optional
+        );
+
+        return $this->successResponse(
+            'Trainer rejected successfully',
+            $trainer
+        );
+    }
+
+
 }

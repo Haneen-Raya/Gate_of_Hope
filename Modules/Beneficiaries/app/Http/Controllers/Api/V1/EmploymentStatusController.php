@@ -9,9 +9,25 @@ use Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus\UpdateEmployment
 use Modules\Beneficiaries\Http\Requests\Api\V1\EmploymentStatus\UpdateEmploymentStatusRequest;
 use Modules\Beneficiaries\Models\EmploymentStatus;
 use Modules\Beneficiaries\Services\EmploymentStatusService;
+use Illuminate\Routing\Controllers\Middleware;
 
 class EmploymentStatusController extends Controller
 {
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:employment_statuses.create', only: ['store']),
+            new Middleware('can:employment_statuses.read', only: ['index','show']),
+            new Middleware('can:employment_statuses.update', only: ['update']),
+            new Middleware('can:employment_statuses.activation.update', only: ['updateActivation']),
+            new Middleware('can:employment_statuses.delete', only: ['destroy']),
+        ];
+    }
+
     protected EmploymentStatusService $employmentStatusService;
 
     /**
@@ -34,7 +50,7 @@ class EmploymentStatusController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->validated();
+        $filters = $request->all();
         return $this->successResponse(
             'Operation succcessful',
             $this->employmentStatusService->getAllEmploymentStatuses($filters),

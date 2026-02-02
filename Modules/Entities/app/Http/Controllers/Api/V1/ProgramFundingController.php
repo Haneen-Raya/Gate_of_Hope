@@ -3,7 +3,9 @@
 namespace Modules\Entities\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\Entities\Http\Requests\Api\V1\ProgramFunding\StoreProgramFundingRequest;
 use Modules\Entities\Http\Requests\Api\V1\ProgramFunding\UpdateProgramFundingRequest;
 use Modules\Entities\Models\ProgramFunding;
@@ -11,6 +13,22 @@ use Modules\Entities\Services\ProgramFundingService;
 
 class ProgramFundingController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:program.funding.create', only: ['store']),
+            new Middleware('can:program.funding.read', only: ['index','show']),
+            new Middleware('can:program.funding.update', only: ['update']),
+            new Middleware('can:program.funding.delete', only: ['destroy']),
+        ];
+    }
+
     protected ProgramFundingService $programFundingService;
 
     /**
@@ -68,6 +86,7 @@ class ProgramFundingController extends Controller
      */
     public function show(ProgramFunding $programFunding)
     {
+        $this->authorize('view', $programFunding);
         return $this->successResponse(
             'Operation succcessful',
             $this->programFundingService->showProgramFunding($programFunding),

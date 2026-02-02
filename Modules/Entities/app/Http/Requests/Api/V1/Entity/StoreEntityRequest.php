@@ -3,6 +3,7 @@
 namespace Modules\Entities\Http\Requests\Api\V1\Entity;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Entities\Enums\EntityType;
 
@@ -13,8 +14,10 @@ class StoreEntityRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('entities.create');
     }
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -22,6 +25,7 @@ class StoreEntityRequest extends FormRequest
     {
         return [
             'name'                  => ['required', 'string', 'max:255','unique:entities,name'],
+            'user_id'               => ['required','integer','exists:users,id'],
             'entity_type'           => ['required','string',Rule::in(EntityType::all())],
             'can_provide_services'  => ['sometimes','boolean'],
             'can_receive_referrals' => ['sometimes','boolean'],

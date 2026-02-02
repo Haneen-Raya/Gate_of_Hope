@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Models;
 
 use App\Contracts\HasCaseEvents;
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\LogsCaseEvents;
 use Illuminate\Database\Eloquent\Model;
@@ -10,10 +11,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
-use Modules\CaseManagement\Enums\CaseReferralDirection;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
-use Modules\CaseManagement\Enums\CaseReferralType;
-use Modules\CaseManagement\Enums\CaseReferralUrgencyLevel;
+use Modules\CaseManagement\Enums\V1\CaseReferralDirection;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralType;
+use Modules\CaseManagement\Enums\V1\CaseReferralUrgencyLevel;
 use Modules\CaseManagement\Models\Builders\CaseReferralBuilder;
 use Modules\CaseManagement\Services\CaseEvent\Formatter\CaseReferralFormatter;
 use Spatie\Activitylog\LogOptions;
@@ -40,7 +41,7 @@ use Modules\Entities\Models\Entitiy;
  *
  * @package Modules\Cases\Models
  */
-class CaseReferral extends Model implements HasCaseEvents
+class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 {
     use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents;
 
@@ -123,7 +124,7 @@ class CaseReferral extends Model implements HasCaseEvents
 
     /**
      * Override the default Eloquent query builder.
-     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     * This tells Laravel to use our custom CaseReferralBuilder instead of the default one.
      *
      * @param Builder $query
      *
@@ -232,5 +233,48 @@ class CaseReferral extends Model implements HasCaseEvents
     public function caseEvents(): HasMany
     {
         return $this->hasMany(CaseEvent::class, 'beneficiary_case_id');
+      /*
+     * Determine if this referral belongs to a given beneficiary user.
+     *
+     * This method checks whether the currently authenticated user
+     * is the owner of the beneficiary linked to this referral.
+     *
+     * @param User $user The user to check against the referral's beneficiary
+     *
+     * @return bool True if the user is the beneficiary, false otherwise
+     */
+    public function isForBeneficiary(User $user): bool
+    {
+        return $this->beneficiaryCase->beneficiary->user_id === $user->id;
+    }
+
+    /**
+     * Determine if this referral is managed by a specific case manager.
+     *
+     * Checks if the provided user is the case manager responsible
+     * for the beneficiary case linked to this referral.
+     *
+     * @param User $user The user to check as case manager
+     *
+     * @return bool True if the user is the case manager, false otherwise
+     */
+    public function isManagedBy(User $user): bool
+    {
+        return $this->beneficiaryCase?->case_manager_id === $user->id;
+    }
+
+    /**
+     * Determine if this referral is assigned to the entity of a specific user.
+     *
+     * Checks if the referral's receiving entity is associated with the given user.
+     * Useful for verifying whether a user’s organization is responsible for handling the referral.
+     *
+     * @param User $user The user whose entity is being checked
+     *
+     * @return bool True if the referral is assigned to the user's entity, false otherwise
+     */
+    public function isAssignedToEntity(User $user): bool
+    {
+        return $this->receiver_entity_id === $user->entitiy->id;
     }
 }

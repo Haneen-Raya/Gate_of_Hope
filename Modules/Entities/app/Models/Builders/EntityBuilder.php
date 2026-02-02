@@ -6,14 +6,44 @@ use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
+ * Class EntityBuilder
  *
+ * Custom query builder responsible for applying
+ * dynamic filters and search conditions on the Entity model.
+ *
+ * This builder provides a fluent interface to filter entities
+ * based on multiple request parameters such as:
+ *
+ * - activation status
+ * - user ownership
+ * - entity type
+ * - capabilities (provide, receive, fund)
+ * - minimum related records count
+ * - name and code search
+ *
+ * @package Modules\Entities\Models\Builders
+ *
+ * @method self filterUser(?int $userId)
+ * @method self filterEntityType(?string $type)
+ * @method self filterCapabilities(?bool $provide, ?bool $receive, ?bool $fund)
+ * @method self filterMinCaseReferrals(?int $min)
+ * @method self filterMinProgramFundings(?int $min)
+ * @method self filterMinDonorReports(?int $min)
+ * @method self filterMinActivities(?int $min)
+ * @method self filterName(?string $name)
+ * @method self filterCode(?string $code)
+ * @method self filter(array $filters)
  */
 class EntityBuilder extends Builder
 {
     /**
-     * Filter by activation status.
+     * Handle bypassing the global active scope.
+     *
+     * If the user passes is_active = false,
+     * the builder will explicitly return only inactive records.
      *
      * @param mixed $isActiveValue
+     *      Value passed from filters (true/false/null).
      *
      * @return self
      */
@@ -27,7 +57,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by user.
+     * Filter entities by user ID.
+     *
+     * Applies filtering using the foreign key user_id.
      *
      * @param int|null $userId
      *
@@ -39,7 +71,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by entity type.
+     * Filter entities by entity type.
+     *
+     * This filter matches the entity_type column exactly.
      *
      * @param string|null $type
      *
@@ -47,13 +81,16 @@ class EntityBuilder extends Builder
      */
     public function filterEntityType(?string $type): self
     {
-        return $this->when($type, function ($q) use ($type) {
-            $q->where('entity_type', $type);
-        });
+        return $this->when($type, fn($q) => $q->where('entity_type', $type));
     }
 
     /**
-     * Filter by capabilities.
+     * Filter entities by capabilities.
+     *
+     * This allows filtering entities based on whether they can:
+     * - provide services
+     * - receive referrals
+     * - fund programs
      *
      * @param bool|null $provide
      * @param bool|null $receive
@@ -69,7 +106,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by minimum number of case referrals.
+     * Filter entities by minimum number of case referrals.
+     *
+     *  Uses relationship count filtering.
      *
      * @param int|null $min
      *
@@ -81,7 +120,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by minimum number of program fundings .
+     * Filter entities by minimum number of program fundings .
+     *
+     * Uses relationship count filtering.
      *
      * @param int|null $min
      *
@@ -93,7 +134,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by minimum number of donor reports.
+     * Filter entities by minimum number of donor reports.
+     *
+     * Uses relationship count filtering.
      *
      * @param int|null $min
      *
@@ -105,7 +148,9 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by minimum number of activities.
+     * Filter entities by minimum number of activities.
+     *
+     * Uses relationship count filtering.
      *
      * @param int|null $min
      *
@@ -117,19 +162,23 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Filter by name.
+     * Search entities by name.
      *
-     * @param string|null $name
+     * Applies a LIKE query on the name column if a term is provided.
+     *
+     * @param string|null $term
      *
      * @return self
      */
-    public function filterName(?string $name): self
+    public function searchByName(?string $term): self
     {
-        return $this->when($name, fn($q) => $q->where('name', 'like', "%{$name}%"));
+        return $this->when($term, fn($q) => $q->where('name', 'like', "%{$term}%"));
     }
 
     /**
-     * Filter by name.
+     * Filter entities by code.
+     *
+     * Converts the provided code into uppercase before filtering.
      *
      * @param string|null $code
      *
@@ -141,10 +190,25 @@ class EntityBuilder extends Builder
     }
 
     /**
-     * Entry point to apply dynamic filters.
+     * Apply dynamic filters on entities.
      *
-     * This method provides a clean, fluent interface to conditionally apply
-     * various search parameters from a user request.
+     * This is the main entry point for applying multiple filters
+     * based on request parameters.
+     *
+     * Supported filters:
+     * - is_active               : bool|null
+     * - user_id                 : int|null
+     * - name                    : string|null
+     * - code                    : string|null
+     * - entity_type             : string|null
+     * - can_provide_services    : bool|null
+     * - can_receive_referrals   : bool|null
+     * - can_fund_programs       : bool|null
+     * - min_case_referrals      : int|null
+     * - min_program_fundings    : int|null
+     * - min_donor_reports       : int|null
+     * - min_activities          : int|null
+     *
      *
      * @param array<string, mixed> $filters
      *

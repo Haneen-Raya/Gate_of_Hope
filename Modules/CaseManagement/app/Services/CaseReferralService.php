@@ -5,10 +5,8 @@ namespace Modules\CaseManagement\Services;
 use DomainException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 use Modules\CaseManagement\Models\CaseReferral;
-
-use function Symfony\Component\Clock\now;
 
 class CaseReferralService
 {
