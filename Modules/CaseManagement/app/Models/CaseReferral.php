@@ -97,8 +97,8 @@ class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 
     /**
      * Map the Model to its dedicated Event Formatter.
-     * * This method acts as the structural link required by the `HasCaseEvents` contract. 
-     * It instructs the central EventManager to use the specified formatter for 
+     * * This method acts as the structural link required by the `HasCaseEvents` contract.
+     * It instructs the central EventManager to use the specified formatter for
      * transforming raw Eloquent mutations into domain-specific timeline events.
      *
      * @return string The fully qualified class name of the formatter.
@@ -225,7 +225,7 @@ class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 
     /**
      * Get all timeline events associated with this specific case.
-     * * This provides a chronological audit trail of all actions, 
+     * * This provides a chronological audit trail of all actions,
      * sessions, and status changes linked to the beneficiary's file.
      *
      * @return HasMany
@@ -233,6 +233,7 @@ class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
     public function caseEvents(): HasMany
     {
         return $this->hasMany(CaseEvent::class, 'beneficiary_case_id');
+    }
       /*
      * Determine if this referral belongs to a given beneficiary user.
      *

@@ -97,6 +97,7 @@ class Trainer extends Model
     public function recordedAttendances(): HasMany
     {
         return $this->hasMany(ActivityAttendance::class,'recorded_by');
+    }
     /**
      * Create a new Eloquent query builder for the model.
      */
