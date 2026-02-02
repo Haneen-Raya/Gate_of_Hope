@@ -13,17 +13,14 @@ return new class extends Migration
     {
         Schema::create('case_events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('beneficiary_case_id')->constrained('beneficiary_cases');
-            $table->foreignId('created_by')->constrained('users');
-            $table->string('event_type');
-            $table->text('summary');
-            $table->string('event_ref_type');
-            $table->integer('event_ref_id');
+            $table->foreignId('beneficiary_id')->index();
+            $table->foreignId('beneficiary_case_id')->index();
+            $table->morphs('subject');
+            $table->string('event_tag');
+            $table->json('payload')->nullable();
+            $table->foreignId('actor_id')->constrained('users');
+            $table->timestamp('occurred_at');
             $table->timestamps();
-
-            $table->index(['beneficiary_case_id', 'created_at']);
-            $table->index(['event_type']);
-            $table->index(['event_ref_type', 'event_ref_id']);
         });
     }
 

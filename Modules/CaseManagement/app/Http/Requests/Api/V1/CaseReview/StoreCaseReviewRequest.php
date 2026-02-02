@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReview;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\CaseManagement\Enums\V1\ProgressStatus;
 
@@ -51,6 +52,8 @@ class StoreCaseReviewRequest extends FormRequest
             'notes' => 'nullable|string|max:1000',
 
             'reviewed_at' => 'required|date|before_or_equal:now',
+
+            'specialist_id' => 'required|exists:specialists,id'
         ];
     }
 
@@ -66,5 +69,15 @@ class StoreCaseReviewRequest extends FormRequest
             'reviewed_at'         => 'Review Date',
             'notes'               => 'Clinical/Social Notes',
         ];
+    }
+
+    public function prepareForValidation()
+    {
+        $specialist = Auth::user()->specialist;
+        if ($specialist) {
+            $this->merge([
+                'specialist_id' => Auth::user()->specialist->id
+            ]);
+        }
     }
 }
