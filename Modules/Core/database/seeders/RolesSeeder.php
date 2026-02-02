@@ -78,6 +78,7 @@ class RolesSeeder extends Seeder
                 'social_backgrounds.read',
                 'case.referral.update.status',
                 'entities.read',
+                'program.funding.read'
             ]);
 
         // Case Coordinator

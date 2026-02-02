@@ -141,4 +141,19 @@ class ProgramFunding extends Model implements CacheInvalidatable
     {
         return $this->donorEntity->user_id === $user->id;
     }
+
+    /**
+     * Check whether the given user manages the program linked to this funding.
+     *
+     * A user is considered the program manager if they are the creator
+     * of the associated program.
+     *
+     * @param User $user The user to check.
+     *
+     * @return bool True if the user manages the program, otherwise false.
+     */
+    public function isProgramManagedBy(User $user): bool
+    {
+        return $this->program->created_by === $user->id;
+    }
 }

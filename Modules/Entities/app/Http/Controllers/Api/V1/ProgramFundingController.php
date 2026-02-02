@@ -23,8 +23,8 @@ class ProgramFundingController extends Controller
     {
         return [
             new Middleware('can:program.funding.create', only: ['store']),
-            new Middleware('can:program.funding.update', only: ['index','show']),
-            new Middleware('can:program.funding.read', only: ['update']),
+            new Middleware('can:program.funding.read', only: ['index','show']),
+            new Middleware('can:program.funding.update', only: ['update']),
             new Middleware('can:program.funding.delete', only: ['destroy']),
         ];
     }

@@ -19,16 +19,17 @@ class ProgramFundingPolicy
     }
 
     /**
-     * Determine whether the user can view the given program funding.
+     * Determine whether the user can view a specific program funding record.
      *
      * Access is granted if:
-     * - User is an admin
-     * - User is the donor of the program funding
+     * - The user is an admin.
+     * - The user is the donor who provided this funding.
+     * - The user is the program manager responsible for the related program.
      *
-     * @param User $user
-     * @param ProgramFunding $programFunding
+     * @param User $user The authenticated user.
+     * @param ProgramFunding $programFunding The requested funding record.
      *
-     * @return bool
+     * @return bool True if the user is authorized, otherwise false.
      */
     public function view(User $user, ProgramFunding $programFunding): bool
     {
@@ -37,7 +38,10 @@ class ProgramFundingPolicy
             $user->hasRole('admin')
 
             // 2. donor of the program funding
-            || ($user->hasRole('donor') && $programFunding->isDonoredBy($user));
+            || ($user->hasRole('donor') && $programFunding->isDonoredBy($user))
+
+            // 3.
+            || ($user->hasRole('program_manager') && $programFunding->isProgramManagedBy($user));
     }
 
     /**
