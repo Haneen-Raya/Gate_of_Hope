@@ -2,18 +2,41 @@
 
 namespace Modules\CaseManagement\Models\Builders;
 
-use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
+ * Class ServiceBuilder
  *
+ * Custom query builder responsible for applying
+ * dynamic filters and search conditions on the
+ * Service model.
+ *
+ * This builder provides a fluent interface to filter
+ * services based on request parameters such as:
+ * - activation status
+ * - direction
+ * - issue category
+ * - unit cost range
+ * - name search
+ *
+ * @package Modules\CaseManagement\Models\Builders
+ *
+ * @method self filterDirection(?string $direction)
+ * @method self filterIssueCategory(?int $issueCategoryId)
+ * @method self filterUnitCost(?float $min, ?float $max)
+ * @method self searchByName(?string $term)
+ * @method self filter(array $filters)
  */
 class ServiceBuilder extends Builder
 {
     /**
-     * Filter by activation status.
+     * Handle bypassing the global active scope.
+     *
+     * If the user passes is_active = false,
+     * the builder will explicitly return only inactive records.
      *
      * @param mixed $isActiveValue
+     *      Value passed from filters (true/false/null).
      *
      * @return self
      */
@@ -27,7 +50,9 @@ class ServiceBuilder extends Builder
     }
 
     /**
-     * Filter by service direction.
+     * Filter services by direction.
+     *
+     * This filter matches the direction column exactly.
      *
      * @param string|null $direction
      *
@@ -35,13 +60,14 @@ class ServiceBuilder extends Builder
      */
     public function filterDirection(?string $direction): self
     {
-        return $this->when($direction, function ($q) use ($direction) {
-            $q->where('direction', $direction);
-        });
+        return $this->when($direction, fn($q) => $q->where('direction', $direction));
+
     }
 
     /**
-     * Filter by issue category.
+     * Filter services by issue category.
+     *
+     * Applies filtering using the foreign key issue_category_id.
      *
      * @param int|null $issueCategoryId
      *
@@ -49,13 +75,13 @@ class ServiceBuilder extends Builder
      */
     public function filterIssueCategory(?int $issueCategoryId): self
     {
-        return $this->when($issueCategoryId, function ($q) use ($issueCategoryId) {
-            $q->where('issue_category_id', $issueCategoryId);
-        });
+        return $this->when($issueCategoryId, fn($q) => $q->where('issue_category_id', $issueCategoryId));
     }
 
     /**
      * Search services by name.
+     *
+     * Applies a LIKE query on the name column if a term is provided.
      *
      * @param string|null $term
      *
@@ -63,13 +89,13 @@ class ServiceBuilder extends Builder
      */
     public function searchByName(?string $term): self
     {
-        return $this->when($term, function ($q) use ($term) {
-            $q->where('name', 'like', "%{$term}%");
-        });
+        return $this->when($term, fn($q) => $q->where('name', 'like', "%{$term}%"));
     }
 
     /**
-     * Filter by unit cost range.
+     * Filter services by unit cost range.
+     *
+     * Allows filtering between minimum and maximum cost values.
      *
      * @param float|null $min
      * @param float|null $max
@@ -87,11 +113,19 @@ class ServiceBuilder extends Builder
     }
 
     /**
-     * Entry point to apply dynamic filters.
+     * Apply dynamic filters on services.
      *
-     * This method provides a clean, fluent interface to conditionally apply
-     * various search parameters from a user request.
-     * 
+     * This is the main entry point for applying multiple filters
+     * based on request parameters.
+     *
+     * Supported filters:
+     * - is_active          : bool|null
+     * - direction          : string|null
+     * - issue_category_id  : int|null
+     * - min_cost           : float|null
+     * - max_cost           : float|null
+     * - name               : string|null
+     *
      * @param array<string, mixed> $filters
      *
      * @return self

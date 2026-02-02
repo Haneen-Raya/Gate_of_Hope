@@ -1,11 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\HumanResources\Http\Controllers\Api\V1\HumanResourcesController;
-use Modules\HumanResources\Http\Controllers\Api\V1\SpecialistController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes Entry Point
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('humanresources', HumanResourcesController::class)->names('humanresources');
-        require __DIR__ . '/v1/specialists.php';
-        require __DIR__ . '/v1/trainers.php';
+
+    // Register professions routes
+    require __DIR__ . '/V1/professions.php';
+
+    // Register specialists routes
+    require __DIR__ . '/v1/specialists.php';
+
+    // Register trainers routes
+    require __DIR__ . '/v1/trainers.php';
 });

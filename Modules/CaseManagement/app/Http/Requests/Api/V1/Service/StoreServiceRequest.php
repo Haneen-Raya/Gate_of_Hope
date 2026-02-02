@@ -3,8 +3,9 @@
 namespace Modules\CaseManagement\Http\Requests\Api\V1\Service;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\ServiceDirection;
+use Modules\CaseManagement\Enums\V1\ServiceDirection;
 
 class StoreServiceRequest extends FormRequest
 {
@@ -13,7 +14,8 @@ class StoreServiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('service.create');
     }
     /**
      * Get the validation rules that apply to the request.

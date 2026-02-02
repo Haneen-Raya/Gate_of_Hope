@@ -21,12 +21,39 @@ class PermissionsSeeder extends Seeder
             'system_settings.read','system_settings.update',
             'audit_logs.read',
 
+            //Google forms
+            'google_forms.read',
+            'google_forms.create',
+            'google_forms.update',
+            'google_forms.delete',
+            'google_forms.import',
+
+            //Priority Rules
+            'priority_rules.read',
+            'priority_rules.create',
+            'priority_rules.update',
+            'priority_rules.delete',
+
             // Beneficiaries
             'beneficiaries.create','beneficiaries.read','beneficiaries.read_sensitive',
             'beneficiaries.update','beneficiaries.delete','beneficiaries.archive',
 
             'beneficiary_documents.create','beneficiary_documents.read',
             'beneficiary_documents.update','beneficiary_documents.delete',
+
+            // Reference Data (Lookup Tables)
+            'education_levels.create','education_levels.read',
+            'education_levels.update','education_levels.activation.update','education_levels.delete',
+
+            'housing_types.create','housing_types.read',
+            'housing_types.update','housing_types.activation.update','housing_types.delete',
+
+            'employment_statuses.create','employment_statuses.read',
+            'employment_statuses.update','employment_statuses.activation.update','employment_statuses.delete',
+
+            // Social Backgrounds
+            'social_backgrounds.create.self','social_backgrounds.read',
+            'social_backgrounds.update.self','social_backgrounds.delete.self',
 
             // Assessments
             'assessments.create','assessments.read','assessments.update','assessments.delete',
@@ -36,7 +63,7 @@ class PermissionsSeeder extends Seeder
             'case_assignments.update','case_assignments.delete',
 
             'cases.read','case_support_plans.read','case_sessions.read',
-            'case_reviews.read','case_referrals.read',
+            'case_reviews.read','case_reviews.create','case_reviews.update','case_reviews.delete','case_referrals.read',
 
             // Issues
             'issue_categories.create','issue_categories.read',
@@ -70,7 +97,7 @@ class PermissionsSeeder extends Seeder
             'file.read','file.update',
             'case_session.view_any','case_session.view_all','case_session.view_by_date',
             'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
-            'case_session.view_by_specialist', 'case_session.count', 
+            'case_session.view_by_specialist', 'case_session.count',
             'case.review.create','case.review.read','case.review.update',
 
             // Community provider
@@ -80,6 +107,16 @@ class PermissionsSeeder extends Seeder
             'activities.sessions.update','activities.sessions.delete',
             'activity.beneficiary.read_minimal',
 
+            // Entities
+            'entities.create','entities.read',
+            'entities.update','entities.delete',
+
+            'entities.read.self',
+            'entities.update.self','entities.activation.update',
+
+            // Program Fundings
+            'program.funding.create','program.funding.update','program.funding.read','program.funding.delete',
+
             // Donor & Research
             'program.read.funded','program_funding.read.self','donor_report.read', 'donor_report.generate',
             'program.report.read.aggregated','program.analytics.read','region.statistics.read',
@@ -88,7 +125,7 @@ class PermissionsSeeder extends Seeder
 
             // Program manager
             'programs.create','programs.read','programs.update','programs.delete','programs.approve',
-            'activities.create','activities.read','activities.update','activities.delete',
+            'activities.create','activities.read','activities.update','activities.delete','activities.activation.update',
             'resources.allocate','resources.read','resources.update',
             'reports.read','statistics.read',
 
@@ -102,11 +139,15 @@ class PermissionsSeeder extends Seeder
 
             'case.event.create','case.event.read','case.event.update',
 
-            'case.referral.create','case.referral.read',
-            'case.referral.update','case.specialist.assign','case.specialist.revoke',
+            'case.referral.create','case.referral.read','case.referral.update.status',
+            'case.referral.update','case.referral.delete',
+            'case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',
 
+            'regions.create','regions.read','regions.update','regions.delete',
+            //activity attendance
+            'activity.attendance.create','activity.attendance.read','activity.attendance.update','activity.attendance.delete',
             // trainer 
             'trainer.profile.read','trainer.profile.update','trainer.schedule.read',
             'trainer.session.read','trainer.session.create','trainer.session.update',

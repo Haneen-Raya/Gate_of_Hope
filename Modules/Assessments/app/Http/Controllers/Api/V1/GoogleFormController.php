@@ -4,11 +4,13 @@ namespace Modules\Assessments\Http\Controllers\Api\V1;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Modules\Assessments\Models\GoogleForm;
 use Modules\Assessments\Services\V1\FormGoogleServices;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\Assessments\Services\V1\AssessmentImportService;
 use Modules\Assessments\Http\Requests\V1\GoogleForm\StoreGoogleFormRequest;
-use Modules\Assessments\Http\Requests\V1\GoogleForm\UpdateGoogleFormRequest;
 use Modules\Assessments\Http\Requests\V1\Assessment\ImportAssessmentRequest;
+use Modules\Assessments\Http\Requests\V1\GoogleForm\UpdateGoogleFormRequest;
 
 /**
  * Class GoogleFormController
@@ -18,6 +20,7 @@ use Modules\Assessments\Http\Requests\V1\Assessment\ImportAssessmentRequest;
  */
 class GoogleFormController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * @param FormGoogleServices $service Service for Google Form CRUD operations.
      * @param AssessmentImportService $importService Service for handling Excel file imports.
@@ -33,6 +36,7 @@ class GoogleFormController extends Controller
      */
     public function index(): JsonResponse
     {
+        $this->authorize('viewAny', GoogleForm::class);
         $forms = $this->service->list(request('per_page', 10));
 
         $data = [
@@ -55,6 +59,7 @@ class GoogleFormController extends Controller
      */
     public function store(StoreGoogleFormRequest $request): JsonResponse
     {
+        $this->authorize('create', GoogleForm::class);
         $form = $this->service->create($request->validated());
 
         return $this->successResponse(
@@ -71,6 +76,7 @@ class GoogleFormController extends Controller
      */
     public function show($id): JsonResponse
     {
+        $this->authorize('viewAny', GoogleForm::class);
         $form = $this->service->getById($id);
 
         return $this->successResponse(
@@ -102,6 +108,7 @@ class GoogleFormController extends Controller
      */
     public function update(UpdateGoogleFormRequest $request, $id): JsonResponse
     {
+        $this->authorize('update', GoogleForm::class);
         $form = $this->service->update($id, $request->validated());
 
         return $this->successResponse(
@@ -117,6 +124,7 @@ class GoogleFormController extends Controller
      */
     public function destroy($id): JsonResponse
     {
+        $this->authorize('delete', GoogleForm::class);
         $this->service->delete($id);
         return $this->successResponse('Form deleted successfully', null, 200);
     }
@@ -129,6 +137,7 @@ class GoogleFormController extends Controller
      */
     public function importResults(ImportAssessmentRequest $request): JsonResponse
     {
+        $this->authorize('import', GoogleForm::class);
         $validated = $request->validated();
 
         $this->importService->handleImport(

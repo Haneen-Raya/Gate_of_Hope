@@ -3,6 +3,7 @@
 namespace Modules\Beneficiaries\Http\Requests\Api\V1\HousingType;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateHousingTypeActivationRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class UpdateHousingTypeActivationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('housing_types.activation.update');
     }
     /**
      * Get the validation rules that apply to the request.

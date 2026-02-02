@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseSupportPlan\StoreCaseSupportPlanRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseSupportPlan\UpdateCaseSupportPlanRequest;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CaseSupportPlanController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Service to handle case-support-plan-related logic
      * and separating it from the controller
@@ -44,13 +47,16 @@ class CaseSupportPlanController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Filter Extraction: Gather all dynamic filter criteria from the request.
+        // 1. authorization
+        $this->authorize('viewAny', CaseSupportPlan::class);
+
+        // 2. Filter Extraction: Gather all dynamic filter criteria from the request.
         $filters = $request->all();
 
-        // 2. Execution: Fetch cached and filtered data through the service layer.
+        // 3. Execution: Fetch cached and filtered data through the service layer.
         $caseSupportPlans = $this->caseSupportPlanService->list($filters);
 
-        // 3. Response
+        // 4. Response
         return self::successResponse('Case Support Plans fetched successfully', $caseSupportPlans);
     }
 
@@ -66,10 +72,13 @@ class CaseSupportPlanController extends Controller
      */
     public function store(StoreCaseSupportPlanRequest $request)
     {
-        // 1. Service Logic: Persists data and manages audit trail (created_by/updated_by).
+        // 1. authorization
+        $this->authorize('create', CaseSupportPlan::class);
+
+        // 2. Service Logic: Persists data and manages audit trail (created_by/updated_by).
         $caseSupportPlan = $this->caseSupportPlanService->store($request->validated());
 
-        // 2. Response (HTTP 201 Created)
+        // 3. Response (HTTP 201 Created)
         return self::successResponse('Case support plan created successfully', $caseSupportPlan, 201);
     }
 
@@ -94,6 +103,9 @@ class CaseSupportPlanController extends Controller
         // 1. Retrieve Data: Handled by service with "Dual-Tag" caching strategy.
         $caseSupportPlan = $this->caseSupportPlanService->getById($id);
 
+        // 2. authorization
+        $this->authorize('view', $caseSupportPlan);
+
         // 2. Response
         return self::successResponse('Case support plan fetched successfully', $caseSupportPlan);
     }
@@ -110,10 +122,13 @@ class CaseSupportPlanController extends Controller
      */
     public function update(UpdateCaseSupportPlanRequest $request, CaseSupportPlan $caseSupportPlan)
     {
-        // 1. Service Logic: Updates the record and purges specific cache tags.
+        // 1. authorization
+        $this->authorize('update', $caseSupportPlan);
+
+        // 2. Service Logic: Updates the record and purges specific cache tags.
         $caseSupportPlan = $this->caseSupportPlanService->update($caseSupportPlan, $request->validated());
 
-        // 2. Response
+        // 3. Response
         return self::successResponse('Case support plan updated successfully', $caseSupportPlan);
     }
 
@@ -125,10 +140,13 @@ class CaseSupportPlanController extends Controller
      */
     public function destroy(CaseSupportPlan $caseSupportPlan)
     {
-        // 1. Service Logic
+        // 1. authorization
+        $this->authorize('delete', $caseSupportPlan);
+
+        // 2. Service Logic
         $this->caseSupportPlanService->delete($caseSupportPlan);
 
-        // 2. Response
+        // 3. Response
         return self::successResponse('Case support plan deleted successfully');
     }
 }

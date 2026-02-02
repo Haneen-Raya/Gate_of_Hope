@@ -3,6 +3,7 @@
 namespace Modules\Assessments\Services\V1;
 
 use Illuminate\Support\Facades\Cache;
+use Modules\Assessments\Models\PriorityRule;
 use Modules\Assessments\Models\PriorityRules;
 
 /**
@@ -38,14 +39,14 @@ class PriorityRuleService
     /**
      * Retrieve all active priority rules with their associated issue types.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|PriorityRules[]
+     * @return \Illuminate\Database\Eloquent\Collection|PriorityRule[]
      */
     public function getAll()
     {
         $cacheKey = "priority_rules_list_all";
 
         return Cache::tags([self::TAG_RULES_GLOBAL])->remember($cacheKey, self::CACHE_TTL, function () {
-            return PriorityRules::with('issueType')->where('is_active', 1)->get();
+            return PriorityRule::with('issueType')->where('is_active', 1)->get();
         });
     }
 
@@ -56,7 +57,7 @@ class PriorityRuleService
      * invalidates its own specific cache and the global list.
      *
      * @param int $id The unique identifier of the rule.
-     * @return PriorityRules
+     * @return PriorityRule
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function getById(int $id)
@@ -65,7 +66,7 @@ class PriorityRuleService
         $specificTag = self::TAG_RULE_PREFIX . $id;
 
         return Cache::tags([self::TAG_RULES_GLOBAL, $specificTag])->remember($cacheKey, self::CACHE_TTL, function () use ($id) {
-            return PriorityRules::with('issueType')->findOrFail($id);
+            return PriorityRule::with('issueType')->findOrFail($id);
         });
     }
 
@@ -74,11 +75,11 @@ class PriorityRuleService
      * Note: Global cache is automatically invalidated via AutoFlushCache trait in the model.
      *
      * @param array $data Validated rule data (issue_type_id, min_score, max_score, priority).
-     * @return PriorityRules
+     * @return PriorityRule
      */
     public function create(array $data)
     {
-        return PriorityRules::create($data);
+        return PriorityRule::create($data);
     }
 
     /**
@@ -87,11 +88,11 @@ class PriorityRuleService
      *
      * @param int $id The ID of the rule to update.
      * @param array $data The updated attributes.
-     * @return PriorityRules
+     * @return PriorityRule
      */
     public function update(int $id, array $data)
     {
-        $rule = PriorityRules::findOrFail($id);
+        $rule = PriorityRule::findOrFail($id);
         $rule->update($data);
 
         return $rule;
@@ -106,7 +107,7 @@ class PriorityRuleService
      */
     public function delete(int $id)
     {
-        $rule = PriorityRules::findOrFail($id);
+        $rule = PriorityRule::findOrFail($id);
         return $rule->delete();
     }
 }

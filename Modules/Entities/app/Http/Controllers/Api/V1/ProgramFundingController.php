@@ -3,57 +3,128 @@
 namespace Modules\Entities\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Modules\Entities\Http\Requests\Api\V1\ProgramFunding\StoreProgramFundingRequest;
+use Modules\Entities\Http\Requests\Api\V1\ProgramFunding\UpdateProgramFundingRequest;
+use Modules\Entities\Models\ProgramFunding;
+use Modules\Entities\Services\ProgramFundingService;
 
 class ProgramFundingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    use AuthorizesRequests;
 
-        return response()->json([]);
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:program.funding.create', only: ['store']),
+            new Middleware('can:program.funding.read', only: ['index','show']),
+            new Middleware('can:program.funding.update', only: ['update']),
+            new Middleware('can:program.funding.delete', only: ['destroy']),
+        ];
+    }
+
+    protected ProgramFundingService $programFundingService;
+
+    /**
+     * Constructor for the ProgramFundingController class.
+     * Initializes the $programFundingService property via dependency injection.
+     *
+     * @param ProgramFundingService $programFundingService
+     */
+    public function __construct(ProgramFundingService $programFundingService)
+    {
+        $this->programFundingService = $programFundingService;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * This method return all program fundings from database.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function index(Request $request)
     {
-        //
-
-        return response()->json([]);
+        $filters = $request->all();
+        return $this->successResponse(
+            'Operation succcessful',
+            $this->programFundingService->getAllProgramFundings($filters),
+            200
+        );
     }
 
     /**
-     * Show the specified resource.
+     * Add a new program funding to the database using the programFundingService via the createProgramFunding method
+     * passes the validated request data to createProgramFunding.
+     *
+     * @param StoreProgramFundingRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function store(StoreProgramFundingRequest $request)
     {
-        //
-
-        return response()->json([]);
+        return $this->successResponse(
+            'Created succcessful',
+            $this->programFundingService->createProgramFunding($request->validated()),
+            201
+        );
     }
 
     /**
-     * Update the specified resource in storage.
+     * Get program funding from database.
+     * using the programFundingService via the showProgramFunding method
+     *
+     * @param ProgramFunding $programFunding
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function show(ProgramFunding $programFunding)
     {
-        //
-
-        return response()->json([]);
+        $this->authorize('view', $programFunding);
+        return $this->successResponse(
+            'Operation succcessful',
+            $this->programFundingService->showProgramFunding($programFunding),
+            200
+        );
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update a program funding in the database using the programFundingService via the updateProgramFunding method.
+     * passes the validated request data to updateProgramFunding.
+     *
+     * @param UpdateProgramFundingRequest $request
+     * @param ProgramFunding $programFunding
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function update(UpdateProgramFundingRequest $request, ProgramFunding $programFunding)
     {
-        //
-
-        return response()->json([]);
+        return $this->successResponse(
+            'Updated succcessful',
+            $this->programFundingService->updateProgramFunding($request->validated(), $programFunding)
+        );
     }
+
+    /**
+     * Remove the specified program funding from database.
+     *
+     * @param ProgramFunding $programFunding
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(ProgramFunding $programFunding)
+    {
+        $this->programFundingService->deleteProgramFunding($programFunding);
+        return $this->successResponse(
+            'Deleted succcessful',
+            null
+        );
+    }
+
 }

@@ -9,11 +9,11 @@ use Modules\CaseManagement\Http\Controllers\Api\V1\BeneficiaryCaseController;
 |--------------------------------------------------------------------------
 | File Path: Modules/CaseManagement/Routes/V1/case.php
 | Controller: BeneficiaryCaseController
-| Purpose: إدارة دورة حياة الحالات (فتح، تحديث، إغلاق، وحذف) مع الكاش.
+|
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1/cases')->group(function () {
+Route::prefix('cases')->group(function () {
 
     /**
      * @name 1. List All Cases
@@ -33,7 +33,6 @@ Route::prefix('v1/cases')->group(function () {
      * - Pagination (Default 15 per page)
      * - Dynamic Filtering via BeneficiaryCaseBuilder
      */
-    Route::get('/', [BeneficiaryCaseController::class, 'index']);
     Route::get('/', [BeneficiaryCaseController::class, 'index']);
 
     /**

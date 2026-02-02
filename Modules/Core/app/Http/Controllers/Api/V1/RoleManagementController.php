@@ -10,65 +10,60 @@ use App\Http\Controllers\Controller;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\Core\Services\RoleManagementService;
 use Modules\Core\Http\Requests\V1\Role\UserRoleRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 /**
  * Class RoleManagementController
- * * This controller manages API endpoints for user role administration.
- * It utilizes RoleManagementService to handle the business logic of roles.
+ * * Manages the administrative tasks related to user roles, including
+ * listing, assigning, updating, and revoking roles using Spatie Laravel-Permission.
+ * * @package Modules\Core\Http\Controllers\Api\V1
  */
 class RoleManagementController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
-     * @var RoleManagementService The service instance for role operations.
+     * @var RoleManagementService The service responsible for role business logic.
      */
     protected RoleManagementService $roleService;
 
     /**
      * RoleManagementController constructor.
-     * * @param RoleManagementService $roleService
+     * * @param RoleManagementService $roleService Dependency injection of the role service.
      */
     public function __construct(RoleManagementService $roleService)
     {
         $this->roleService = $roleService;
     }
 
-    //  /**
-    //      * Define the middleware for this controller.
-    //      *
-    //      * @return array
-    //      */
-        // public static function middleware(): array
-        // {
-        //     return [
-        //         new Middleware('permission:manage User Role', only: ['index', 'assign', 'update','revoke']),
-        //     ];
-        // }
-
     /**
      * List all available roles in the system.
-     * * @return JsonResponse Returns a collection of all roles.
+     * * Validates if the authenticated user has 'manageRoles' authority.
+     * * @return JsonResponse List of all system roles.
      */
     public function index(): JsonResponse
     {
+        $this->authorize('manageRoles', User::class);
         $roles = $this->roleService->getAllRoles();
         return $this->successResponse('Roles retrieved successfully.', $roles);
     }
 
     /**
      * Assign a specific role to a user.
-     * * @param UserRoleRequest $request Validated request containing the 'role' name.
-     * @param User $user The user model instance injected via Route Model Binding.
-     * @return JsonResponse Success response with updated user data, or error if conflict occurs.
+     * * @param UserRoleRequest $request Validated request (Only Admins allowed).
+     * @param User $user The target user receiving the role via Route Model Binding.
+     * @return JsonResponse Success or conflict response if the role exists.
      */
     public function assign(UserRoleRequest $request, User $user): JsonResponse
     {
+        $this->authorize('manageRoles', User::class);
         $validatedData = $request->validated();
         $roleName = $validatedData['role'];
 
         $updatedUser = $this->roleService->assignRoleToUser($user, $roleName);
 
         if (!$updatedUser) {
-            return $this->errorResponse("User already has the '{$roleName}' role.", null, Response::HTTP_CONFLICT); // 409
+            return $this->errorResponse("User already has the '{$roleName}' role.", null, Response::HTTP_CONFLICT);
         }
 
         return $this->successResponse(
@@ -78,13 +73,15 @@ class RoleManagementController extends Controller
     }
 
     /**
-     * Replace existing user roles with a new role.
-     * * @param UserRoleRequest $request Validated request containing the 'role' name.
-     * @param User $user The user model instance.
-     * @return JsonResponse Success response with updated user and their new role.
+     * Replace all current user roles with a single new role.
+     * * Useful for strict single-role enforcement.
+     * * @param UserRoleRequest $request Validated request.
+     * @param User $user The target user.
+     * @return JsonResponse Updated user data.
      */
     public function update(UserRoleRequest $request, User $user): JsonResponse
     {
+        $this->authorize('manageRoles', User::class);
         $validatedData = $request->validated();
         $roleName = $validatedData['role'];
 
@@ -98,19 +95,20 @@ class RoleManagementController extends Controller
 
     /**
      * Remove a specific role from a user.
-     * * @param UserRoleRequest $request Validated request containing the 'role' name.
-     * @param User $user The user model instance.
-     * @return JsonResponse Success response if revoked, or 404 if the user didn't have the role.
+     * * @param UserRoleRequest $request Validated request.
+     * @param User $user The target user.
+     * @return JsonResponse Success or 404 if user does not possess the role.
      */
     public function revoke(UserRoleRequest $request, User $user): JsonResponse
     {
+        $this->authorize('manageRoles', User::class);
         $validatedData = $request->validated();
         $roleName = $validatedData['role'];
 
-        $updatedUser = $this->roleService->revokeRoleFromUser($user, $request->validated()['role']);
+        $updatedUser = $this->roleService->revokeRoleFromUser($user, $roleName);
 
         if (!$updatedUser) {
-            return $this->errorResponse("User does not have the '{$roleName}' role to revoke.", null, Response::HTTP_NOT_FOUND); // 404
+            return $this->errorResponse("User does not have the '{$roleName}' role to revoke.", null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->successResponse(

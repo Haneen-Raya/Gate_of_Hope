@@ -11,6 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Programs\Models\ActivitySession;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Programs\Models\ActivityAttendance;
 use Modules\HumanResources\Enums\CertificationLevel;
 use Modules\HumanResources\Enums\Gender;
 use Modules\HumanResources\Enums\TrainerStatus;
@@ -80,6 +81,25 @@ class Trainer extends Model
     public function activitySessions(): HasMany
     {
         return $this->hasMany(ActivitySession::class);
+    }
+
+    /**
+     * Get all attendance records recorded by this trainer.
+     *
+     * Defines a one-to-many relationship where a trainer
+     * can register multiple attendance entries across sessions.
+     *
+     * This is useful for auditing trainer activity and monitoring
+     * session engagement responsibilities.
+     *
+     * Linked via the recorded_by foreign key
+     * on the activity_attendances table.
+     *
+     * @return HasMany
+     */
+    public function recordedAttendances(): HasMany
+    {
+        return $this->hasMany(ActivityAttendance::class,'recorded_by');
     }
     /**
      * Create a new Eloquent query builder for the model.
