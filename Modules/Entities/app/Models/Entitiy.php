@@ -2,8 +2,10 @@
 
 namespace Modules\Entities\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,7 +40,7 @@ use Illuminate\Database\Query\Builder;
  *
  * @package Modules\Entities\Models
  */
-class Entitiy extends Model
+class Entitiy extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity, HasActiveState, AutoFlushCache;
 
@@ -95,7 +97,7 @@ class Entitiy extends Model
      * @var string
      */
     protected $table = 'entities';
-    
+
     /**
      * Define cache tags to invalidate on model changes.
      * Implementing the "Ripple Effect" to purge list and detail caches.
@@ -124,16 +126,20 @@ class Entitiy extends Model
     }
 
     /**
-     * Mutator: Capitalize the first letter of "name" before storing.
-     * This acts as a safety net for both auto-generated and manually entered codes.
+     * Accessor & Mutator for the "name" attribute.
      *
-     * @param string $value
+     * - Getter: Capitalizes the first character when accessing the name.
      *
-     * @return void
+     * - Setter: Converts the value to lowercase before storing in the database.
+     *
+     * @return Attribute
      */
-    public function setNameAttribute($value): void
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucfirst($value);
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
     }
 
     /**

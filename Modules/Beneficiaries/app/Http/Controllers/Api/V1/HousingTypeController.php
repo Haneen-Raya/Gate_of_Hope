@@ -4,6 +4,7 @@ namespace Modules\Beneficiaries\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\StoreHousingTypeRequest;
 use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\UpdateHousingTypeActivationRequest;
 use Modules\Beneficiaries\Http\Requests\Api\V1\HousingType\UpdateHousingTypeRequest;
@@ -12,6 +13,21 @@ use Modules\Beneficiaries\Services\HousingTypeService;
 
 class HousingTypeController extends Controller
 {
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:housing_types.create', only: ['store']),
+            new Middleware('can:housing_types.read', only: ['index','show']),
+            new Middleware('can:housing_types.update', only: ['update']),
+            new Middleware('can:housing_types.activation.update', only: ['updateActivation']),
+            new Middleware('can:housing_types.delete', only: ['destroy']),
+        ];
+    }
+
     protected HousingTypeService $housingTypeService;
 
     /**
@@ -34,7 +50,7 @@ class HousingTypeController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->validated();
+        $filters = $request->all();
         return $this->successResponse(
             'Operation succcessful',
             $this->housingTypeService->getAllHousingTypes($filters),

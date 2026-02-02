@@ -3,8 +3,9 @@
 namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseReferral;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 
 class UpdateCaseReferralStatusRequest extends FormRequest
 {
@@ -13,7 +14,8 @@ class UpdateCaseReferralStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('case.referral.update.status');
     }
     /**
      * Get the validation rules that apply to the request.

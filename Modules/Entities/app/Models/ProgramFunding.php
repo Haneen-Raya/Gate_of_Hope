@@ -2,11 +2,13 @@
 
 namespace Modules\Entities\Models;
 
+use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
+use Modules\Core\Models\User;
 use Modules\Entities\Models\Builders\ProgramFundingBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -23,7 +25,7 @@ use Modules\Programs\Models\Program;
  *
  * @package Modules\Entities\Models
  */
-class ProgramFunding extends Model
+class ProgramFunding extends Model implements CacheInvalidatable
 {
     use HasFactory, LogsActivity,AutoFlushCache;
 
@@ -76,7 +78,7 @@ class ProgramFunding extends Model
 
     /**
      * Override the default Eloquent query builder.
-     * This tells Laravel to use our custom EntityBuilder instead of the default one.
+     * This tells Laravel to use our custom ProgramFundingBuilder instead of the default one.
      *
      * @param Builder $query
      *
@@ -126,5 +128,32 @@ class ProgramFunding extends Model
     public function program():BelongsTo
     {
         return $this->belongsTo(Program::class);
+    }
+
+    /**
+     * Determine if this funding is donored by a specific donor entity.
+     *
+     * @param User $user The user to check as donor entity
+     *
+     * @return bool True if the user is the donor entity, false otherwise
+     */
+    public function isDonoredBy(User $user): bool
+    {
+        return $this->donorEntity->user_id === $user->id;
+    }
+
+    /**
+     * Check whether the given user manages the program linked to this funding.
+     *
+     * A user is considered the program manager if they are the creator
+     * of the associated program.
+     *
+     * @param User $user The user to check.
+     *
+     * @return bool True if the user manages the program, otherwise false.
+     */
+    public function isProgramManagedBy(User $user): bool
+    {
+        return $this->program->created_by === $user->id;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Modules\Core\Models;
 
+use App\Contracts\CacheInvalidatable;
+use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -20,9 +22,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * Handles region-specific attributes, logging, and relationships.
  * * @package Modules\Core\Models
  */
-class Region extends Model
+class Region extends Model implements CacheInvalidatable
 {
-    use HasActiveState,HasFactory, LogsActivity,HasSpatial;
+    use HasActiveState,HasFactory, LogsActivity,HasSpatial, AutoFlushCache;
 
     /**
      * @var array<int, string> The attributes that are mass assignable.

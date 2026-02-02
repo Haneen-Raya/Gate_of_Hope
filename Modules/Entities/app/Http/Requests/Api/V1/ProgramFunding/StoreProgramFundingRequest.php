@@ -3,6 +3,7 @@
 namespace Modules\Entities\Http\Requests\Api\V1\ProgramFunding;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreProgramFundingRequest extends FormRequest
 {
@@ -11,8 +12,10 @@ class StoreProgramFundingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('program.funding.create');
     }
+
     /**
      * Get the validation rules that apply to the request.
      */

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\CaseManagement\Enums;
+namespace Modules\CaseManagement\Enums\V1;
 
 /**
  * @Enum CaseReferralUrgencyLevel

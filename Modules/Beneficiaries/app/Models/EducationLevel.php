@@ -2,17 +2,39 @@
 
 namespace Modules\Beneficiaries\Models;
 
+use App\Contracts\CacheInvalidatable;
+use App\Traits\AutoFlushCache;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
+use Modules\Beneficiaries\Models\Builders\EducationLevelBuilder;
 
-// use Modules\Beneficiaries\Database\Factories\EducationLevelFactory;
-
-class EducationLevel extends Model
+/**
+ * Class EducationLevel
+ *
+ * Represents an education level record used to classify beneficiaries
+ * based on their academic background.
+ *
+ * Features:
+ * - Automatically flushes related caches when updated.
+ * - Logs all model changes using Spatie Activitylog.
+ * - Uses a custom query builder (EducationLevelBuilder).
+ *
+ * @package Modules\Beneficiaries\Models
+ *
+ * @property int $id
+ * @property string $name
+ * @property bool $is_active
+ *
+ * @method static EducationLevelBuilder query()
+ */
+class EducationLevel extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,AutoFlushCache;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +47,50 @@ class EducationLevel extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Define cache tags to invalidate on model changes.
+     * Implementing the "Ripple Effect" to purge list and detail caches.
+     *
+     * @return array<string>
+     */
+    public function getCacheTagsToInvalidate(): array
+    {
+        return [
+            "education_levels",
+            "education_level_{$this->id}"
+        ];
+    }
+
+    /**
+     * Override the default Eloquent query builder.
+     * This tells Laravel to use our custom EducationLevelBuilder instead of the default one.
+     *
+     * @param Builder $query
+     *
+     * @return EducationLevelBuilder
+     */
+    public function newEloquentBuilder($query): EducationLevelBuilder
+    {
+        return new EducationLevelBuilder($query);
+    }
+
+    /**
+     * Accessor & Mutator for the "name" attribute.
+     *
+     * - Getter: Capitalizes the first character when accessing the name.
+     *
+     * - Setter: Converts the value to lowercase before storing in the database.
+     *
+     * @return Attribute
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucfirst($value),
+            set: fn(string $value) => strtolower($value),
+        );
+    }
 
     /**
      * Configure the activity logging options.
