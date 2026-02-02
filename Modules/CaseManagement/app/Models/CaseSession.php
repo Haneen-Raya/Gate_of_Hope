@@ -10,12 +10,13 @@ use Modules\CaseManagement\Models\Builders\CaseSessionBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\HumanResources\Models\Specialist;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\CaseSessionFactory;
 
 class CaseSession extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity , HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +35,9 @@ class CaseSession extends Model
     'session_type' => SessionType::class,
     'session_date' => 'datetime',
     ];
+
+    public array $translatable = ['notes', 'recommendations'];
+
     
     // protected static function newFactory(): CaseSessionFactory
     // {

@@ -54,12 +54,16 @@ class StoreCaseSessionRequest extends FormRequest
             /**
              * Optional notes related to the session
              */
-            'notes' => ['nullable', 'string'],
+            // JSON for translations
+
+            'notes' => ['nullable', 'array'],
+            'notes.*' => ['string', 'max:1000'],
 
             /**
              * Optional recommendations provided during the session
              */
-            'recommendations' => ['nullable', 'string'],
+            'recommendations' => ['nullable', 'array'],
+            'recommendations.*' => ['string', 'max:1000'],
 
             /**
              * Specialist who conducted the session

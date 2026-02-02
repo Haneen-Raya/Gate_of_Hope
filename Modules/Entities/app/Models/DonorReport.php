@@ -26,6 +26,12 @@ class DonorReport extends Model
         'reporting_period_end'
     ];
 
+      protected $casts = [
+        'aggregated_data' => 'array',
+        'reporting_period_start' => 'date',
+        'reporting_period_end' => 'date',
+    ];
+
     // protected static function newFactory(): DonorReportFactory
     // {
     //     // return DonorReportFactory::new();

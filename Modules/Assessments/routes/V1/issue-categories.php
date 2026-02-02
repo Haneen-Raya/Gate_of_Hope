@@ -18,7 +18,7 @@ use Modules\Assessments\Http\Controllers\Api\V1\IssueCategoryController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1/assessment/issue-categories')->group(function () {
+Route::prefix('assessment/issue-categories')->group(function () {
 
     /**
      * ------------------------------------------------------------------

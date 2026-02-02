@@ -6,23 +6,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateIssueCategoryRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     */
-    public function rules()
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'label' => 'required|string|max:255',
-            'is_active' => 'boolean',
-        ];
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['sometimes', 'array'],
+            'name.ar' => ['sometimes', 'string', 'max:255'],
+            'name.en' => ['sometimes', 'string', 'max:255'],
+
+            'label' => ['sometimes', 'array'],
+            'label.ar' => ['sometimes', 'string', 'max:255'],
+            'label.en' => ['sometimes', 'string', 'max:255'],
+
+            'is_active' => ['sometimes', 'boolean'],
+        ];
     }
 }

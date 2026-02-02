@@ -21,7 +21,7 @@ return new class extends Migration
             $table->geometry('location', 'point');
             $table->integer('capacity');
             $table->string('status')->index();
-            $table->text('session_notes')->nullable();
+            $table->json('session_notes')->nullable();
             $table->timestamps();
 
             $table->spatialIndex('location');

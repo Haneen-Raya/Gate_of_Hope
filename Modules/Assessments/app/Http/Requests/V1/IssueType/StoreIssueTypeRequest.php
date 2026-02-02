@@ -6,23 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreIssueTypeRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     */
-    public function rules()
-    {
-        return [
-            'issue_category_id' => 'required|exists:issue_categories,id',
-            'name' => 'required|string|max:255',
-            'is_active' => 'boolean',
-        ];
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'issue_category_id' => ['required', 'exists:issue_categories,id'],
+
+            // Name is multilingual
+            'name' => ['required', 'array'],
+            'name.ar' => ['required', 'string', 'max:255'],
+            'name.en' => ['required', 'string', 'max:255'],
+
+            'is_active' => ['sometimes', 'boolean'],
+        ];
     }
 }

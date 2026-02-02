@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Modules\Programs\Http\Requests\V1\ActivitySession\NearbyActivitySessionRequest;
 use Modules\Programs\Models\ActivitySession;
 use Modules\Programs\Services\ActivitySessionService;
 use Modules\Programs\Http\Requests\V1\ActivitySession\StoreActivitySessionRequest;
 use Modules\Programs\Http\Requests\V1\ActivitySession\UpdateActivitySessionRequest;
+use Modules\Programs\Http\Resources\ActivitySessionResource;
 
 /**
  * Class ActivitySessionController
@@ -40,16 +42,12 @@ class ActivitySessionController extends Controller
         $this->service = $service;
     }
 
-    /**
+ /**
      * Retrieve a paginated list of activity sessions.
      *
-     * Query Parameters:
-     * - per_page (int, optional): Number of items per page (default: 15)
-     * - page (int, optional): Current page number (default: 1)
-     *
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $this->authorize('viewAny', ActivitySession::class);
 
@@ -58,72 +56,60 @@ class ActivitySessionController extends Controller
 
         $sessions = $this->service->getPaginatedSessions($perPage, $page);
 
-        return $this->successResponse(
-            'Activity sessions retrieved successfully',
-            $sessions
-        );
+        // ➤ استخدام الريسورس لكل عنصر في الصفحة
+        return ActivitySessionResource::collection($sessions)
+            ->additional(['success' => true, 'message' => 'Activity sessions retrieved successfully']);
     }
 
+  
     /**
      * Retrieve a single activity session.
      *
      * @param ActivitySession $activitySession
-     * @return JsonResponse
+     * @return ActivitySessionResource
      */
-    public function show(ActivitySession $activitySession): JsonResponse
+    public function show(ActivitySession $activitySession): ActivitySessionResource
     {
         $this->authorize('view', $activitySession);
 
-        return $this->successResponse(
-            'Activity session retrieved successfully',
-            $activitySession
-        );
+        return (new ActivitySessionResource($activitySession))
+            ->additional(['success' => true, 'message' => 'Activity session retrieved successfully']);
     }
 
-    /**
-     * Create a new activity session.
+  /**
+     * Store a new activity session.
      *
      * @param StoreActivitySessionRequest $request
-     * @return JsonResponse
+     * @return ActivitySessionResource
      */
-    public function store(StoreActivitySessionRequest $request): JsonResponse
+    public function store(StoreActivitySessionRequest $request): ActivitySessionResource
     {
         $this->authorize('create', ActivitySession::class);
 
         $session = $this->service->create($request->validated());
 
-        return $this->successResponse(
-            'Activity session created successfully',
-            $session,
-            201
-        );
+        return (new ActivitySessionResource($session))
+            ->additional(['success' => true, 'message' => 'Activity session created successfully']);
     }
 
-    /**
+       /**
      * Update an existing activity session.
      *
      * @param UpdateActivitySessionRequest $request
      * @param ActivitySession $activitySession
-     * @return JsonResponse
+     * @return ActivitySessionResource
      */
-    public function update(
-        UpdateActivitySessionRequest $request,
-        ActivitySession $activitySession
-    ): JsonResponse {
+    public function update(UpdateActivitySessionRequest $request, ActivitySession $activitySession): ActivitySessionResource
+    {
         $this->authorize('update', $activitySession);
 
-        $session = $this->service->update(
-            $activitySession,
-            $request->validated()
-        );
+        $session = $this->service->update($activitySession, $request->validated());
 
-        return $this->successResponse(
-            'Activity session updated successfully',
-            $session
-        );
+        return (new ActivitySessionResource($session))
+            ->additional(['success' => true, 'message' => 'Activity session updated successfully']);
     }
 
-    /**
+      /**
      * Delete an activity session.
      *
      * @param ActivitySession $activitySession
@@ -135,45 +121,39 @@ class ActivitySessionController extends Controller
 
         $this->service->delete($activitySession);
 
-        return $this->successResponse(
-            'Activity session deleted successfully'
-        );
+        return $this->successResponse('Activity session deleted successfully');
     }
 
     /**
-     * Mark an activity session as completed.
+     * Complete an activity session.
      *
      * @param ActivitySession $activitySession
-     * @return JsonResponse
+     * @return ActivitySessionResource
      */
-    public function complete(ActivitySession $activitySession): JsonResponse
+    public function complete(ActivitySession $activitySession): ActivitySessionResource
     {
         $this->authorize('update', $activitySession);
 
         $session = $this->service->complete($activitySession);
 
-        return $this->successResponse(
-            'Activity session marked as completed',
-            $session
-        );
+        return (new ActivitySessionResource($session))
+            ->additional(['success' => true, 'message' => 'Activity session marked as completed']);
     }
 
     /**
      * Cancel an activity session.
      *
      * @param ActivitySession $activitySession
-     * @return JsonResponse
+     * @return ActivitySessionResource
      */
-    public function cancel(ActivitySession $activitySession): JsonResponse
+    public function cancel(ActivitySession $activitySession): ActivitySessionResource
     {
         $this->authorize('update', $activitySession);
 
         $session = $this->service->cancel($activitySession);
 
-        return $this->successResponse(
-            'Activity session cancelled',
-            $session
-        );
+        return (new ActivitySessionResource($session))
+            ->additional(['success' => true, 'message' => 'Activity session cancelled']);
     }
     /**
      * Retrieve nearby activity sessions based on geographic location.
@@ -190,7 +170,7 @@ class ActivitySessionController extends Controller
      * @param NearbyActivitySessionRequest $request
      * @return JsonResponse
      */
-    public function nearby(NearbyActivitySessionRequest $request): JsonResponse
+   public function nearby(NearbyActivitySessionRequest $request): AnonymousResourceCollection
     {
         $sessions = $this->service->getNearbySessions(
             $request->lat,
@@ -199,10 +179,8 @@ class ActivitySessionController extends Controller
             $request->activity_id
         );
 
-        return $this->successResponse(
-            'Nearby activity sessions retrieved successfully',
-            $sessions
-        );
+        return ActivitySessionResource::collection($sessions)
+            ->additional(['success' => true, 'message' => 'Nearby activity sessions retrieved successfully']);
     }
 
     /**
@@ -211,33 +189,29 @@ class ActivitySessionController extends Controller
      * @param int $trainer Trainer ID
      * @return JsonResponse
      */
-    public function upcomingForTrainer(int $trainer): JsonResponse
+    public function upcomingForTrainer(int $trainer): AnonymousResourceCollection
     {
         $this->authorize('viewUpcomingForTrainer', [ActivitySession::class, $trainer]);
 
         $sessions = $this->service->getUpcomingForTrainer($trainer);
 
-        return $this->successResponse(
-            'Upcoming activity sessions for trainer retrieved successfully',
-            $sessions
-        );
+        return ActivitySessionResource::collection($sessions)
+            ->additional(['success' => true, 'message' => 'Upcoming activity sessions for trainer retrieved successfully']);
     }
 
     /**
      * Retrieve upcoming activity sessions for a specific activity.
      *
      * @param int $activity Activity ID
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function upcomingForActivity(int $activity): JsonResponse
+  public function upcomingForActivity(int $activity): AnonymousResourceCollection
     {
         $this->authorize('viewUpcomingForActivity', ActivitySession::class);
 
         $sessions = $this->service->getUpcomingForActivity($activity);
 
-        return $this->successResponse(
-            'Upcoming activity sessions for activity retrieved successfully',
-            $sessions
-        );
+        return ActivitySessionResource::collection($sessions)
+            ->additional(['success' => true, 'message' => 'Upcoming activity sessions for activity retrieved successfully']);
     }
 }

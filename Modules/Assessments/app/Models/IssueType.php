@@ -13,12 +13,13 @@ use Modules\Assessments\Models\AssessmentResult;
 use Modules\Assessments\Models\PriorityRules;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\Assessments\Database\Factories\IssueTypeFactory;
 
 class IssueType extends Model
 {
-    use HasFactory, LogsActivity , SoftDeletes;
+    use HasFactory, LogsActivity , SoftDeletes , HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -29,6 +30,7 @@ class IssueType extends Model
         'is_active'
     ];
 
+    public array $translatable = ['name'];
     // protected static function newFactory(): IssueTypeFactory
     // {
     //     // return IssueTypeFactory::new();
