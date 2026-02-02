@@ -4,51 +4,42 @@ namespace Modules\HumanResources\Policies;
 
 use Modules\HumanResources\Models\Trainer;
 use Modules\Core\Models\User;
-use Illuminate\Auth\Access\Response;
+use Modules\HumanResources\Enums\TrainerStatus;
 
 /**
  * Class TrainerPolicy
  *
- * Handles authorization logic for Trainers.
- * Determines which users can view, create, update, delete, restore, or force delete trainers
- * based on their roles and the provider_entity relationships.
+ * Authorization rules for Trainer management.
  *
- * Roles & Permissions:
- * - Admin: full access to all trainers.
- * - Program Manager: can view/update/delete trainers only if sessions belong to their provider_entity.
- * - Community Provider: can view trainers linked to their activities.
- * - Trainer: can view their own profile.
- *
- * Relationships Considered:
- * Trainer -> ActivitySession -> Activity -> provider_entity_id
- *
- * @package Modules\HumanResources\Policies
+ * Core Concepts:
+ * - Trainers self-register and start with PENDING status
+ * - Admin approves/rejects trainers
+ * - Trainer is linked to User (user_id)
+ * - Provider access is scoped via:
+ *   Trainer -> ActivitySession -> Activity -> provider_entity_id
  */
 class TrainerPolicy
 {
     /**
-     * Determine whether the user can view any trainers.
+     * View list of trainers
      *
-     * @param User $user
-     * @return bool True if the user can view a list of trainers
+     * Allowed:
+     * - Admin
+     * - Program Manager
      */
     public function viewAny(User $user): bool
     {
-        // Admin أو Program Manager يمكنهم رؤية قائمة Trainers
         return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
-     * Determine whether the user can view a specific trainer.
+     * View a specific trainer
      *
      * Rules:
-     * - Admin: can view any trainer
-     * - Program Manager / Community Provider: can view only if trainer has sessions linked to their provider_entity
-     * - Trainer: can view their own profile
-     *
-     * @param User $user
-     * @param Trainer $trainer
-     * @return bool
+     * - Admin: can view all
+     * - Program Manager / Community Provider:
+     *   can view trainers linked to activities under same provider_entity
+     * - Trainer: can view own profile
      */
     public function view(User $user, Trainer $trainer): bool
     {
@@ -58,9 +49,9 @@ class TrainerPolicy
 
         if ($user->hasRole(['program_manager', 'community_provider'])) {
             return $trainer->activitySessions()
-                ->whereHas('activity', function ($q) use ($user) {
-                    $q->where('provider_entity_id', $user->provider_entity_id);
-                })
+                ->whereHas('activity', fn ($q) =>
+                    $q->where('provider_entity_id', $user->provider_entity_id)
+                )
                 ->exists();
         }
 
@@ -72,30 +63,26 @@ class TrainerPolicy
     }
 
     /**
-     * Determine whether the user can create a new trainer.
+     * Create trainer (Self-registration)
      *
-     * Rules:
-     * - Only Admin can create a trainer
-     *
-     * @param User $user
-     * @return bool
+     * Allowed:
+     * - Any authenticated user who is NOT already a trainer
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin']);
+        return !$user->hasRole('trainer');
     }
 
     /**
-     * Determine whether the user can update a trainer.
+     * Update trainer profile
      *
      * Rules:
-     * - Admin: can update any trainer
-     * - Program Manager: can update only if all trainer sessions belong to their provider_entity
-     * - Trainer: cannot update
-     *
-     * @param User $user
-     * @param Trainer $trainer
-     * @return bool
+     * - Admin: can update anytime
+     * - Trainer: can update own profile ONLY if status = PENDING
+     * - Program Manager:
+     *   can update ONLY if:
+     *   - trainer is PENDING
+     *   - all sessions belong to same provider_entity
      */
     public function update(User $user, Trainer $trainer): bool
     {
@@ -103,14 +90,29 @@ class TrainerPolicy
             return true;
         }
 
+        if (
+            $user->hasRole('trainer') &&
+            $trainer->user_id === $user->id &&
+            $trainer->status === TrainerStatus::PENDING
+        ) {
+            return true;
+        }
+
         if ($user->hasRole('program_manager')) {
+            if ($trainer->status !== TrainerStatus::PENDING) {
+                return false;
+            }
+
             $totalSessions = $trainer->activitySessions()->count();
+
             if ($totalSessions === 0) {
-                return true; // can update trainers without sessions
+                return true;
             }
 
             $matchedSessions = $trainer->activitySessions()
-                ->whereHas('activity', fn($q) => $q->where('provider_entity_id', $user->provider_entity_id))
+                ->whereHas('activity', fn ($q) =>
+                    $q->where('provider_entity_id', $user->provider_entity_id)
+                )
                 ->count();
 
             return $totalSessions === $matchedSessions;
@@ -120,15 +122,14 @@ class TrainerPolicy
     }
 
     /**
-     * Determine whether the user can delete a trainer.
+     * Delete trainer
      *
      * Rules:
-     * - Admin: can delete any trainer
-     * - Program Manager: cannot delete if trainer has active/future sessions within their provider_entity
-     *
-     * @param User $user
-     * @param Trainer $trainer
-     * @return bool
+     * - Admin: can delete anytime
+     * - Program Manager:
+     *   can delete ONLY if:
+     *   - trainer is still PENDING
+     *   - no future sessions under same provider_entity
      */
     public function delete(User $user, Trainer $trainer): bool
     {
@@ -136,15 +137,50 @@ class TrainerPolicy
             return true;
         }
 
-        if ($user->hasRole('program_manager')) {
-            $hasActiveSessions = $trainer->activitySessions()
+        if (
+            $user->hasRole('program_manager') &&
+            $trainer->status === TrainerStatus::PENDING
+        ) {
+            $hasFutureSessions = $trainer->activitySessions()
                 ->where('date', '>=', now())
-                ->whereHas('activity', fn($q) => $q->where('provider_entity_id', $user->provider_entity_id))
+                ->whereHas('activity', fn ($q) =>
+                    $q->where('provider_entity_id', $user->provider_entity_id)
+                )
                 ->exists();
 
-            return !$hasActiveSessions;
+            return !$hasFutureSessions;
         }
 
         return false;
+    }
+
+    /**
+     * Approve trainer
+     *
+     * Rules:
+     * - Only Admin
+     * - Trainer must be in PENDING status
+     *
+     * This action:
+     * - Changes status to APPROVED
+     * - Assigns "trainer" role to related user
+     */
+    public function approve(User $user, Trainer $trainer): bool
+    {
+        return $user->hasRole('admin')
+            && $trainer->status === TrainerStatus::PENDING;
+    }
+
+    /**
+     * Reject trainer
+     *
+     * Rules:
+     * - Only Admin
+     * - Trainer must be in PENDING status
+     */
+    public function reject(User $user, Trainer $trainer): bool
+    {
+        return $user->hasRole('admin')
+            && $trainer->status === TrainerStatus::PENDING;
     }
 }

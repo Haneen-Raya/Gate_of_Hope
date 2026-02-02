@@ -3,7 +3,10 @@
 namespace Modules\Programs\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Modules\Programs\Models\ActivitySession;
+use Modules\Programs\Policies\ActivitySessionPolicy;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +30,7 @@ class ProgramsServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        Gate::policy(ActivitySession::class, ActivitySessionPolicy::class);
     }
 
     /**

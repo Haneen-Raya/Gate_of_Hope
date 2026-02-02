@@ -11,7 +11,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Programs\Models\ActivitySession;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\HumanResources\Enums\CertificationLevel;
 use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\TrainerStatus;
 use Modules\HumanResources\Models\Builders\TrainerBuilder;
 
 // use Modules\HumanResources\Database\Factories\TrainerFactory;
@@ -31,11 +33,15 @@ class Trainer extends Model
         'bio',
         'certification_level',
         'hourly_rate',
-        'is_external'
+        'is_external',
+        'status',
+        'approved_at',
     ];
 
     protected $casts = [
         'gender' => Gender::class,
+        'status' => TrainerStatus::class,
+        'certification_level' => CertificationLevel::class,
         'is_external' => 'boolean',
         'date_of_birth' => 'date',
     ];

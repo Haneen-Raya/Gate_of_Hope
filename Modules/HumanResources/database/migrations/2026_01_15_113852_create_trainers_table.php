@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\HumanResources\Enums\TrainerStatus;
 
 return new class extends Migration
 {
@@ -21,6 +22,8 @@ return new class extends Migration
             $table->string('certification_level');
             $table->decimal('hourly_rate', 10, 2);
             $table->boolean('is_external');
+            $table->string('status')->default(TrainerStatus::PENDING->value);
+            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }

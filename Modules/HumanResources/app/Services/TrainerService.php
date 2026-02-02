@@ -5,7 +5,10 @@ namespace Modules\HumanResources\Services;
 use Modules\HumanResources\Models\Trainer;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Modules\HumanResources\Notifications\TrainerApprovedNotification;
 use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\TrainerStatus;
 
 /**
  * Class TrainerService
@@ -86,32 +89,127 @@ class TrainerService
     }
 
     /**
-     * Create a new trainer.
+     * Create Trainer (Self Registration)
      *
-     * @param array $data
-     * @return Trainer
+     * Flow:
+     * - Authenticated user applies as trainer
+     * - Trainer created with status = PENDING
+     * - user_id is always the authenticated user
      */
     public function create(array $data): Trainer
     {
         return DB::transaction(function () use ($data) {
-            $trainer = Trainer::create($data);
+
+            // Prevent duplicate trainer application
+            if (Trainer::where('user_id', auth()->id())->exists()) {
+                throw new \Exception('You have already applied as a trainer.');
+            }
+
+            $trainer = Trainer::create([
+                ...$data,
+                'user_id' => auth()->id(),
+                'status'  => TrainerStatus::PENDING,
+            ]);
+
             $this->flushCache();
+
             return $trainer;
         });
     }
-
-    /**
-     * Update an existing trainer.
+     /**
+     * Update Trainer Profile
      *
-     * @param Trainer $trainer
-     * @param array $data
-     * @return Trainer
+     * Rules:
+     * - Admin can update anytime
+     * - Trainer can update only if status = PENDING
      */
     public function update(Trainer $trainer, array $data): Trainer
     {
         return DB::transaction(function () use ($trainer, $data) {
+
+            if (
+                auth()->user()->hasRole('trainer') &&
+                $trainer->status !== TrainerStatus::PENDING
+            ) {
+                throw new \Exception('Approved trainers cannot modify their profile.');
+            }
+
             $trainer->update($data);
+
             $this->flushCache();
+
+            return $trainer->refresh();
+        });
+    }
+    
+    /**
+     * Approve Trainer (Admin Action)
+     *
+     * Flow:
+     * - Status changed to APPROVED
+     * - approved_at timestamp set
+     * - Trainer role assigned to related user
+     * - Email notification sent
+     */
+    public function approve(Trainer $trainer): Trainer
+    {
+        return DB::transaction(function () use ($trainer) {
+
+            if ($trainer->status !== TrainerStatus::PENDING) {
+                throw new \Exception('Trainer is not pending approval.');
+            }
+
+            $trainer->update([
+                'status'      => TrainerStatus::APPROVED,
+                'approved_at' => now(),
+            ]);
+
+            // Assign Trainer role
+            $trainer->user->assignRole('trainer');
+
+            // Send notification
+            Notification::send(
+                $trainer->user,
+                new TrainerApprovedNotification($trainer)
+            );
+
+            $this->flushCache();
+
+            return $trainer->refresh();
+        });
+    }
+        /**
+     * Reject Trainer (Admin Action)
+     *
+     * Flow:
+     * - Status changed to REJECTED
+     * - approved_at remains NULL
+     * - Trainer role is NOT assigned
+     * - Optional: send rejection notification
+     */
+    public function reject(Trainer $trainer, ?string $reason = null): Trainer
+    {
+        return DB::transaction(function () use ($trainer, $reason) {
+
+            if ($trainer->status !== TrainerStatus::PENDING) {
+                throw new \Exception('Trainer is not pending approval.');
+            }
+
+            $trainer->update([
+                'status' => TrainerStatus::REJECTED,
+            ]);
+
+            // send rejection notification
+            // TrainerRejectedNotification)
+            /*
+            Notification::send(
+                $trainer->user,
+                new TrainerRejectedNotification($trainer, $reason)
+            );
+            */
+
+            $this->flushCache();
+
             return $trainer->refresh();
         });
     }

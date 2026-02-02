@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use Modules\HumanResources\Enums\CertificationLevel;
 use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\TrainerStatus;
 
 class StoreTrainerRequest extends FormRequest
 {
@@ -17,7 +18,6 @@ class StoreTrainerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id'              => 'required|exists:users,id',
             'profession_id'        => 'required|exists:professions,id',
             'gender' => ['required', new Enum(Gender::class)],
             'date_of_birth'        => 'required|date',
@@ -25,6 +25,7 @@ class StoreTrainerRequest extends FormRequest
             'certification_level' => ['required', new Enum(CertificationLevel::class)],
             'hourly_rate'          => 'required|numeric|min:0',
             'is_external'          => 'required|boolean',
+            'status' => 'prohibited',
         ];
     }
 }
