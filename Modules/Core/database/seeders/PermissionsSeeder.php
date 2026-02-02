@@ -128,6 +128,9 @@ class PermissionsSeeder extends Seeder
             'case.specialist.assign','case.specialist.revoke',
 
             'service.create','service.read','service.update','service.delete',
+
+            //activity attendance
+            'activity.attendance.create','activity.attendance.read','activity.attendance.update','activity.attendance.delete'
         ];
 
         foreach ($permissions as $permission) {

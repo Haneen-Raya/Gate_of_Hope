@@ -3,6 +3,7 @@
 namespace Modules\Programs\Http\Requests\Api\V1\ActivityAttendance;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Programs\Enums\Api\V1\Activity\AttendanceStatus;
 
@@ -13,8 +14,10 @@ class StoreActivityAttendanceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('activity.attendance.create');
     }
+
     /**
      * Get the validation rules that apply to the request.
      */

@@ -13,7 +13,8 @@ class UpdateActivityAttendanceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $attendance=$this->route('activity_attendance');
+        return $this->user()->can('update',$attendance);
     }
     /**
      * Get the validation rules that apply to the request.

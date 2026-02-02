@@ -3,7 +3,9 @@
 namespace Modules\Programs\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\Programs\Http\Requests\Api\V1\ActivityAttendance\StoreActivityAttendanceRequest;
 use Modules\Programs\Http\Requests\Api\V1\ActivityAttendance\UpdateActivityAttendanceRequest;
 use Modules\Programs\Models\ActivityAttendance;
@@ -11,6 +13,22 @@ use Modules\Programs\Services\ActivityAttendanceService;
 
 class ActivityAttendanceController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:activity.attendance.create', only: ['store']),
+            new Middleware('can:activity.attendance.read', only: ['index','show']),
+            new Middleware('can:activity.attendance.update', only: ['update']),
+            new Middleware('can:activity.attendance.delete', only: ['destroy']),
+        ];
+    }
+
     protected ActivityAttendanceService $activityAttendanceService;
 
     /**
@@ -68,6 +86,7 @@ class ActivityAttendanceController extends Controller
      */
     public function show(ActivityAttendance $activityAttendance)
     {
+        $this->authorize('view', $activityAttendance);
         return $this->successResponse(
             'Operation succcessful',
             $this->activityAttendanceService->showActivityAttendance($activityAttendance),
@@ -86,6 +105,7 @@ class ActivityAttendanceController extends Controller
      */
     public function update(UpdateActivityAttendanceRequest $request, ActivityAttendance $activityAttendance)
     {
+        $this->authorize('update', $activityAttendance);
         return $this->successResponse(
             'Updated succcessful',
             $this->activityAttendanceService->updateActivityAttendance($request->validated(), $activityAttendance)

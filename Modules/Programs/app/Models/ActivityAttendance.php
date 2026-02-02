@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Beneficiaries\Models\Beneficiary;
+use Modules\Core\Models\User;
 use Modules\HumanResources\Models\Trainer;
 use Modules\Programs\Enums\Api\V1\Activity\AttendanceStatus;
 use Modules\Programs\Models\Builders\ActivityAttendanceBuilder;
@@ -144,5 +145,61 @@ class ActivityAttendance extends Model implements CacheInvalidatable
     public function recordedByTrainer()
     {
         return $this->belongsTo(Trainer::class,'recorded_by');
+    }
+
+    /**
+     * Determine if this attendance belongs to a specific beneficiary.
+     *
+     * Used to allow beneficiaries to view only their own attendance.
+     *
+     * @param User $user The user to check against the attendance's beneficiary
+     *
+     * @return bool True if the user is the beneficiary, false otherwise
+     */
+    public function isForBeneficiary(User $user): bool
+    {
+        return $this->beneficiary?->user_id === $user->id;
+    }
+
+    /**
+     * Check if this attendance record was recorded by a specific trainer.
+     *
+     * Used to allow trainers to update only records they created.
+     *
+     * @param User
+     *
+     * @return bool
+     */
+    public function isRecordedBy(User $user): bool
+    {
+        return $this->recordedByTrainer?->user_id === $user->id;
+    }
+
+    /**
+     * Check if this attendance record is inside a program managed by the user.
+     *
+     * Used to allow program managers to view attendance of their own programs.
+     *
+     * @param User
+     *
+     * @return bool
+     */
+    public function isWithinManagedProgram(User $user): bool
+    {
+        return $this->activitySession?->activity?->program?->created_by === $user->id;
+    }
+
+    /**
+      * Check if this attendance belongs to an activity provided by the user's entity.
+     *
+     * Used to allow community providers to view attendance for their activities.
+     *
+     * @param User
+     *
+     * @return bool
+     */
+    public function belongsToProviderEntity(User $user): bool
+    {
+        return $this->activitySession?->activity?->provider_entity_id === $user->entitiy?->id;
     }
 }
