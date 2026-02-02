@@ -55,11 +55,7 @@ class CaseReferralPolicy
      */
     public function create(User $user,$beneficiaryCase): bool
     {
-        $caseManagerId = is_int($beneficiaryCase)
-            ? \Modules\CaseManagement\Models\BeneficiaryCase::find($beneficiaryCase)?->case_manager_id
-            : $beneficiaryCase->case_manager_id;
-
-        return $user->id === $caseManagerId;
+        return false;
     }
 
     /**

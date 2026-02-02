@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
+use Modules\Core\Models\User;
 use Modules\Entities\Models\Builders\ProgramFundingBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -127,5 +128,17 @@ class ProgramFunding extends Model implements CacheInvalidatable
     public function program():BelongsTo
     {
         return $this->belongsTo(Program::class);
+    }
+
+    /**
+     * Determine if this funding is donored by a specific donor entity.
+     *
+     * @param User $user The user to check as donor entity
+     *
+     * @return bool True if the user is the donor entity, false otherwise
+     */
+    public function isDonoredBy(User $user): bool
+    {
+        return $this->donorEntity->user_id === $user->id;
     }
 }

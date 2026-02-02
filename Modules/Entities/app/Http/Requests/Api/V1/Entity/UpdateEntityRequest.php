@@ -3,6 +3,7 @@
 namespace Modules\Entities\Http\Requests\Api\V1\Entity;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Entities\Enums\EntityType;
 
@@ -13,7 +14,8 @@ class UpdateEntityRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $entity=$this->route('entitiy');
+        return $this->user()->can('update',$entity);
     }
     /**
      * Get the validation rules that apply to the request.

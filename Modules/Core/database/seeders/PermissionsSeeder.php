@@ -91,6 +91,16 @@ class PermissionsSeeder extends Seeder
             'activities.sessions.update','activities.sessions.delete',
             'activity.beneficiary.read_minimal',
 
+            // Entities
+            'entities.create','entities.read',
+            'entities.update','entities.delete',
+
+            'entities.read.self',
+            'entities.update.self','entities.activation.update',
+
+            // Program Fundings
+            'program.funding.create','program.funding.update','program.funding.read','program.funding.delete',
+
             // Donor & Research
             'program.read.funded','program_funding.read.self','donor_report.read',
             'program.report.read.aggregated','program.analytics.read','region.statistics.read',

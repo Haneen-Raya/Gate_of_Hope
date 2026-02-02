@@ -43,7 +43,8 @@ class RolesSeeder extends Seeder
                 'activities.sessions.update','activities.sessions.delete',
                 'activity.beneficiary.read_minimal',
                 'case.referral.update.status',
-                'case_referral.read'
+                'case_referral.read',
+                'entities.read.self','entities.update.self',
             ]);
 
         // Donor
@@ -51,6 +52,8 @@ class RolesSeeder extends Seeder
             ->syncPermissions([
                 'program.read.funded','program_funding.read.self','donor_report.read',
                 'program.report.read.aggregated','program.analytics.read','region.statistics.read',
+                'entities.read.self',
+                'program.funding.read'
             ]);
 
         // Researcher
@@ -59,6 +62,7 @@ class RolesSeeder extends Seeder
                 'program.read.all','program.analytics.read.full',
                 'program.report.read.aggregated','program.report.read.comparative',
                 'region.statistics.read',
+                'entities.read',
             ]);
 
         // Program Manager
@@ -73,6 +77,7 @@ class RolesSeeder extends Seeder
                 'employment_statuses.read',
                 'social_backgrounds.read',
                 'case.referral.update.status',
+                'entities.read',
             ]);
 
         // Case Coordinator
@@ -92,7 +97,7 @@ class RolesSeeder extends Seeder
                 'case.referral.create','case.referral.read','case.referral.update',
                 'case.referral.update.status','case.referral.delete',
                 'case.specialist.assign','case.specialist.revoke',
-                'service.create','service.read','service.update','service.delete',
+                'entities.read',
             ]);
     }
 }

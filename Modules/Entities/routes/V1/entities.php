@@ -181,7 +181,7 @@ Route::prefix('entities')->group(function () {
      * Updated Entity JSON resource with new activation state.
      */
 
-    /*Route::put('{entity}/updateActivation', [EntitiyController::class, 'updateActivation'])
+    Route::put('{entity}/updateActivation', [EntitiyController::class, 'updateActivation'])
         ->name('entities.updateActivation');
-        */
+        
 });
