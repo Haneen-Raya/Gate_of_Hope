@@ -2,6 +2,7 @@
 
 namespace Modules\CaseManagement\Services;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\CaseManagement\Models\BeneficiaryCase;
@@ -53,6 +54,7 @@ class BeneficiaryCaseService
      */
     public function createCase(array $data): BeneficiaryCase
     {
+        $data['case_manager_id'] = Auth::id();
         return BeneficiaryCase::create($data);
     }
 

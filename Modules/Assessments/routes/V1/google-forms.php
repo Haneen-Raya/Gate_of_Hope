@@ -13,7 +13,7 @@ use Modules\Assessments\Http\Controllers\Api\V1\GoogleFormController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1/google-forms')->group(function () {
+Route::prefix('google-forms')->group(function () {
 
     /**
      * @name 1. List Form Mappings

@@ -218,15 +218,20 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
      * @return void
      */
     protected static function booted()
-    {
-        static::saving(function (BeneficiaryCase $case) {
-            if ($case->status === CaseStatus::CLOSED) {
-                if (is_null($case->closed_at)) {
-                    $case->closed_at = Carbon::now();
-                }
-            } else {
-                $case->closed_at = null;
+{
+    static::saving(function (BeneficiaryCase $case) {
+        if (!empty($case->closure_reason) && $case->status !== CaseStatus::CLOSED) {
+            $case->status = CaseStatus::CLOSED;
+        }
+
+        if ($case->status === CaseStatus::CLOSED) {
+            if (is_null($case->closed_at)) {
+                $case->closed_at = now();
             }
-        });
-    }
+        } else {
+
+            $case->closed_at = null;
+        }
+    });
+}
 }

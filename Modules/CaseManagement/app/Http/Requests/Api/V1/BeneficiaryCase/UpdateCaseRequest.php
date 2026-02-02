@@ -20,7 +20,7 @@ class UpdateCaseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasAnyPermission(['case.update', 'admin']);
     }
 
     /**

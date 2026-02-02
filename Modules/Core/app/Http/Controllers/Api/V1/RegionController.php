@@ -7,6 +7,7 @@ use Modules\Core\Models\Region;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Modules\Core\Services\RegionService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\Core\Http\Requests\V1\Region\IndexRegionRequest;
 use Modules\Core\Http\Requests\V1\Region\StoreRegionRequest;
 use Modules\Core\Http\Requests\V1\Region\UpdateRegionRequest;
@@ -18,6 +19,7 @@ use Modules\Core\Http\Requests\V1\Region\UpdateRegionRequest;
  */
 class RegionController extends Controller
 {
+    use AuthorizesRequests ;
     /**
      * @var RegionService
      */
@@ -39,6 +41,8 @@ class RegionController extends Controller
      */
     public function index(IndexRegionRequest $request): JsonResponse
     {
+
+        $this->authorize('viewAny', Region::class);
         $regions = $this->regionService->list($request->validated());
 
         if ($regions->isEmpty()) {
@@ -58,7 +62,7 @@ class RegionController extends Controller
      */
     public function store(StoreRegionRequest $request): JsonResponse
     {
-        //dd($request);
+        $this->authorize('create', Region::class);
         $region = $this->regionService->createRegion($request->validated());
 
         return $this->successResponse(
@@ -75,6 +79,7 @@ class RegionController extends Controller
      */
     public function show(int $id): JsonResponse
     {
+        $this->authorize('view', Region::class);
         $region = $this->regionService->getRegionById($id);
 
         return $this->successResponse(
@@ -91,6 +96,7 @@ class RegionController extends Controller
      */
     public function update(UpdateRegionRequest $request, Region $region): JsonResponse
     {
+        $this->authorize('update', $region);
         $updatedRegion = $this->regionService->updateRegion($region, $request->validated());
 
         return $this->successResponse(
@@ -106,6 +112,7 @@ class RegionController extends Controller
      */
     public function destroy(Region $region): JsonResponse
     {
+        $this->authorize('delete', $region);
         $this->regionService->deleteRegion($region);
 
         return $this->successResponse(
