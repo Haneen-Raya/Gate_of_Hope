@@ -233,7 +233,7 @@ class CaseReferral extends Model implements CacheInvalidatable
      */
     public function isManagedBy(User $user): bool
     {
-        return $this->beneficiaryCase->case_manager_id === $user->id;
+        return $this->beneficiaryCase?->case_manager_id === $user->id;
     }
 
     /**
@@ -243,11 +243,11 @@ class CaseReferral extends Model implements CacheInvalidatable
      * Useful for verifying whether a user’s organization is responsible for handling the referral.
      *
      * @param User $user The user whose entity is being checked
-     * 
+     *
      * @return bool True if the referral is assigned to the user's entity, false otherwise
      */
     public function isAssignedToEntity(User $user): bool
     {
-        return $this->receiver_entity_id === $user->entitiy->user_id;
+        return $this->receiver_entity_id === $user->entitiy->id;
     }
 }

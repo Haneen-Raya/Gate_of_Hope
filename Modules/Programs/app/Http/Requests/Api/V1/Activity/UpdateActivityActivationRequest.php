@@ -3,6 +3,7 @@
 namespace Modules\Programs\Http\Requests\Api\V1\Activity;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateActivityActivationRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class UpdateActivityActivationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('activities.activation.update');
     }
     /**
      * Get the validation rules that apply to the request.

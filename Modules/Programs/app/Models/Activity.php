@@ -12,6 +12,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
 use Modules\HumanResources\Models\Profession;
 use Modules\Programs\Enums\Api\V1\Activity\ActivityType;
@@ -171,5 +172,41 @@ class Activity extends Model implements CacheInvalidatable
     public function activitySessions(): HasMany
     {
         return $this->hasMany(ActivitySession::class);
+    }
+
+    /**
+     * Determine whether this activity is managed by a given program manager.
+     *
+     * This helper checks if the provided user is the manager responsible
+     * for the program that owns this activity.
+     *
+     * In the current system design, a program is considered managed
+     * by the user who created it.
+     *
+     * @param User $user The user to verify as program manager.
+     *
+     * @return bool True if the user manages the related program, otherwise false.
+     */
+    public function isManagedBy(User $user): bool
+    {
+        return $this->program?->created_by === $user->id;
+    }
+
+    /**
+     * Determine whether this activity is provided by the entity of a given user.
+     *
+     * This helper verifies that the authenticated user belongs to the same
+     * provider entity assigned to this activity.
+     *
+     * Useful for community providers who should only access activities
+     * delivered by their own organization.
+     *
+     * @param User $user The user whose entity ownership is being checked.
+     *
+     * @return bool True if the user belongs to the provider entity, otherwise false.
+     */
+    public function isProvidedByEntityOf(User $user): bool
+    {
+        return $this->providerEntity?->user_id === $user->id;
     }
 }

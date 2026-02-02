@@ -45,6 +45,7 @@ class RolesSeeder extends Seeder
                 'case.referral.update.status',
                 'case_referral.read',
                 'entities.read.self','entities.update.self',
+                'activities.read'
             ]);
 
         // Donor
@@ -69,7 +70,7 @@ class RolesSeeder extends Seeder
         Role::firstOrCreate(['name' => 'program_manager'])
             ->syncPermissions([
                 'programs.create','programs.read','programs.update','programs.delete','programs.approve',
-                'activities.create','activities.read','activities.update','activities.delete',
+                'activities.create','activities.read','activities.update','activities.delete','activities.activation.update',
                 'resources.allocate','resources.read','resources.update',
                 'reports.read','statistics.read',
                 'education_levels.read',
@@ -78,7 +79,7 @@ class RolesSeeder extends Seeder
                 'social_backgrounds.read',
                 'case.referral.update.status',
                 'entities.read',
-                'program.funding.read'
+                'program.funding.read',
             ]);
 
         // Case Coordinator

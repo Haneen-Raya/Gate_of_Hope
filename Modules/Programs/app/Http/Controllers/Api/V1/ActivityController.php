@@ -3,7 +3,9 @@
 namespace Modules\Programs\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Modules\Programs\Http\Requests\Api\V1\Activity\StoreActivityRequest;
 use Modules\Programs\Http\Requests\Api\V1\Activity\UpdateActivityActivationRequest;
 use Modules\Programs\Http\Requests\Api\V1\Activity\UpdateActivityRequest;
@@ -12,6 +14,23 @@ use Modules\Programs\Services\ActivityService;
 
 class ActivityController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * Summary of middleware
+     * @return array<Middleware|string>
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('can:activities.create', only: ['store']),
+            new Middleware('can:activities.read', only: ['index','show']),
+            new Middleware('can:activities.update', only: ['update']),
+            new Middleware('can:activities.activation.update', only: ['update']),
+            new Middleware('can:activities.delete', only: ['destroy']),
+        ];
+    }
+
     protected ActivityService $activityService;
 
     /**
@@ -69,6 +88,7 @@ class ActivityController extends Controller
      */
     public function show(Activity $activity)
     {
+        $this->authorize('view', $activity);
         return $this->successResponse(
             'Operation succcessful',
             $this->activityService->showActivity($activity),
@@ -87,6 +107,7 @@ class ActivityController extends Controller
      */
     public function update(UpdateActivityRequest $request, Activity $activity)
     {
+        $this->authorize('update', $activity);
         return $this->successResponse(
             'Updated succcessful',
             $this->activityService->updateActivity($request->validated(), $activity)
@@ -102,6 +123,7 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
+        $this->authorize('delete', $activity);
         $this->activityService->deleteActivity($activity);
         return $this->successResponse(
             'Deleted succcessful',

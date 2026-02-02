@@ -3,8 +3,10 @@
 namespace Modules\Programs\Http\Requests\Api\V1\Activity;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Programs\Enums\Api\V1\Activity\ActivityType;
+use Modules\Programs\Rules\ProgramManagerOwnsProgram;
 
 class StoreActivityRequest extends FormRequest
 {
@@ -13,7 +15,8 @@ class StoreActivityRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->can('activities.create');
     }
     /**
      * Get the validation rules that apply to the request.
@@ -21,7 +24,7 @@ class StoreActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'program_id'         => ['required', 'integer', 'exists:programs,id'],
+            'program_id'         => ['required', 'integer', 'exists:programs,id', new ProgramManagerOwnsProgram()],
             'profession_id'      => ['required', 'integer', 'exists:professions,id'],
             'provider_entity_id' => ['required', 'integer', 'exists:entities,id'],
             'activity_type'      => ['required', 'string', Rule::in(ActivityType::all())],
