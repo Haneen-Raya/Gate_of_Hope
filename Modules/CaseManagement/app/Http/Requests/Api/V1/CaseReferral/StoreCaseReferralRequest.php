@@ -29,11 +29,9 @@ class StoreCaseReferralRequest extends FormRequest
             'receiver_entity_id'  => ['required','integer','exists:entities,id'],
             'referral_type'       => ['required','string',Rule::in(CaseReferralType::all())],
             'direction'           => ['required','string',Rule::in(CaseReferralDirection::all())],
-            'status'              => ['required','string',Rule::in(CaseReferralStatus::all())],
             'urgency_level'       => ['required','string',Rule::in(CaseReferralUrgencyLevel::all())],
             'reason'              => ['required', 'string', 'max:1000'],
             'notes'               => ['nullable', 'string', 'max:1000'],
-            //'followup_date'       => ['required', 'date','after_or_equal:referral_date'],
         ];
     }
 }

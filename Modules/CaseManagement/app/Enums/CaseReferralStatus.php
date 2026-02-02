@@ -68,6 +68,54 @@ enum CaseReferralStatus : string
     {
         return array_column(self::cases(), 'value');
     }
+
+    /**
+     * Get the timestamp field associated with this status.
+     *
+     * @return string|null
+     */
+    public function timestampField(): ?string
+    {
+        return match ($this) {
+            self::REFERRED  => 'referral_date',
+            self::ACCEPTED  => 'accepted_at',
+            self::COMPLETED => 'completed_at',
+            self::REJECTED  => 'rejected_at',
+            self::CANCELLED => 'cancelled_at',
+        };
+    }
+
+    /**
+     * Determine whether the referral can transition
+     * from the current status to the given target status.
+     *
+     * This method defines the complete lifecycle of a case referral
+     * and enforces the allowed state transitions.
+     *
+     * Allowed transitions:
+     * - REFERRED  → ACCEPTED
+     * - REFERRED  → REJECTED
+     * - REFERRED  → CANCELLED
+     * - ACCEPTED  → COMPLETED
+     *
+     * Disallowed transitions:
+     * - Any transition from COMPLETED, REJECTED, or CANCELLED
+     * - ACCEPTED  → REFERRED
+     * - ACCEPTED  → REJECTED
+     * - ACCEPTED  → CANCELLED
+     *
+     * @param self $to The target status to transition to.
+     *
+     * @return bool.
+     */
+    public function canTransitionTo(self $to): bool
+    {
+        return match ($this) {
+            self::REFERRED  => in_array($to, [self::ACCEPTED,self::REJECTED,self::CANCELLED,]),
+            self::ACCEPTED  => $to === self::COMPLETED,
+            default         => false,
+        };
+    }
 }
 
 
