@@ -4,7 +4,10 @@ namespace Modules\HumanResources\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\HumanResources\Models\Specialist;
+use Modules\HumanResources\Policies\SpecialistPolicy;
 use Nwidart\Modules\Traits\PathNamespace;
+use Illuminate\Support\Facades\Gate;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -27,6 +30,7 @@ class HumanResourcesServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        Gate::policy(Specialist::class, SpecialistPolicy::class);
     }
 
     /**

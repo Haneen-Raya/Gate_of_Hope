@@ -80,8 +80,11 @@ class PermissionsSeeder extends Seeder
             'notifications.read.self','feedback.create.self','support_request.create.self',
 
             // Specialist
+            'view_specialist','create_specialist' , 'update_specialist' , 'delete_specialist',
             'file.read','file.update',
-            'sessions.create','sessions.read','sessions.update','sessions.delete',
+            'case_session.view_any','case_session.view_all','case_session.view_by_date',
+            'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
+            'case_session.view_by_specialist', 'case_session.count', 
             'case.review.create','case.review.read','case.review.update',
 
             // Community provider
@@ -131,6 +134,9 @@ class PermissionsSeeder extends Seeder
 
             //activity attendance
             'activity.attendance.create','activity.attendance.read','activity.attendance.update','activity.attendance.delete'
+            // trainer 
+            'trainer.profile.read','trainer.profile.update','trainer.schedule.read',
+            'trainer.session.read','trainer.session.create','trainer.session.update',
         ];
 
         foreach ($permissions as $permission) {

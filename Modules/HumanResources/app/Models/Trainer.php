@@ -4,6 +4,7 @@ namespace Modules\HumanResources\Models;
 
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -11,6 +12,10 @@ use Modules\Programs\Models\ActivitySession;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Programs\Models\ActivityAttendance;
+use Modules\HumanResources\Enums\CertificationLevel;
+use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\TrainerStatus;
+use Modules\HumanResources\Models\Builders\TrainerBuilder;
 
 // use Modules\HumanResources\Database\Factories\TrainerFactory;
 
@@ -29,7 +34,17 @@ class Trainer extends Model
         'bio',
         'certification_level',
         'hourly_rate',
-        'is_external'
+        'is_external',
+        'status',
+        'approved_at',
+    ];
+
+    protected $casts = [
+        'gender' => Gender::class,
+        'status' => TrainerStatus::class,
+        'certification_level' => CertificationLevel::class,
+        'is_external' => 'boolean',
+        'date_of_birth' => 'date',
     ];
 
     // protected static function newFactory(): TrainerFactory
@@ -82,5 +97,11 @@ class Trainer extends Model
     public function recordedAttendances(): HasMany
     {
         return $this->hasMany(ActivityAttendance::class,'recorded_by');
+    /**
+     * Create a new Eloquent query builder for the model.
+     */
+    public function newEloquentBuilder($query): Builder
+    {
+        return new TrainerBuilder($query);
     }
 }
