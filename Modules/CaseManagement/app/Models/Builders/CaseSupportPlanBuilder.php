@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Custom Query Builder for the CaseSupportPlan Model.
  *
- * This class encapsulates all filtering logic for support plans, 
+ * This class encapsulates all filtering logic for support plans,
  * including version control, status toggles, and date range analysis.
  *
  * @extends Builder<\Modules\CaseManagement\Models\CaseSupportPlan>
@@ -84,8 +84,8 @@ class CaseSupportPlanBuilder extends Builder
 
     /**
      * Apply dynamic filters from an HTTP request array.
-     * * This method orchestrates various scopes to provide a fluid filtering 
-     * experience for case support plans, covering relational, temporal, 
+     * * This method orchestrates various scopes to provide a fluid filtering
+     * experience for case support plans, covering relational, temporal,
      * and versioning constraints.
      *
      * @param array<string, mixed> $filters Associative array containing filter keys.
@@ -104,7 +104,7 @@ class CaseSupportPlanBuilder extends Builder
             // ---------------------------------------------------
             // 2. Lifecycle & Versioning
             // ---------------------------------------------------
-            // Manages the visibility of plans based on their active status 
+            // Manages the visibility of plans based on their active status
             // and specific document iterations.
             ->when($filters['version'] ?? null, fn($q, $v) => $q->version((int) $v))
             ->when(isset($filters['is_active']), fn($q) => $q->active((bool) $filters['is_active']))
@@ -112,7 +112,7 @@ class CaseSupportPlanBuilder extends Builder
             // ---------------------------------------------------
             // 3. Temporal Range Filtering
             // ---------------------------------------------------
-            // Encapsulates date boundary logic to filter plans by their 
+            // Encapsulates date boundary logic to filter plans by their
             // initialization period.
             ->startedBetween(
                 $filters['start_date_from'] ?? null,
@@ -122,7 +122,7 @@ class CaseSupportPlanBuilder extends Builder
             // ---------------------------------------------------
             // 4. Real-time Effectiveness logic
             // ---------------------------------------------------
-            // A specialized filter that dynamically calculates if a plan 
+            // A specialized filter that dynamically calculates if a plan
             // is currently valid based on the server's current date.
             ->when($filters['only_effective'] ?? null, fn($q) => $q->effectiveNow());
     }
