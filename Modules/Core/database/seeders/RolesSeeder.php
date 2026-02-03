@@ -43,7 +43,7 @@ class RolesSeeder extends Seeder
                 'file.read','file.update',
                 'case_session.view_any','case_session.view_all','case_session.view_by_date',
                 'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
-                'case_session.view_by_specialist', 'case_session.count', 
+                'case_session.view_by_specialist', 'case_session.count',
                 'case.review.create','case.review.read','case.review.update','google_forms.read',
                 'social_backgrounds.read'
             ]);

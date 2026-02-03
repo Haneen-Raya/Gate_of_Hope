@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum Gender
  * 
@@ -12,21 +14,10 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum Gender: string
 {
+    use HasEnumTranslation;
+
     case MALE = 'male';
     case FEMALE = 'female';
-
-    /**
-     * Get a human-readable label for each gender.
-     * Useful for UI displays, Exports, and Reports.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::MALE => 'Male',
-            self::FEMALE => 'Female',
-        };
-    }
 
     /**
      * Retrieve all enum values.

@@ -4,6 +4,7 @@ namespace Modules\CaseManagement\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,7 @@ use Modules\CaseManagement\Enums\V1\PlanStatus;
 use Modules\CaseManagement\Models\Builders\CasePlanGoalBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\CasePlanGoalFactory;
 
@@ -37,7 +39,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class CasePlanGoal extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache, InteractsWithEnums, HasTranslations;
+
+    /**
+     * The attributes that are translatable via Spatie Translatable.
+     *
+     * Each attribute listed here will be stored as a JSON object containing 
+     * translations for different locales (e.g., {"en": "...", "ar": "..."}).
+     *
+     * @var array<int, string>
+     */
+    public array $translatable = ['notes', 'goal_description'];
 
     /**
      * The attributes that are mass assignable.
@@ -108,5 +120,21 @@ class CasePlanGoal extends Model implements CacheInvalidatable
     public function caseSupportPlan(): BelongsTo
     {
         return $this->belongsTo(CaseSupportPlan::class, 'plan_id');
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply 
+     * structured Enum transformations, providing localized labels and 
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'status',
+        ]);
     }
 }

@@ -5,8 +5,8 @@ namespace Modules\Assessments\Enums;
 /**
  * Enum PriorityLevel
  *
- * Defines the urgency levels for assessments and cases.
- * Used to categorize records based on their importance and response requirements.
+ * This Enum defines the urgency levels for assessments and cases.
+ * It provides built-in support for multi-language localization using Laravel's translation system.
  *
  * @package Modules\Assessments\Enums
  */
@@ -23,7 +23,6 @@ enum PriorityLevel: string
 
     /** Immediate action required; highest level of urgency. */
     case CRITICAL = 'critical';
-
     /**
      * Retrieve all priority level values as an array of strings.
      *

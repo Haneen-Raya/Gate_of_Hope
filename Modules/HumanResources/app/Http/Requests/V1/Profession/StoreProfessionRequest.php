@@ -39,6 +39,8 @@ class StoreProfessionRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:professions,name',
+            'label' => 'required|array',
+            'label.*' => 'required|string|max:255',
             'is_active' => 'sometimes|boolean'
         ];
     }
