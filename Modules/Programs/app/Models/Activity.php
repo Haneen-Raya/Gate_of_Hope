@@ -16,7 +16,7 @@ use Illuminate\Database\Query\Builder;
 use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
 use Modules\HumanResources\Models\Profession;
-use Modules\Programs\Enums\V1\Activity\ActivityType;
+use Modules\Programs\Enums\V1\ActivityType;
 use Modules\Programs\Models\Builders\ActivityBuilder;
 use Spatie\Translatable\HasTranslations;
 

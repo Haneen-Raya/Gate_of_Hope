@@ -1,6 +1,8 @@
 <?php
 
-namespace Modules\HumanResources\Enums;
+namespace Modules\HumanResources\Enums\V1;
+
+use App\Traits\HasEnumTranslation;
 
 /**
  * Enum TrainerStatus
@@ -20,23 +22,11 @@ namespace Modules\HumanResources\Enums;
  */
 enum TrainerStatus: string
 {
+    use HasEnumTranslation;
+
     case PENDING  = 'pending';
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
-
-    /**
-     * Get human-readable label for each status.
-     *
-     * Useful for UI, dashboards, notifications, and exports.
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING  => 'Pending Approval',
-            self::APPROVED => 'Approved',
-            self::REJECTED => 'Rejected',
-        };
-    }
 
     /**
      * Get all enum values as a flat array.

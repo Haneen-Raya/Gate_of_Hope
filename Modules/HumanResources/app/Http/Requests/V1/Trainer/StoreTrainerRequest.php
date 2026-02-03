@@ -4,9 +4,8 @@ namespace Modules\HumanResources\Http\Requests\V1\Trainer;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use Modules\HumanResources\Enums\CertificationLevel;
-use Modules\HumanResources\Enums\Gender;
-use Modules\HumanResources\Enums\TrainerStatus;
+use Modules\HumanResources\Enums\V1\CertificationLevel;
+use Modules\HumanResources\Enums\V1\Gender;
 
 class StoreTrainerRequest extends FormRequest
 {

@@ -1,9 +1,12 @@
 <?php
 
-namespace Modules\CaseManagement\Enums;
+namespace Modules\CaseManagement\Enums\V1;
+
+use App\Traits\HasEnumTranslation;
 
 enum SessionType: string
 {
+    use HasEnumTranslation;
     case INDIVIDUAL = 'individual';
     case GROUP = 'group';
     case FAMILY = 'family';
@@ -16,15 +19,6 @@ enum SessionType: string
     public static function values(): array
     {
         return array_column(self::cases(), 'value');
-    }
-
-    /**
-     * Get label for UI / API 
-     */
-    public function label(): string
-    {
-        // Use the enum value as key in the lang file
-        return __('session_types.' . $this->value);
     }
 
 }

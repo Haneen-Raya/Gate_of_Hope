@@ -15,11 +15,11 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Modules\Assessments\Models\IssueType;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Modules\CaseManagement\Enums\CaseStatus;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\CaseManagement\Enums\V1\CaseStatus;
 use Modules\CaseManagement\Models\Builders\BeneficiaryCaseBuilder;
 use Modules\CaseManagement\Services\CaseEvent\Formatter\BeneficiaryCaseFormatter;
 

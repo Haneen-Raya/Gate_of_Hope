@@ -5,7 +5,7 @@ namespace Modules\Programs\Http\Requests\Api\V1\Activity;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Modules\Programs\Enums\V1\Activity\ActivityType;
+use Modules\Programs\Enums\V1\ActivityType;
 use Modules\Programs\Rules\ProgramManagerOwnsProgram;
 
 class StoreActivityRequest extends FormRequest

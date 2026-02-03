@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\CaseManagement\Http\Controllers\Api;
+namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Modules\CaseManagement\Enums\SessionType;
+use Modules\CaseManagement\Http\Requests\Api\V1\CaseSession\StoreCaseSessionRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\CaseSession\UpdateCaseSessionRequest;
 use Modules\CaseManagement\Models\CaseSession;
 use Modules\CaseManagement\Services\CaseSessionService;
-use Modules\CaseManagement\Http\Requests\StoreCaseSessionRequest;
-use Modules\CaseManagement\Http\Requests\UpdateCaseSessionRequest;
 use Modules\CaseManagement\Http\Resources\V1\CaseSessionResource;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 

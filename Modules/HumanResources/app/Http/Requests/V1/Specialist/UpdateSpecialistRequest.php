@@ -4,7 +4,7 @@ namespace Modules\HumanResources\Http\Requests\V1\Specialist;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\V1\Gender;
 
 class UpdateSpecialistRequest extends FormRequest
 {
@@ -28,6 +28,6 @@ class UpdateSpecialistRequest extends FormRequest
             'date_of_birth' => 'sometimes|date',
             'user_id' => 'sometimes|exists:users,id',
             'issue_category_id' => 'sometimes|exists:issue_categories,id',
-        ];  
+        ];
     }
 }

@@ -4,11 +4,11 @@ namespace Modules\Programs\Services;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Programs\Models\ActivitySession;
-use Modules\Programs\Enums\ActivitySessionStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Support\Collection;
+use Modules\Programs\Enums\V1\ActivitySessionStatus;
 use Modules\Programs\Events\ActivitySessionScheduled;
 
 /**

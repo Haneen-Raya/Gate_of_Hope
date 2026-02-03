@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Programs\Enums\V1\Activity;
+namespace Modules\Programs\Enums\V1;
 
 use App\Traits\HasEnumTranslation;
 

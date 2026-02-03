@@ -4,7 +4,7 @@ namespace Modules\Programs\Http\Requests\V1\ActivitySession;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Programs\Enums\ActivitySessionStatus;
+use Modules\Programs\Enums\V1\ActivitySessionStatus;
 use Modules\Programs\Models\ActivitySession;
 
 /**

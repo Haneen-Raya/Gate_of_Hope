@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Programs\Http\Controllers\V1;
+namespace Modules\Programs\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -61,7 +61,7 @@ class ActivitySessionController extends Controller
             ->additional(['success' => true, 'message' => 'Activity sessions retrieved successfully']);
     }
 
-  
+
     /**
      * Retrieve a single activity session.
      *

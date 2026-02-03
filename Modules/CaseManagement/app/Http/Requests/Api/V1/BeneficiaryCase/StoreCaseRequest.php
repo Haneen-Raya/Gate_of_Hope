@@ -5,7 +5,7 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\Assessments\Enums\PriorityLevel;
-use Modules\CaseManagement\Enums\CaseStatus;
+use Modules\CaseManagement\Enums\V1\CaseStatus;
 
 /**
  * Class StoreCaseRequest
