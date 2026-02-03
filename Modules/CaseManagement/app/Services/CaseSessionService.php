@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Modules\CaseManagement\Models\CaseSession;
 use Modules\CaseManagement\Enums\SessionType;
 use Modules\CaseManagement\Models\BeneficiaryCase;
+use Modules\CaseManagement\Notifications\UpcomingCaseSessionNotification;
 use Throwable;
 
 /**
@@ -136,6 +137,9 @@ class CaseSessionService
 
         // Create the session
         $session = CaseSession::create($data);
+        if ($session->specialist) {
+            $session->specialist->user->notify(new UpcomingCaseSessionNotification($session));
+        }
 
         // Clear related cache to avoid stale data
         $this->clearCaseCache($beneficiaryCase->id);

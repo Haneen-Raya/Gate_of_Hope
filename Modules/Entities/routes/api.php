@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Modules\Entities\Http\Controllers\Api\V1\EntitiyController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+<<<<<<< HEAD
+                    require __DIR__ . '/V1/donor-reports.php';
+    Route::apiResource('entities', EntitiyController::class)->names('entities');
+=======
     //Route::apiResource('entities', EntitiyController::class)->names('entities');
 
     // Register Program Fundings routes
@@ -11,4 +15,5 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Register entities routes
     require __DIR__ . '/V1/entities.php';
+>>>>>>> 90e66263a63e0fcdc27719200da0f59e16581510
 });

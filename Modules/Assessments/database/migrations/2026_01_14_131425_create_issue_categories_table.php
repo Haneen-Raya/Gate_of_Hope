@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('issue_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->json('name');
             $table->string('code')->unique()->index();
-            $table->string('label');
+            $table->json('label');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
             $table->softDeletes();

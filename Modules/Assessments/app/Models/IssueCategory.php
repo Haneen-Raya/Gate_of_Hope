@@ -11,12 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CaseManagement\Models\Service;
 use Modules\HumanResources\Models\Specialist;
 use Modules\Programs\Models\Program;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\Assessments\Database\Factories\IssueCategoriesFactory;
 
 class IssueCategory extends Model
 {
-    use HasFactory, LogsActivity,SoftDeletes;
+    use HasFactory, LogsActivity,SoftDeletes , HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +27,8 @@ class IssueCategory extends Model
         'label',
         'is_active'
     ];
+
+    public array $translatable = ['name' , 'label'];
 
     // protected static function newFactory(): IssueCategoriesFactory
     // {
@@ -67,7 +70,7 @@ class IssueCategory extends Model
     {
         return $this->hasMany(Specialist::class);
     }
-
+    
 
     protected static function booted()
 {

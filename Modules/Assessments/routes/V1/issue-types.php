@@ -20,7 +20,7 @@ use Modules\Assessments\Http\Controllers\Api\V1\IssueTypeController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1/assessment/issue-types')->group(function () {
+Route::prefix('assessment/issue-types')->group(function () {
 
     /**
      * ------------------------------------------------------------------
