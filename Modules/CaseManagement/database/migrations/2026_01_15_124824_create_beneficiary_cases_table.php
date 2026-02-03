@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('priority');
             $table->timestamp('opened_at');
             $table->timestamp('closed_at')->nullable();
-            $table->text('closure_reason')->nullable();
+            $table->json('closure_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['beneficiary_id', 'issue_type_id', 'status']);
