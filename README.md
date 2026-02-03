@@ -328,7 +328,7 @@ routes/
     └── ...
 ```
 
-## 🧩 Modules Detailed Documentation | التوثيق التفصيلي للموديولات
+## Modules Detailed Documentation | التوثيق التفصيلي للموديولات
 
 ### 1. Programs & Field Activities Module | موديول البرامج والأنشطة الميدانية
 
@@ -470,6 +470,8 @@ You can access the full API collection and environment variables via the followi
 **[Download / View Postman Collection](https://documenter.getpostman.com/view/33882685/2sBXc7LQUa)**
 
 ---
+
+#### Global Request Headers | ترويسات الطلب العالمية
 
 <details>
 <summary><strong>English</strong></summary>
