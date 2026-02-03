@@ -3,6 +3,8 @@
 namespace Modules\Programs\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Programs\Events\ActivitySessionScheduled;
+use Modules\Programs\Listeners\SendSessionReminderListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,11 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        ActivitySessionScheduled::class => [
+            SendSessionReminderListener::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.
