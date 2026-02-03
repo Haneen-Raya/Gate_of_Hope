@@ -1,6 +1,8 @@
 <?php
 
-namespace Modules\Programs\Enums\Api\V1\Activity;
+namespace Modules\Programs\Enums\V1\Activity;
+
+use App\Traits\HasEnumTranslation;
 
 /**
  * @Enum ActivityType
@@ -17,6 +19,8 @@ namespace Modules\Programs\Enums\Api\V1\Activity;
  */
 enum ActivityType: string
 {
+    use HasEnumTranslation;
+
     /** Community awareness and educational sessions. */
     case AWARENESS = 'awareness';
 
@@ -37,26 +41,6 @@ enum ActivityType: string
 
     /** Vocational training and livelihood support. */
     case VOCATIONAL = 'vocational';
-
-    /**
-     * Get a human-readable label for each activity type.
-     *
-     * Intended for UI display, reports, and API responses.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::AWARENESS     => 'Awareness Session',
-            self::TRAINING      => 'Training Workshop',
-            self::PSYCHOSOCIAL  => 'Psychosocial Support Activity',
-            self::RECREATIONAL  => 'Recreational Activity',
-            self::COMMUNITY     => 'Community Engagement',
-            self::EDUCATIONAL   => 'Educational Support',
-            self::VOCATIONAL    => 'Vocational Support',
-        };
-    }
 
     /**
      * Return all available enum values.

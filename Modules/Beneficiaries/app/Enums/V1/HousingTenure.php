@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Class HousingTenure
  *
@@ -22,6 +24,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum HousingTenure: string
 {
+    use HasEnumTranslation;
+
     // The property is owned by the beneficiary or family.
     case OWNED = 'owned';
 
@@ -33,21 +37,6 @@ enum HousingTenure: string
 
     // The property is informal or irregularly occupied (e.g., squatting, unregistered).
     case INFORMAL = 'informal';
-
-    /**
-     * Return the human-readable label of the current enum case.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match($this) {
-            self::OWNED => 'Owned',
-            self::RENTED => 'Rented',
-            self::HOSTED => 'Hosted',
-            self::INFORMAL => 'Informal',
-        };
-    }
 
     /**
      * Retrieve all enum values.

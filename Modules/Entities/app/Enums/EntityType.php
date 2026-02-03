@@ -2,6 +2,7 @@
 
 namespace Modules\Entities\Enums;
 
+use App\Traits\HasEnumTranslation;
 
 /**
  * @Enum EntityType
@@ -16,27 +17,13 @@ namespace Modules\Entities\Enums;
  */
 enum EntityType : string
 {
+    use HasEnumTranslation;
+
     /** Non-Governmental Organization (NGO). */
     case NGO = 'ngo';
 
     /** Governmental entity or public institution. */
     case GOVERNMENT = 'government';
-
-    /**
-     * Get a human-readable label for the entity type.
-     *
-     * This label is intended for UI display, reports, and API responses,
-     * while the enum value is used for storage and internal logic.
-     *
-     *  @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::NGO         => 'Ngo type',
-            self::GOVERNMENT  => 'Government type',
-        };
-    }
 
     /**
      * Retrieve all enum values.

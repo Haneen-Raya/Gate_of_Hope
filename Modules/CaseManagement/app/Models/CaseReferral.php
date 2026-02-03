@@ -5,6 +5,7 @@ namespace Modules\CaseManagement\Models;
 use App\Contracts\HasCaseEvents;
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use App\Traits\LogsCaseEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +45,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations, LogsCaseEvents;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations, LogsCaseEvents, InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -285,5 +286,24 @@ class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
     public function isAssignedToEntity(User $user): bool
     {
         return $this->receiver_entity_id === $user->entitiy->id;
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'referral_type',
+            'direction',
+            'status',
+            'urgency_level',
+        ]);
     }
 }

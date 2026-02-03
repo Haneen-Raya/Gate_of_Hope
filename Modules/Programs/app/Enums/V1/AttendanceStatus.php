@@ -1,6 +1,8 @@
 <?php
 
-namespace Modules\Programs\Enums\Api\V1\Activity;
+namespace Modules\Programs\Enums\V1\Activity;
+
+use App\Traits\HasEnumTranslation;
 
 /**
  * @Enum AttendanceStatus
@@ -20,6 +22,8 @@ namespace Modules\Programs\Enums\Api\V1\Activity;
  */
 enum AttendanceStatus: string
 {
+    use HasEnumTranslation;
+
     /** Beneficiary attended the session successfully. */
     case ATTENDED = 'attended';
 
@@ -28,23 +32,6 @@ enum AttendanceStatus: string
 
     /** Beneficiary absence was excused with valid reason. */
     case EXCUSED = 'excused';
-
-
-    /**
-     * Get a human-readable label for each attendance status.
-     *
-     * Intended for UI display, reports, and API responses.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::ATTENDED   => 'Attended',
-            self::ABSENT     => 'Absent',
-            self::EXCUSED    => 'Excused Absence',
-        };
-    }
 
     /**
      * Return all available enum values.

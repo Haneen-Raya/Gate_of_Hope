@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum CaseReferralUrgencyLevel
  *
@@ -17,6 +19,8 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum CaseReferralUrgencyLevel : string
 {
+    use HasEnumTranslation;
+
     /**
      * Normal priority referral.
      *
@@ -32,22 +36,6 @@ enum CaseReferralUrgencyLevel : string
      * or accelerated action due to critical circumstances.
      */
     case URGENT = 'urgent';
-
-    /**
-     * Get a human-readable label for the service direction.
-     *
-     * This label is intended for UI display, reports, and API responses,
-     * while the enum value is used for storage and internal logic.
-     *
-     *  @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::NORMAL   => 'Normal Priority',
-            self::URGENT   =>  'Urgent Priority',
-        };
-    }
 
     /**
      * Retrieve all enum values.

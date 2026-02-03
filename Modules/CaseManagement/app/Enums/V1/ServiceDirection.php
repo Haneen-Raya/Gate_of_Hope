@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum ServiceDirection
  *
@@ -16,27 +18,13 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum ServiceDirection : string
 {
+    use HasEnumTranslation;
+
     /** Service provided internally by the organization.*/
     case INTERNAL = 'internal';
 
     /** Service provided externally by a partner or third-party entity. */
     case EXTERNAL = 'external';
-
-    /**
-     * Get a human-readable label for the service direction.
-     *
-     * This label is intended for UI display, reports, and API responses,
-     * while the enum value is used for storage and internal logic.
-     *
-     *  @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::INTERNAL   => 'Internal Service',
-            self::EXTERNAL   => 'External Service',
-        };
-    }
 
     /**
      * Retrieve all enum values.
