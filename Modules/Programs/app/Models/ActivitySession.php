@@ -2,6 +2,7 @@
 
 namespace Modules\Programs\Models;
 
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Modules\HumanResources\Models\Trainer;
-use Modules\Programs\Enums\ActivitySessionStatus;
+use Modules\Programs\Enums\V1\ActivitySessionStatus;
 use Modules\Programs\Models\Builders\ActivitySessionBuilder;
 use Spatie\Translatable\HasTranslations;
 
@@ -24,7 +25,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class ActivitySession extends Model
 {
-    use HasFactory, LogsActivity , HasSpatial, HasTranslations;
+    use HasFactory, LogsActivity , HasSpatial, HasTranslations, InteractsWithEnums;
 
     /**
      * @var array Mass-assignable attributes for session lifecycle.
@@ -41,7 +42,6 @@ class ActivitySession extends Model
         'session_notes'
     ];
 
-    /** @var array Fields handled as spatial geometric data. */
     protected array $spatialFields = [
             'location',
         ];
@@ -101,5 +101,21 @@ class ActivitySession extends Model
         static::creating(function ($session) {
             $session->status ??= ActivitySessionStatus::DRAFT;
         });
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'status',
+        ]);
     }
 }

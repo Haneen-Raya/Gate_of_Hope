@@ -3,7 +3,7 @@
 namespace Modules\HumanResources\Models\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
-use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\V1\Gender;
 
 /**
  * Class TrainerBuilder

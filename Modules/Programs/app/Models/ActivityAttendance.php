@@ -14,7 +14,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Modules\Core\Models\User;
 use Modules\HumanResources\Models\Trainer;
-use Modules\Programs\Enums\V1\Activity\AttendanceStatus;
+use Modules\Programs\Enums\V1\AttendanceStatus;
 use Modules\Programs\Models\Builders\ActivityAttendanceBuilder;
 use Spatie\Translatable\HasTranslations;
 

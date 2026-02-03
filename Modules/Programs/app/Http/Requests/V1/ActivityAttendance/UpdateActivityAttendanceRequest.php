@@ -4,7 +4,7 @@ namespace Modules\Programs\Http\Requests\Api\V1\ActivityAttendance;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Programs\Enums\V1\Activity\AttendanceStatus;
+use Modules\Programs\Enums\V1\AttendanceStatus;
 
 /**
  * Class UpdateActivityAttendanceRequest

@@ -1,32 +1,24 @@
 <?php
 
-namespace Modules\HumanResources\Enums;
+namespace Modules\HumanResources\Enums\V1;
+
+use App\Traits\HasEnumTranslation;
 
 /**
  * @Enum Gender
- * 
+ *
  * Defines the biological and social gender classification for specialists.
  * Used for demographic reporting and targeted assistance programs.
- * 
+ *
  * @method static array all() Returns a flat array of all string values ['male', 'female'].
  */
 enum Gender: string
 {
+    use HasEnumTranslation;
+
     case MALE = 'male';
     case FEMALE = 'female';
 
-    /**
-     * Get a human-readable label for each gender.
-     * Useful for UI displays, Exports, and Reports.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::MALE => 'Male',
-            self::FEMALE => 'Female',
-        };
-    }
 
     /**
      * Retrieve all enum values.

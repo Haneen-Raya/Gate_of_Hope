@@ -72,7 +72,8 @@ return [
         'equipment'   => 'تجهيزات ومعدات',
         'kits'        => 'حقائب دعم',
         'venue'       => 'تأمين قاعات',
-      ],
+    ],
+
     'family_stability' => [
         'stable' => 'مستقر',
         'partially_unstable' => 'غير مستقر جزئياً',
@@ -113,10 +114,15 @@ return [
 
     'status' => [
         'referred' => 'تمت الإحالة',
-        'accepted' => 'مقبولة',
-        'completed' => 'مكتملة',
-        'rejected' => 'مرفوضة',
-        'cancelled' => 'ملغاة',
+        'accepted' => 'تم القبول',
+        'completed' => 'تم الانجاز',
+        'rejected' => 'تم الرفض',
+        'cancelled' => 'تم الالغاء',
+        'pending' => 'بانتظار الموافقة',
+        'approved' => 'تمت الموافقة',
+        'open'        => 'مفتوحة',
+        'in_progress' => 'قيد التنفيذ',
+        'closed'      => 'مغلقة',
     ],
 
     'urgency_level' => [
@@ -140,9 +146,23 @@ return [
     ],
 
     'attendance_status' => [
-        'attended' => 'حضر',
+        'attended' => 'حاضر',
         'absent' => 'غائب',
         'excused' => 'غائب بعذر',
+    ],
+
+    'certification_level' => [
+        'junior' => 'مبتدئ',
+        'senior' => 'متقدم',
+        'expert' => 'خبير',
+    ],
+
+    'session_type' => [
+        'individual' => 'جلسة فردية',
+        'group' => 'جلسة جماعية',
+        'family' => 'جلسة عائلية',
+        'follow_up' => 'جلسة متابعة',
+        'assessment' => 'جلسة تقييم',
     ],
 ];
 

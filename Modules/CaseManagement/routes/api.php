@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\CaseManagement\Http\Controllers\CaseManagementController;
+use Modules\CaseManagement\Http\Controllers\Api\V1\CaseReferralController;
+use Modules\CaseManagement\Http\Controllers\Api\V1\ServiceController;
+use Modules\CaseManagement\Http\Controllers\CaseEventController;
 
 /**
  * Case Management Domain - Version 1
@@ -15,11 +17,6 @@ Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(func
      * Handles psychological and social work session logs.
      */
     require __DIR__ . '/v1/case_sessions.php';
-
-    /** * Master Case Resource:
-     * Provides CRUD operations for the central Case Management entity.
-     */
-    Route::apiResource('casemanagements', CaseManagementController::class)->names('casemanagement');
 
     /** * Clinical Timeline:
      * Manages Case Events (Significant occurrences) and Support Plans.

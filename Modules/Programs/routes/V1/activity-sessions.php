@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Programs\Http\Controllers\V1\ActivitySessionController;
+use Modules\Programs\Http\Controllers\Api\V1\ActivitySessionController;
 
 /**
  * --------------------------------------------------------------------------

@@ -73,7 +73,7 @@ return [
         'venue'       => 'Venue Rentals',
     ],
 
-'family_stability' => [
+    'family_stability' => [
         'stable' => 'Stable',
         'partially_unstable' => 'Partially Unstable',
         'unstable' => 'Unstable',
@@ -117,6 +117,11 @@ return [
         'completed' => 'Completed',
         'rejected' => 'Rejected',
         'cancelled' => 'Cancelled',
+        'pending' => 'Pending',
+        'approved' => 'Approved',
+        'open'        => 'Open',
+        'in_progress' => 'In Progress',
+        'closed'      => 'Closed',
     ],
 
     'urgency_level' => [
@@ -143,6 +148,20 @@ return [
         'attended' => 'Attended',
         'absent' => 'Absent',
         'excused' => 'Excused',
+    ],
+
+    'certification_level' => [
+        'junior' => 'Junior',
+        'senior' => 'Senior',
+        'expert' => 'Expert',
+    ],
+
+    'session_type' => [
+        'individual' => 'Individual Session',
+        'group' => 'Group Session',
+        'family' => 'Family Session',
+        'follow_up' => 'Follow-up Session',
+        'assessment' => 'Assessment Session',
     ],
 
 ];

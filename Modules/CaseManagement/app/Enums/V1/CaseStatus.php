@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\CaseManagement\Enums;
+namespace Modules\CaseManagement\Enums\V1;
 
 use App\Traits\HasEnumTranslation;
 
@@ -27,18 +27,6 @@ enum CaseStatus: string
     /** Case has been forwarded to another entity or program. */
     case REFERRED = 'referred';
 
-    /**
-     * Retrieve the translated label for the current case status.
-     *
-     * This method fetches the translation from:
-     * Modules/CaseManagement/lang/{locale}/case_status.php
-     *
-     * @return string The localized label.
-     */
-    public function label(): string
-    {
-        return __("casemanagement::case_status.{$this->value}");
-    }
 
     /**
      * Get all raw string values of the enum cases.

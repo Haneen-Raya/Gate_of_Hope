@@ -1,6 +1,8 @@
 <?php
 
-namespace Modules\Programs\Enums;
+namespace Modules\Programs\Enums\V1;
+
+use App\Traits\HasEnumTranslation;
 
 /**
  * Enum ActivitySessionStatus
@@ -18,6 +20,8 @@ namespace Modules\Programs\Enums;
  */
 enum ActivitySessionStatus: string
 {
+    use HasEnumTranslation;
+    
     /**
      * Draft session
      * - Initial state before scheduling
