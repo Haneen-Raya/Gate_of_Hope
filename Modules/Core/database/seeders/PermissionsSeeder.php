@@ -143,12 +143,12 @@ class PermissionsSeeder extends Seeder
             'case.referral.update','case.referral.delete',
             'case.specialist.assign','case.specialist.revoke',
 
-            'service.create','service.read','service.update','service.delete',
+            'service.create','service.read','service.update','service.delete', 'service.activation.update',
 
             'regions.create','regions.read','regions.update','regions.delete',
             //activity attendance
             'activity.attendance.create','activity.attendance.read','activity.attendance.update','activity.attendance.delete',
-            // trainer 
+            // trainer
             'trainer.profile.read','trainer.profile.update','trainer.schedule.read',
             'trainer.session.read','trainer.session.create','trainer.session.update',
         ];

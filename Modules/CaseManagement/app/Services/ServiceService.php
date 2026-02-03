@@ -99,5 +99,24 @@ class ServiceService
     {
         $service->delete();
     }
+
+    /**
+     * Update the activation status of the given service.
+     *
+     * Executes the update inside a database transaction and clears
+     * related cache entries upon success.
+     *
+     * @param  array  $data
+     * @param  Service $service
+     *
+     * @return Service $service
+     */
+    public function updateActivationStatus(array $data, Service $service)
+    {
+        return DB::transaction(function () use ($data,$service) {
+            $service->update(['is_active'=>$data['is_active']]);
+            return $service->refresh();
+        });
+    }
 }
 
