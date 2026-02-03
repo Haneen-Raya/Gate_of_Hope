@@ -5,9 +5,11 @@ namespace Modules\Programs\Models;
 use App\Traits\HasAuditUsers;
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Spatie\Activitylog\LogOptions;
 use App\Contracts\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Programs\Enums\V1\ProgramStatus;
 use Modules\Assessments\Models\IssueCategory;
@@ -37,7 +39,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Program extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, HasAuditUsers;
+    use HasFactory, LogsActivity, AutoFlushCache, HasAuditUsers, InteractsWithEnums , HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -55,7 +57,12 @@ class Program extends Model implements CacheInvalidatable
         'status',
         'created_by'
     ];
-
+    public array $translatable = [
+        'name',
+        'description',
+        'objectives',
+        'target_groups'
+    ];
     /**
      * Disable the default 'updated_by' behavior from HasAuditUsers trait.
      * Set to null because the table structure only tracks the creator.
@@ -77,7 +84,6 @@ class Program extends Model implements CacheInvalidatable
         'budget'     => 'float',
         'objectives' => 'json',
     ];
-
     /**
      * Define the tags used for intelligent cache invalidation.
      * * When a program is updated, these specific tags will be flushed via AutoFlushCache.
@@ -147,5 +153,11 @@ class Program extends Model implements CacheInvalidatable
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'status',
+        ]);
     }
 }

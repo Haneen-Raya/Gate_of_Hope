@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Enum CaseStatus
  *
@@ -12,6 +14,7 @@ namespace Modules\CaseManagement\Enums;
  */
 enum CaseStatus: string
 {
+    use HasEnumTranslation;
     /** Case is newly created and awaiting action. */
     case OPEN = 'open';
 
@@ -36,7 +39,7 @@ enum CaseStatus: string
     {
         return __("casemanagement::case_status.{$this->value}");
     }
-    
+
     /**
      * Get all raw string values of the enum cases.
      *

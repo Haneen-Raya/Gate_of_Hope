@@ -2,6 +2,8 @@
 
 namespace Modules\Programs\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Enum ResourceType
  * * Defines the supported categories for program resources.
@@ -11,6 +13,7 @@ namespace Modules\Programs\Enums\V1;
  */
 enum ResourceType: string
 {
+    use HasEnumTranslation;
     /**
      * Educational materials like books, notebooks, or training guides.
      */

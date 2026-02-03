@@ -6,6 +6,7 @@ use App\Traits\LogsCaseEvents;
 use App\Contracts\HasCaseEvents;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\CaseManagement\Enums\SessionType;
@@ -13,7 +14,6 @@ use Modules\HumanResources\Models\Specialist;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\CaseManagement\Models\Builders\CaseSessionBuilder;
-use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
 use Modules\CaseManagement\Services\CaseEvent\Formatter\CaseSessionFormatter;
 
 // use Modules\CaseManagement\Database\Factories\CaseSessionFactory;

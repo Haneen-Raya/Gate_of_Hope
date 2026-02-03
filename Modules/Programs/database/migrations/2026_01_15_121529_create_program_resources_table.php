@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('quantity');
             $table->decimal('cost', 15, 2);
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamps();
         });
     }

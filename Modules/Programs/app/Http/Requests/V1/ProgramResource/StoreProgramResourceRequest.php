@@ -71,7 +71,7 @@ class StoreProgramResourceRequest extends FormRequest
              * Optional descriptive notes.
              * Can be null or a string.
              */
-            'notes'         => 'nullable|string'
+            'notes'         => 'nullable|array'
         ];
     }
 }

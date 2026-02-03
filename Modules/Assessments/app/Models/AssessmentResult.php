@@ -19,31 +19,38 @@ use Modules\Assessments\Models\Builders\AssessmentResultBuilder;
 // use Modules\Assessments\Database\Factories\AssessmentResultFactory;
 
 /**
- * Modules\Assessments\Models\AssessmentResult
+ * Class AssessmentResult
  *
- * Represents the quantified outcome of a beneficiary assessment.
- * Handles scoring metrics, vulnerability normalization, and priority determination.
+ * This model represents the quantified outcome of a beneficiary assessment.
+ * It acts as the analytical engine that captures raw scores, normalizes vulnerability metrics,
+ * and maintains the history of priority assignments (both algorithmic and specialist-led).
  *
- * @property int $id
+ * CORE CAPABILITIES:
+ * - Scoring Normalization: Handles the calculation and storage of percentage-based vulnerability metrics.
+ * - Audit Trail: Tracks specialist decisions and overrides via HasAuditUsers and LogsActivity.
+ * - Performance Caching: Implements a "Ripple Effect" invalidation strategy via CacheInvalidatable.
+ * - Domain Intelligence: Uses AssessmentResultBuilder for complex vulnerability analytics.
+ *
+ * @package Modules\Assessments\Models
+ * @property int $id Internal primary key.
  * @property int $beneficiary_id The target beneficiary of the assessment.
  * @property int $issue_type_id The specific vulnerability or issue category evaluated.
  * @property int $score The raw numerical score achieved.
  * @property int $max_score The total possible score for this assessment type.
  * @property float $normalized_score The percentage-based score (0.00 - 100.00).
- * @property string $priority_suggested Algorithmic-based priority level.
- * @property string|null $priority_final Specialist-overridden or confirmed priority.
- * @property string|null $justification Contextual reasoning for the assigned priority.
- * @property bool $is_latest Flag indicating if this is the current active assessment.
- * @property Carbon $assessed_at The exact timestamp when the assessment was finalized.
- * @property int|null $assessed_by User ID of the specialist who conducted the session.
- * @property int|null $updated_by User ID of the last user who modified the result.
+ * @property string $priority_suggested Algorithmic-based priority level calculated by the system.
+ * @property PriorityLevel|null $priority_final Specialist-overridden or confirmed priority level.
+ * @property string|null $justification Contextual reasoning for the final priority assignment.
+ * @property bool $is_latest Flag indicating if this is the most current assessment for the beneficiary.
+ * @property Carbon $assessed_at The exact timestamp when the assessment session was finalized.
+ * @property int|null $assessed_by User ID of the specialist who conducted the session (Created By).
+ * @property int|null $updated_by User ID of the last specialist who modified the result.
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property-read Beneficiary $beneficiary
- * @property-read IssueType $issueType
- * @property-read User|null $assessor
- * @property-read User|null $updater
+ * @property-read Beneficiary $beneficiary Master profile of the assessed individual.
+ * @property-read IssueType $issueType Categorization of the protection or social issue.
+ * @property-read User|null $assessor The specialist responsible for the assessment.
  *
  * @method static AssessmentResultBuilder|static query()
  */
@@ -52,14 +59,17 @@ class AssessmentResult extends Model implements CacheInvalidatable
     use HasFactory, LogsActivity, HasAuditUsers, AutoFlushCache;
 
     /**
-     * Audit Configuration: Map custom field names for creator and updater.
+     * AUDIT CONFIGURATION:
+     * Maps custom database field names for the creation and update tracking logic.
+     * Uses 'assessed_by' as the primary creator identifier.
      */
     protected $createdByField = 'assessed_by';
     protected $updatedByField = null;
 
     /**
-     * The attributes that are mass assignable.
-     * * @var array<int, string>
+     * The attributes that are mass assignable for bulk ingestion.
+     *
+     * @var array<int, string>
      */
     protected $fillable = [
         'beneficiary_id',
@@ -75,20 +85,22 @@ class AssessmentResult extends Model implements CacheInvalidatable
         'assessed_by',
     ];
 
+    /**
+     * Attribute casting registry.
+     * Maps 'priority_final' to the PriorityLevel Enum for strict type enforcement.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'priority_final' => PriorityLevel::class,
     ];
 
-    // protected static function newFactory(): AssessmentResultFactory
-    // {
-    //     // return AssessmentResultFactory::new();
-    // }
-
     /**
-     * Define cache tags to invalidate on model changes.
-     * Triggers the "Ripple Effect" to clear list analytics and individual results.
+     * CACHE STRATEGY: Define invalidation ripples.
+     * Ensures that analytics dashboards and individual results are refreshed
+     * immediately upon assessment updates.
      *
-     * @return array<string>
+     * @return array<int, string> List of cache tags.
      */
     public function getCacheTagsToInvalidate(): array
     {
@@ -99,7 +111,8 @@ class AssessmentResult extends Model implements CacheInvalidatable
     }
 
     /**
-     * Create a new custom Eloquent query builder for the model.
+     * DOMAIN BUILDER: Custom Eloquent orchestration.
+     * Returns a specialized builder for handling complex vulnerability filtering.
      *
      * @param \Illuminate\Database\Query\Builder $query
      * @return AssessmentResultBuilder
@@ -110,8 +123,10 @@ class AssessmentResult extends Model implements CacheInvalidatable
     }
 
     /**
-     * Configure the activity logging options for audit trails.
-     * Essential for tracking vulnerability changes and specialist decisions.
+     * AUDIT CONFIG: Activity log behavior specification.
+     * Essential for tracking changes in vulnerability scores and specialist justifications.
+     *
+     * @return LogOptions Standardized logging options.
      */
     public function getActivitylogOptions(): LogOptions
     {
@@ -119,7 +134,8 @@ class AssessmentResult extends Model implements CacheInvalidatable
     }
 
     /**
-     * Relationship: The beneficiary being assessed.
+     * RELATIONSHIP: Beneficiary Ownership.
+     * Links the result to the core beneficiary master profile.
      *
      * @return BelongsTo
      */
@@ -129,7 +145,8 @@ class AssessmentResult extends Model implements CacheInvalidatable
     }
 
     /**
-     * Relationship: The category or type of issue being evaluated.
+     * RELATIONSHIP: Domain Categorization.
+     * Links the result to the specific issue or vulnerability type being assessed.
      *
      * @return BelongsTo
      */

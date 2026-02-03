@@ -52,4 +52,26 @@ return [
         'stable'    => 'مستقر',
         'worsening' => 'في تراجع',
     ],
+
+    'priority_levels' => [
+        'low'      => 'منخفض',
+        'medium'   => 'متوسط',
+        'high'     => 'عالي',
+        'critical' => 'حرج',
+    ],
+    'program_statuses' => [
+        'draft'     => 'مسودة',
+        'active'    => 'نشط',
+        'completed' => 'مكتمل',
+        'suspended' => 'معلق',
+        'archived'  => 'مؤرشف',
+    ],
+    'resource_types' => [
+        'educational' => 'مواد تعليمية',
+        'logistics'   => 'خدمات لوجستية',
+        'equipment'   => 'تجهيزات ومعدات',
+        'kits'        => 'حقائب دعم',
+        'venue'       => 'تأمين قاعات',
+    ],
 ];
+

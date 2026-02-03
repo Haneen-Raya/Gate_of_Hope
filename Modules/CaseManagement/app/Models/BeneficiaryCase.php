@@ -8,6 +8,7 @@ use App\Traits\AutoFlushCache;
 use App\Traits\LogsCaseEvents;
 use Modules\Core\Models\Region;
 use App\Contracts\HasCaseEvents;
+use App\Traits\InteractsWithEnums;
 use Spatie\Activitylog\LogOptions;
 use App\Contracts\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Model;
@@ -34,21 +35,22 @@ use Modules\CaseManagement\Services\CaseEvent\Formatter\BeneficiaryCaseFormatter
  * - Multi-Layered Caching: Implements CacheInvalidatable for high-performance retrieval.
  * - Event Sourcing: Transforms raw mutations into domain events via BeneficiaryCaseFormatter.
  * - Auto-Closure Logic: Automatically synchronizes closure timestamps based on status transitions.
- * - Localization: Supports multi-lingual closure reasons via Spatie Translatable.
+ * - Advanced Localization:
+ * 1. Supports multi-lingual narrative for case termination via Spatie Translatable.
+ * 2. Dynamically transforms Enums (like Status) into localized human-readable labels during serialization via InteractsWithEnums.
  * * @property int $id Internal primary key.
- * @property int $beneficiary_id Reference to the core beneficiary profile.
- * @property int $issue_type_id Classification of the primary protection/social issue.
- * @property int $case_manager_id The assigned specialist responsible for case progression.
- * @property int $region_id Geographical jurisdiction of the case.
- * @property CaseStatus $status Enum representing the operational state (Active, Closed, etc.).
- * @property string $priority Urgency level (Critical, High, Medium, Low).
- * @property Carbon|null $opened_at Formal activation timestamp.
- * @property Carbon|null $closed_at Termination timestamp, managed by system observers.
- * @property string|null $closure_reason Multi-lingual narrative for case termination.
+ * @property CaseStatus $status Enum representing the operational state (Active, Closed, etc.) - Supports translation.
+ * @property array|string|null $closure_reason Multi-lingual narrative for case termination (Stored as JSON).
+ * @property Carbon|null $closed_at Termination timestamp, automatically managed by system observers.
  */
 class BeneficiaryCase extends Model implements HasCaseEvents, CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents, HasTranslations;
+    /**
+     * TRAIT REGISTRY:
+     * - HasTranslations: Enables Spatie's multi-lingual JSON column handling.
+     * - InteractsWithEnums: Maps technical Enum values to localized labels in API responses.
+     */
+    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents, HasTranslations, InteractsWithEnums;
 
     /**
      * Mass assignable attributes for bulk ingestion.
@@ -67,8 +69,8 @@ class BeneficiaryCase extends Model implements HasCaseEvents, CacheInvalidatable
     ];
 
     /**
-     * Translatable field registry.
-     * @var array<int, string>
+     * TRANSLATION CONFIGURATION:
+     * Defines fields that support multi-language input.
      */
     public array $translatable = ['closure_reason'];
 
@@ -218,5 +220,16 @@ class BeneficiaryCase extends Model implements HasCaseEvents, CacheInvalidatable
                 $case->closed_at = null;
             }
         });
+    }
+    /**
+     * SERIALIZATION OVERRIDE:
+     * Intercepts the toArray() method to inject localized labels for Enums.
+     * This ensures the Frontend receives "Active" or "نشط" instead of the raw string "active".
+     */
+     public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'status',
+        ]);
     }
 }
