@@ -5,6 +5,7 @@ namespace Modules\CaseManagement\Models;
 use App\Contracts\CacheInvalidatable;
 use App\Contracts\HasCaseEvents;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use App\Traits\LogsCaseEvents;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ use Modules\CaseManagement\Services\CaseEvent\Formatter\CaseReviewFormatter;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\HumanResources\Models\Specialist;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\CaseReviewFactory;
 
@@ -42,7 +44,17 @@ use Modules\HumanResources\Models\Specialist;
  */
 class CaseReview extends Model implements CacheInvalidatable, HasCaseEvents
 {
-    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents;
+    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents, InteractsWithEnums, HasTranslations;
+
+    /**
+     * The attributes that are translatable via Spatie Translatable.
+     *
+     * Each attribute listed here will be stored as a JSON object containing 
+     * translations for different locales (e.g., {"en": "...", "ar": "..."}).
+     *
+     * @var array<int, string>
+     */
+    public array $translatable = ['notes'];
 
     /**
      * The attributes that are mass assignable.
@@ -146,5 +158,21 @@ class CaseReview extends Model implements CacheInvalidatable, HasCaseEvents
     public function caseEvents(): HasMany
     {
         return $this->hasMany(CaseEvent::class, 'beneficiary_case_id');
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply 
+     * structured Enum transformations, providing localized labels and 
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'progress_status'
+        ]);
     }
 }

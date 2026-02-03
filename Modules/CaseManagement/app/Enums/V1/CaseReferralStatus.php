@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum CaseReferralStatus
  *
@@ -18,6 +20,8 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum CaseReferralStatus : string
 {
+    use HasEnumTranslation;
+
     /** The referral has been created and sent to the receiving entity, but no action has been taken yet.*/
     case REFERRED = 'referred';
 
@@ -34,30 +38,6 @@ enum CaseReferralStatus : string
      * before service completion.
      */
     case CANCELLED = 'cancelled';
-
-    /**
-     * Get a human-readable label for the referral status.
-     *
-     * These labels are intended for:
-     * - UI status indicators and badges
-     * - Case tracking dashboards
-     * - Reports and exports
-     *
-     * The enum value itself is used for persistence
-     * and internal business logic.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::REFERRED   => 'Referred',
-            self::ACCEPTED   => 'Accepted',
-            self::COMPLETED  => 'Completed',
-            self::CANCELLED  => 'Cancelled',
-            self::REJECTED   => 'Rejected',
-        };
-    }
 
     /**
      * Retrieve all enum values.

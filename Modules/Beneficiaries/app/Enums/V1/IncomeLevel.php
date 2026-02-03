@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Class IncomeLevel
  *
@@ -22,6 +24,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum IncomeLevel: string
 {
+    use HasEnumTranslation;
+
     // No income at all.
     case NONE = 'none';
 
@@ -34,20 +38,6 @@ enum IncomeLevel: string
     // High income, above average living standard.
     case HIGH = 'high';
 
-    /**
-     * Return the human-readable label of the current enum case.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match($this) {
-            self::NONE => 'None',
-            self::LOW => 'Low',
-            self::MEDIUM => 'Medium',
-            self::HIGH => 'High',
-        };
-    }
 
     /**
      * Retrieve all enum values.

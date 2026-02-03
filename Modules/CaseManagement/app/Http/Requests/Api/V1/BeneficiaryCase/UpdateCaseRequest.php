@@ -4,6 +4,7 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Assessments\Enums\PriorityLevel;
 use Modules\CaseManagement\Enums\CaseStatus;
 
 /**
@@ -33,11 +34,11 @@ class UpdateCaseRequest extends FormRequest
             'case_manager_id' => 'sometimes|exists:users,id',
             'region_id'       => 'sometimes|exists:regions,id',
             'status'          => ['sometimes', Rule::in(CaseStatus::all())],
-            'priority'        => 'sometimes|string|in:Low,Medium,High,Critical',
+            'priority'        => ['sometimes', Rule::in(PriorityLevel::all())],
             'closed_at'       => 'nullable|date',
             'closure_reason'  => [
                 'nullable',
-                'string',
+                'array',
                 'max:1000',
                 Rule::requiredIf(fn() => !empty($this->closed_at)),
             ],

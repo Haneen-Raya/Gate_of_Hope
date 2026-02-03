@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Class LivingStandard
  *
@@ -22,6 +24,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum LivingStandard: string
 {
+    use HasEnumTranslation;
+
     // Extremely low standard of living, lacking basic necessities.
     case VERY_POOR = 'very_poor';
 
@@ -34,21 +38,6 @@ enum LivingStandard: string
     // Above average living standard, comfortable lifestyle.
     case GOOD = 'good';
 
-    /**
-     * Return the human-readable label of the current enum case.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match($this) {
-            self::VERY_POOR => 'Very Poor',
-            self::POOR => 'Poor',
-            self::ACCEPTABLE => 'Acceptable',
-            self::GOOD => 'Good',
-        };
-    }
-    
     /**
      * Retrieve all enum values.
      * Common use case: Validation rules in FormRequests.

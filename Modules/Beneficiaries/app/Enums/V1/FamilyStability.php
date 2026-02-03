@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Class FamilyStability
  *
@@ -16,6 +18,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum FamilyStability: string
 {
+    use HasEnumTranslation;
+
     //The family environment is stable and well-functioning.
     case STABLE = 'stable';
 
@@ -24,19 +28,6 @@ enum FamilyStability: string
 
     // The family is unstable, with significant issues affecting well-being.
     case UNSTABLE = 'unstable';
-
-    /* Return the human-readable label of the current enum case.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match($this) {
-            self::STABLE => 'Stable',
-            self::PARTIALLY_UNSTABLE => 'Partially Unstable',
-            self::UNSTABLE => 'Unstable',
-        };
-    }
 
     /**
      * Retrieve all enum values.

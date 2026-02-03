@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum ResidenceType
  * 
@@ -13,20 +15,10 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum ResidenceType: string
 {
+    use HasEnumTranslation;
+    
     case URBAN = 'urban';
     case RURAL = 'rural';
-
-    /**
-     * Get a human-readable title for the residence type.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::URBAN => 'Urban Area',
-            self::RURAL => 'Rural Area',
-        };
-    }
 
     /**
      * Retrieve all enum values.

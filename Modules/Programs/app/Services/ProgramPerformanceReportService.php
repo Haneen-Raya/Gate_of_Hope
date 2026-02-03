@@ -2,7 +2,7 @@
 
 namespace Modules\Programs\Services;
 
-use Modules\Programs\Enums\Api\V1\Activity\AttendanceStatus;
+use Modules\Programs\Enums\V1\Activity\AttendanceStatus;
 use Modules\Programs\Models\ActivityAttendance;
 use Modules\Programs\Models\Program;
 

@@ -65,6 +65,7 @@ class PermissionsSeeder extends Seeder
             'cases.read','case_support_plans.read','case_sessions.read',
             'case_reviews.read','case_reviews.create','case_reviews.update','case_reviews.delete',
 
+
             // Issues
             'issue_categories.create','issue_categories.read',
             'issue_categories.update','issue_categories.delete','issue_categories.archive',

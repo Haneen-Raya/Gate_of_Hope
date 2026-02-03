@@ -4,6 +4,7 @@ namespace Modules\Beneficiaries\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,7 +56,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class SocialBackground extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, SoftDeletes, AutoFlushCache;
+    use HasFactory, LogsActivity, SoftDeletes, AutoFlushCache,InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -169,5 +170,24 @@ class SocialBackground extends Model implements CacheInvalidatable
     public function employmentStatus()
     {
         return $this->belongsTo(EmploymentStatus::class);
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'housing_tenures',
+            'income_level',
+            'living_standard',
+            'family_stability',
+        ]);
     }
 }

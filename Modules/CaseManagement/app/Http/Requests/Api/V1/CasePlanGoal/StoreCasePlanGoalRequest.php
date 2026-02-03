@@ -43,10 +43,12 @@ class StoreCasePlanGoalRequest extends FormRequest
     {
         return [
             'plan_id' => 'required|exists:case_support_plans,id',
-            'goal_description' => 'required|string|max:1000',
+            'goal_description' => 'required|array',
+            'goal_description.*' => 'required|string|max:1000',
             'status' => ['required', Rule::in(PlanStatus::all())],
             'target_date' => ['sometimes', 'date', 'after:today', new ValidGoalTargetDate($this->plan_id)],
-            'notes' => 'nullable|string|max:1000',
+            'notes' => 'nullable|array',
+            'notes.*' => 'nullable|string|max:1000',
         ];
     }
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\HumanResources\Models\Builders\ProfessionBuilder;
 use Modules\Programs\Models\Activity;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\HumanResources\Database\Factories\ProfessionFactory;
 
@@ -34,7 +35,17 @@ use Modules\Programs\Models\Activity;
  */
 class Profession extends Model implements CacheInvalidatable
 {
-    use HasFactory, AutoFlushCache, HasActiveState;
+    use HasFactory, AutoFlushCache, HasActiveState, HasTranslations;
+
+    /**
+     * The attributes that are translatable via Spatie Translatable.
+     *
+     * Each attribute listed here will be stored as a JSON object containing 
+     * translations for different locales (e.g., {"en": "...", "ar": "..."}).
+     *
+     * @var array<int, string>
+     */
+    public array $translatable = ['label'];
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +53,7 @@ class Profession extends Model implements CacheInvalidatable
      */
     protected $fillable = [
         'name',
+        'label',
         'code',
         'is_active'
     ];

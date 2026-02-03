@@ -5,6 +5,7 @@ namespace Modules\Beneficiaries\Models;
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\AutoTranslatesAttributes;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +37,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class EducationLevel extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations;
+    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations, InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.

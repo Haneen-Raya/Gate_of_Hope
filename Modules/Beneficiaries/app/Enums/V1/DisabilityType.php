@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum DisabilityType
  * 
@@ -12,6 +14,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum DisabilityType: string
 {
+    use HasEnumTranslation;
+
     /** Beneficiaries with partial or total loss of sight. */
     case VISUAL = 'visual';
 
@@ -38,25 +42,6 @@ enum DisabilityType: string
 
     /** Beneficiaries with no reported or identified disabilities. */
     case NONE = 'none';
-
-    /**
-     * Get a human-readable and standardized label for each disability type.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::VISUAL       => 'Visual Impairment',
-            self::HEARING      => 'Hearing Impairment',
-            self::PHYSICAL     => 'Physical Disability',
-            self::INTELLECTUAL => 'Intellectual Disability',
-            self::SPEECH       => 'Speech and Language Disorder',
-            self::MENTAL       => 'Mental Health Condition',
-            self::AUTISM       => 'Autism Spectrum Disorder',
-            self::MULTIPLE     => 'Multiple Disabilities',
-            self::NONE         => 'No Disability',
-        };
-    }
 
     /**
      * Retrieve all enum values.

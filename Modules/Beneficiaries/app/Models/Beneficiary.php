@@ -4,6 +4,7 @@ namespace Modules\Beneficiaries\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Carbon\Carbon;
 use Modules\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +60,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Beneficiary extends Model implements CacheInvalidatable, HasMedia
 {
-    use HasFactory, LogsActivity, SoftDeletes, AutoFlushCache, InteractsWithMedia;
+    use HasFactory, LogsActivity, SoftDeletes, AutoFlushCache, InteractsWithMedia, InteractsWithEnums;
+
 
     /**
      * The attributes that are mass assignable.
@@ -192,5 +194,24 @@ class Beneficiary extends Model implements CacheInvalidatable, HasMedia
     public function activityAttendances(): HasMany
     {
         return $this->hasMany(ActivityAttendance::class,);
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply 
+     * structured Enum transformations, providing localized labels and 
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'governorate',
+            'gender',
+            'residence_type',
+            'disability_type'
+        ]);
     }
 }

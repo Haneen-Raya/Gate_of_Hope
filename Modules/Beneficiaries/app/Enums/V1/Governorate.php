@@ -2,6 +2,8 @@
 
 namespace Modules\Beneficiaries\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum Governorate
  * 
@@ -13,6 +15,8 @@ namespace Modules\Beneficiaries\Enums\V1;
  */
 enum Governorate: string
 {
+    use HasEnumTranslation;
+
     case ALEPPO = 'aleppo';
     case RAQQA = 'raqqa';
     case SUWAYDA = 'suwayda';
@@ -27,30 +31,6 @@ enum Governorate: string
     case QUNEITRA = 'quneitra';
     case RURAL_DAMASCUS = 'rural_damascus';
     case TARTUS = 'tartus';
-
-    /**
-     * Get the human-readable English name for the governorate.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::ALEPPO         => 'Aleppo',
-            self::RAQQA          => 'Raqqa',
-            self::SUWAYDA        => 'Suwayda',
-            self::DAMASCUS       => 'Damascus',
-            self::DARAA          => 'Daraa',
-            self::DEIR_EZ_ZOR    => 'Deir ez-Zor',
-            self::HAMA           => 'Hama',
-            self::AL_HASAKAH     => 'Al-Hasakah',
-            self::HOMS           => 'Homs',
-            self::IDLIB          => 'Idlib',
-            self::LATAKIA        => 'Latakia',
-            self::QUNEITRA       => 'Quneitra',
-            self::RURAL_DAMASCUS => 'Rural Damascus',
-            self::TARTUS         => 'Tartus',
-        };
-    }
 
     /**
      * Retrieve all enum values.
