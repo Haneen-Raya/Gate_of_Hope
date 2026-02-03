@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Entities\Http\Controllers\Api\V1\EntitiyController;
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    
+Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
+
     require __DIR__ . '/V1/donor-reports.php';
     //Route::apiResource('entities', EntitiyController::class)->names('entities');
 

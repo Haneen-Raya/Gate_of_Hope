@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
  * * Middleware: auth:sanctum (Ensures user is authenticated)
  * Prefix: v1 (Version control)
  */
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
 
     /**
      * Program Management Routes (v1)
@@ -53,7 +53,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     require __DIR__ . '/v1/resource.php';
 
     require __DIR__ . '/v1/activity-sessions.php';
-    
+
     // Register activities routes
     require __DIR__ . '/V1/activities.php';
 
