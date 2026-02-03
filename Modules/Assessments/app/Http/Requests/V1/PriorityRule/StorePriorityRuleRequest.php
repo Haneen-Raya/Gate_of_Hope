@@ -17,7 +17,8 @@ class StorePriorityRuleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return  $this->user()->hasRole('admin') ||
+                $this->user()->hasPermissionTo('priority_rules.create');
     }
 
     /**

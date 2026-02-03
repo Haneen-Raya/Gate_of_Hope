@@ -3,6 +3,7 @@
 namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReview\StoreCaseReviewRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\CaseReview\UpdateCaseReviewRequest;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CaseReviewController extends Controller
 {
+    use AuthorizesRequests;
 
     /**
      * Service to handle case-review-related logic 
@@ -48,13 +50,16 @@ class CaseReviewController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Filter Extraction: Gather all dynamic filter criteria from the request.
+        // 1. authorization
+        $this->authorize('viewAny', CaseReview::class);
+
+        // 2. Filter Extraction: Gather all dynamic filter criteria from the request.
         $filters = $request->all();
 
-        // 2. Execution: Fetch cached and filtered data through the service layer.
+        // 3. Execution: Fetch cached and filtered data through the service layer.
         $caseReviews = $this->caseReviewService->list($filters);
 
-        // 3. Response
+        // 4. Response
         return self::successResponse('Case Reviews fetched successfully', $caseReviews);
     }
 
@@ -76,8 +81,13 @@ class CaseReviewController extends Controller
      */
     public function store(StoreCaseReviewRequest $request)
     {
+        // 1. authorization
+        $this->authorize('create', CaseReview::class);
+
+        // 2. Service Logic
         $caseReview =  $this->caseReviewService->store($request->validated());
 
+        // 3. Response (HTTP 201 Created)
         return self::successResponse('Case review created successfully', $caseReview, 201);
     }
 
@@ -99,8 +109,13 @@ class CaseReviewController extends Controller
      */
     public function show($id)
     {
+        // 1. Retrieve Data: Handled by service with "Dual-Tag" caching strategy.
         $caseReview =  $this->caseReviewService->getById($id);
 
+        // 2. authorization
+        $this->authorize('view', $caseReview);
+
+        // 3. Response
         return self::successResponse('Case review fetched successfully', $caseReview);
     }
 
@@ -123,8 +138,13 @@ class CaseReviewController extends Controller
      */
     public function update(UpdateCaseReviewRequest $request, CaseReview $caseReview)
     {
+        // 1. authorization
+        $this->authorize('update', $caseReview);
+
+        // 2. Service Logic: Updates the record and purges specific cache tags.
         $caseReview = $this->caseReviewService->update($caseReview, $request->validated());
 
+        // 3. Response
         return self::successResponse('Case review updated successfully', $caseReview);
     }
 
@@ -136,8 +156,13 @@ class CaseReviewController extends Controller
      */
     public function destroy(CaseReview $caseReview)
     {
+        // 1. authorization
+        $this->authorize('delete', $caseReview);
+
+        // 2. Service Logic
         $this->caseReviewService->delete($caseReview);
 
+        // 3. Response
         return self::successResponse('Case review deleted successfully');
     }
 }

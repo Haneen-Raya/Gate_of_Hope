@@ -4,7 +4,9 @@ namespace Modules\Assessments\Http\Controllers\Api\V1;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Modules\Assessments\Models\PriorityRule;
 use Modules\Assessments\Services\V1\PriorityRuleService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\Assessments\Http\Requests\V1\PriorityRule\StorePriorityRuleRequest;
 use Modules\Assessments\Http\Requests\V1\PriorityRule\UpdatePriorityRuleRequest;
 
@@ -17,6 +19,7 @@ use Modules\Assessments\Http\Requests\V1\PriorityRule\UpdatePriorityRuleRequest;
  */
 class PriorityRuleController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * @param PriorityRuleService $service The service handling business logic and caching for priority rules.
      */
@@ -29,6 +32,7 @@ class PriorityRuleController extends Controller
      */
     public function index(): JsonResponse
     {
+        $this->authorize('viewAny', PriorityRule::class);
         $rules = $this->service->getAll();
 
         return $this->successResponse(
@@ -44,6 +48,7 @@ class PriorityRuleController extends Controller
      */
     public function store(StorePriorityRuleRequest $request): JsonResponse
     {
+        $this->authorize('create', PriorityRule::class);
         $rule = $this->service->create($request->validated());
 
         return $this->successResponse(
@@ -61,6 +66,8 @@ class PriorityRuleController extends Controller
      */
     public function update(UpdatePriorityRuleRequest $request, $id): JsonResponse
     {
+
+        $this->authorize('update', PriorityRule::class);
         $rule = $this->service->update($id, $request->validated());
 
         return $this->successResponse(
@@ -76,6 +83,7 @@ class PriorityRuleController extends Controller
      */
     public function show($id): JsonResponse
     {
+        $this->authorize('viewAny', PriorityRule::class);
         $rule = $this->service->getById($id);
 
         return $this->successResponse(
@@ -91,6 +99,7 @@ class PriorityRuleController extends Controller
      */
     public function destroy($id): JsonResponse
     {
+        $this->authorize('delete', PriorityRule::class);
         $this->service->delete($id);
         return $this->successResponse('Rule deleted successfully');
     }

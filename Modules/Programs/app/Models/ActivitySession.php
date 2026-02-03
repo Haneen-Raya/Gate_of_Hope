@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Modules\HumanResources\Models\Trainer;
+use Modules\Programs\Enums\ActivitySessionStatus;
+use Modules\Programs\Models\Builders\ActivitySessionBuilder;
 
 // use Modules\Programs\Database\Factories\ActivitySessionFactory;
 
 class ActivitySession extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity , HasSpatial;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +32,18 @@ class ActivitySession extends Model
         'capacity',
         'status',
         'session_notes'
+    ];
+    
+    protected array $spatialFields = [
+            'location',
+        ];
+
+    protected $casts = [
+        'session_date' => 'date',
+        'start_time'   => 'datetime:H:i',
+        'end_time'     => 'datetime:H:i',
+        'status'       => ActivitySessionStatus::class,
+        'location'     => Point::class,
     ];
 
     // protected static function newFactory(): ActivitySessionFactory
@@ -59,4 +75,24 @@ class ActivitySession extends Model
     {
         return $this->hasMany(ActivityAttendance::class);
     }
+    /**
+     * Use custom Builder for fluent queries
+     */
+    public function newEloquentBuilder($query): ActivitySessionBuilder
+    {
+        return new ActivitySessionBuilder($query);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($session) {
+            $session->status ??= ActivitySessionStatus::DRAFT;
+        });
+    }
+
+    
+
 }
+
+
+

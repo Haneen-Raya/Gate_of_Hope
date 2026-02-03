@@ -138,9 +138,6 @@ class CaseReviewService
      */
     public function store(array $data): CaseReview
     {
-        // Audit Attribution: Link the review to the specialist profile of the current user.
-        $data['specialist_id'] = Auth::user()->specialist->id;
-
         // 1. Execute persistence logic.
         $caseReview = CaseReview::create($data);
 

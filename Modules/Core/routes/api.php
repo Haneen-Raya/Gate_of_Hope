@@ -11,23 +11,29 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,5');
 
 
-    require __DIR__ . '/v1/region.php';
-    require __DIR__ . '/v1/Role.php';
 
-    
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])
         ->middleware(['auth:sanctum'])
         ->name('verification.send');
-});
+
+    require __DIR__ . '/v1/region.php';
+    require __DIR__ . '/v1/role.php';
+
+    });
+
+
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
     ->middleware(['signed'])
     ->name('verification.verify');
 
 
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-    ->name('password.email');
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
 
-Route::post('/password/reset', [ResetPasswordController::class, 'reset'])
-    ->name('password.reset');
+    Route::post('/password/reset', [ResetPasswordController::class, 'reset'])
+        ->name('password.reset');

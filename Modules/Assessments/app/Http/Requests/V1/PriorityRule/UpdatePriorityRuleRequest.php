@@ -17,7 +17,8 @@ class UpdatePriorityRuleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return  $this->user()->hasRole('admin') ||
+                $this->user()->hasPermissionTo('priority_rules.update');
     }
 
     public function rules(): array

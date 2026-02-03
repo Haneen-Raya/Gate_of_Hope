@@ -18,7 +18,7 @@ class ImportAssessmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+    return $this->user()->hasRole('admin') || $this->user()->hasPermissionTo('google_forms.import');
     }
 
     /**

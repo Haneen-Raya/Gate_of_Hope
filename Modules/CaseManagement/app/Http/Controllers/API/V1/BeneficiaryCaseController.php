@@ -5,6 +5,7 @@ namespace Modules\CaseManagement\Http\Controllers\Api\V1;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Modules\CaseManagement\Models\BeneficiaryCase;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\CaseManagement\Services\BeneficiaryCaseService;
 use Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase\StoreCaseRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase\UpdateCaseRequest;
@@ -19,6 +20,7 @@ use Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase\UpdateCaseReques
  */
 class BeneficiaryCaseController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * @param BeneficiaryCaseService $caseService
      */
@@ -40,7 +42,7 @@ class BeneficiaryCaseController extends Controller
      */
     public function index(): JsonResponse
     {
-        // تم تمرير request()->all() لتمكين الـ Builder من تطبيق الفلاتر تلقائياً
+        $this->authorize('viewAny', BeneficiaryCase::class);
         $cases = $this->caseService->list(request()->all());
         return $this->successResponse('Cases retrieved successfully.', $cases);
     }
@@ -53,6 +55,7 @@ class BeneficiaryCaseController extends Controller
      */
     public function store(StoreCaseRequest $request): JsonResponse
     {
+        $this->authorize('create', BeneficiaryCase::class);
         $case = $this->caseService->createCase($request->validated());
         return $this->successResponse('Case opened successfully.', $case, 201);
     }
@@ -67,6 +70,7 @@ class BeneficiaryCaseController extends Controller
     public function show(int $id): JsonResponse
     {
         $case = $this->caseService->getCaseById($id);
+        $this->authorize('view', $case);
         return $this->successResponse('Case details retrieved.', $case);
     }
 
@@ -80,6 +84,7 @@ class BeneficiaryCaseController extends Controller
      */
     public function update(UpdateCaseRequest $request, BeneficiaryCase $case): JsonResponse
     {
+        $this->authorize('update', $case);
         $updatedCase = $this->caseService->updateCase($case, $request->validated());
         return $this->successResponse('Case updated successfully.', $updatedCase);
     }
@@ -93,6 +98,7 @@ class BeneficiaryCaseController extends Controller
      */
     public function destroy(BeneficiaryCase $case): JsonResponse
     {
+        $this->authorize('delete', $case);
         $this->caseService->deleteCase($case);
         return $this->successResponse('Case deleted successfully.');
     }

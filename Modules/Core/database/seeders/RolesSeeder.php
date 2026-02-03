@@ -15,6 +15,17 @@ class RolesSeeder extends Seeder
         $admin->syncPermissions(Permission::all());
 
         // Beneficiary
+       $beneficiaryPermissions = Permission::where('name','like','beneficiary.%')
+        ->orWhere('name','like','assessment%')
+        ->orWhere('name','like','activity.%')
+        ->orWhere('name','like','case.%self%')
+        ->orWhereIn('name', [
+            'case_session.view_any',
+            'case_session.view',
+            'case_session.count',
+        ])
+        ->get();
+
         Role::firstOrCreate(['name' => 'beneficiary'])
             ->syncPermissions(Permission::where('name','like','beneficiary.%')
                 ->orWhere('name','like','assessment%')
@@ -30,8 +41,10 @@ class RolesSeeder extends Seeder
         Role::firstOrCreate(['name' => 'specialist'])
             ->syncPermissions([
                 'file.read','file.update',
-                'sessions.create','sessions.read','sessions.update','sessions.delete',
-                'case.review.create','case.review.read','case.review.update',
+                'case_session.view_any','case_session.view_all','case_session.view_by_date',
+                'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
+                'case_session.view_by_specialist', 'case_session.count', 
+                'case.review.create','case.review.read','case.review.update','google_forms.read',
                 'social_backgrounds.read'
             ]);
 
@@ -80,7 +93,11 @@ class RolesSeeder extends Seeder
                 'programs.create','programs.read','programs.update','programs.delete','programs.approve',
                 'activities.create','activities.read','activities.update','activities.delete','activities.activation.update',
                 'resources.allocate','resources.read','resources.update',
-                'reports.read','statistics.read',
+                'reports.read','statistics.read','google_forms.read',
+                'google_forms.create','google_forms.update',
+                'google_forms.delete','google_forms.import',
+                'priority_rules.read','priority_rules.create',
+                'priority_rules.update','priority_rules.delete',
                 'education_levels.read',
                 'housing_types.read',
                 'employment_statuses.read',
@@ -94,6 +111,7 @@ class RolesSeeder extends Seeder
         // Case Coordinator
         Role::firstOrCreate(['name' => 'case_coordinator'])
             ->syncPermissions([
+                'case_session.view_any','case_session.view', 'case_session.count','case_session.view_all','case_session.view_by_date',
                 'file.read','file.update',
                 'social_backgrounds.read',
                 'education_levels.read',
@@ -108,7 +126,20 @@ class RolesSeeder extends Seeder
                 'case.referral.create','case.referral.read','case.referral.update',
                 'case.referral.update.status','case.referral.delete',
                 'case.specialist.assign','case.specialist.revoke',
+                'service.create','service.read','service.update','service.delete','google_forms.read',
+                'google_forms.import',
                 'entities.read',
+            ]);
+
+            Role::firstOrCreate(['name' => 'trainer'])
+            ->syncPermissions([
+                'trainer.profile.read',
+                'trainer.profile.update',
+                'trainer.schedule.read',
+                'trainer.session.read',
+                'trainer.session.create',
+                'trainer.session.update',
             ]);
     }
 }
+

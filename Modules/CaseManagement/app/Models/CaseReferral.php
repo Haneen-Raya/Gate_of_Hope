@@ -2,17 +2,21 @@
 
 namespace Modules\CaseManagement\Models;
 
+use App\Contracts\HasCaseEvents;
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\LogsCaseEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Modules\CaseManagement\Enums\V1\CaseReferralDirection;
 use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 use Modules\CaseManagement\Enums\V1\CaseReferralType;
 use Modules\CaseManagement\Enums\V1\CaseReferralUrgencyLevel;
 use Modules\CaseManagement\Models\Builders\CaseReferralBuilder;
+use Modules\CaseManagement\Services\CaseEvent\Formatter\CaseReferralFormatter;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Core\Models\User;
@@ -38,9 +42,9 @@ use Spatie\Translatable\HasTranslations;
  *
  * @package Modules\Cases\Models
  */
-class CaseReferral extends Model implements CacheInvalidatable
+class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations, LogsCaseEvents;
 
     /**
      * The attributes that are mass assignable.
@@ -100,6 +104,18 @@ class CaseReferral extends Model implements CacheInvalidatable
      */
     public array $translatable = ['reason','notes','rejection_reason','cancellation_reason'];
 
+    /* Map the Model to its dedicated Event Formatter.
+     * * This method acts as the structural link required by the `HasCaseEvents` contract.
+     * It instructs the central EventManager to use the specified formatter for
+     * transforming raw Eloquent mutations into domain-specific timeline events.
+     *
+     * @return string The fully qualified class name of the formatter.
+     */
+    public function caseEventFormatter(): string
+    {
+        return CaseReferralFormatter::class;
+    }
+
     /**
      * Define cache tags to invalidate on model changes.
      * Implementing the "Ripple Effect" to purge list and detail caches.
@@ -146,7 +162,7 @@ class CaseReferral extends Model implements CacheInvalidatable
      *
      * @return BelongsTo
      */
-    public function beneficiaryCase():BelongsTo
+    public function beneficiaryCase(): BelongsTo
     {
         return $this->belongsTo(BeneficiaryCase::class);
     }
@@ -162,7 +178,7 @@ class CaseReferral extends Model implements CacheInvalidatable
      *
      * @return BelongsTo
      */
-    public function service():BelongsTo
+    public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
     }
@@ -178,7 +194,7 @@ class CaseReferral extends Model implements CacheInvalidatable
      *
      * @return BelongsTo
      */
-    public function receiverEntity():BelongsTo
+    public function receiverEntity(): BelongsTo
     {
         return $this->belongsTo(Entitiy::class, 'receiver_entity_id');
     }
@@ -194,7 +210,7 @@ class CaseReferral extends Model implements CacheInvalidatable
      *
      * @return BelongsTo
      */
-    public function creator():BelongsTo
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
@@ -210,12 +226,23 @@ class CaseReferral extends Model implements CacheInvalidatable
      *
      * @return BelongsTo
      */
-    public function updater():BelongsTo
+    public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
 
     /**
+     * Get all timeline events associated with this specific case.
+     * * This provides a chronological audit trail of all actions,
+     * sessions, and status changes linked to the beneficiary's file.
+     *
+     * @return HasMany
+     */
+    public function caseEvents(): HasMany
+    {
+        return $this->hasMany(CaseEvent::class, 'beneficiary_case_id');
+    }
+      /*
      * Determine if this referral belongs to a given beneficiary user.
      *
      * This method checks whether the currently authenticated user

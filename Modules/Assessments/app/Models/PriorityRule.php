@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property PriorityLevel $priority
  * @property bool $is_active
  */
-class PriorityRules extends Model
+class PriorityRule extends Model
 {
     use HasFactory, LogsActivity, AutoFlushCache;
 

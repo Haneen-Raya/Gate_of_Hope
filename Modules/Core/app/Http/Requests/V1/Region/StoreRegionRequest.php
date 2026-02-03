@@ -18,7 +18,7 @@ class StoreRegionRequest extends FormRequest
     public function authorize(): bool
     {
         // Typically checks for permissions like 'create regions'
-        return true;
+        return $this->user()->hasRole('admin');
     }
 
     /**
