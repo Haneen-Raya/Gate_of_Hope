@@ -4,6 +4,7 @@ namespace Modules\Beneficiaries\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\AutoTranslatesAttributes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Modules\Beneficiaries\Models\Builders\EducationLevelBuilder;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Class EducationLevel
@@ -34,7 +36,7 @@ use Modules\Beneficiaries\Models\Builders\EducationLevelBuilder;
  */
 class EducationLevel extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,AutoFlushCache;
+    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -44,9 +46,22 @@ class EducationLevel extends Model implements CacheInvalidatable
         'is_active'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['name'];
 
     /**
      * Define cache tags to invalidate on model changes.

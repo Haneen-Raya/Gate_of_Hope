@@ -17,6 +17,7 @@ use Modules\Entities\Models\Entitiy;
 use Modules\HumanResources\Models\Profession;
 use Modules\Programs\Enums\Api\V1\Activity\ActivityType;
 use Modules\Programs\Models\Builders\ActivityBuilder;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Class Activity
@@ -36,7 +37,7 @@ use Modules\Programs\Models\Builders\ActivityBuilder;
  */
 class Activity extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -63,6 +64,14 @@ class Activity extends Model implements CacheInvalidatable
         'is_active'     => 'boolean',
         'activity_type' => ActivityType::class
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['name','description'];
 
     /**
      * Define cache tags to invalidate on model changes.

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->foreignId('issue_category_id')->constrained('issue_categories');
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->json('name');
+            $table->json('description')->nullable();
             $table->string('direction');
             $table->decimal('unit_cost', 15, 2);
             $table->boolean('is_active')->default(1);

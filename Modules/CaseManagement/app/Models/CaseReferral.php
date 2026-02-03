@@ -17,6 +17,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\CaseReferralControllerFactory;
 
@@ -39,7 +40,7 @@ use Modules\Entities\Models\Entitiy;
  */
 class CaseReferral extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -90,6 +91,14 @@ class CaseReferral extends Model implements CacheInvalidatable
         'accepted_at'   => 'datetime',
         'completed_at'  => 'datetime',
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['reason','notes','rejection_reason','cancellation_reason'];
 
     /**
      * Define cache tags to invalidate on model changes.

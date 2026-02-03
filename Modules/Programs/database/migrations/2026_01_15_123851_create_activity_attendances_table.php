@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('beneficiary_id')->constrained('beneficiaries');
             $table->foreignId('recorded_by')->constrained('trainers');
             $table->string('attendance_status');
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamps();
         });
     }

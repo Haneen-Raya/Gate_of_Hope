@@ -14,6 +14,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Entities\Models\Entitiy;
 use Modules\Programs\Models\Program;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\Funding\Database\Factories\ProgramFundingFactory;
 
@@ -27,7 +28,7 @@ use Modules\Programs\Models\Program;
  */
 class ProgramFunding extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,AutoFlushCache;
+    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -61,6 +62,14 @@ class ProgramFunding extends Model implements CacheInvalidatable
         'start_date' => 'date',
         'end_date'   => 'date',
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['currency'];
 
     /**
      * Define cache tags to invalidate on model changes.
