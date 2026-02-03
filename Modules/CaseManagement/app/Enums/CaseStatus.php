@@ -25,6 +25,19 @@ enum CaseStatus: string
     case REFERRED = 'referred';
 
     /**
+     * Retrieve the translated label for the current case status.
+     *
+     * This method fetches the translation from:
+     * Modules/CaseManagement/lang/{locale}/case_status.php
+     *
+     * @return string The localized label.
+     */
+    public function label(): string
+    {
+        return __("casemanagement::case_status.{$this->value}");
+    }
+    
+    /**
      * Get all raw string values of the enum cases.
      *
      * Useful for validation rules or population of dropdown lists.

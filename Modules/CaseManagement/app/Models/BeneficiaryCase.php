@@ -2,15 +2,16 @@
 
 namespace Modules\CaseManagement\Models;
 
-use App\Contracts\HasCaseEvents;
-use App\Contracts\CacheInvalidatable;
 use Carbon\Carbon;
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
 use App\Traits\LogsCaseEvents;
 use Modules\Core\Models\Region;
+use App\Contracts\HasCaseEvents;
 use Spatie\Activitylog\LogOptions;
+use App\Contracts\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Modules\Assessments\Models\IssueType;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\CaseManagement\Enums\CaseStatus;
@@ -41,7 +42,7 @@ use Modules\CaseManagement\Services\CaseEvent\Formatter\BeneficiaryCaseFormatter
  */
 class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents;
+    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents,HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -59,7 +60,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
         'closed_at',
         'closure_reason'
     ];
-
+    public array $translatable = ['closure_reason'];
     /**
      * The attributes that should be cast to native types.
      *
@@ -73,8 +74,8 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
 
     /**
      * Map the Model to its dedicated Event Formatter.
-     * * This method acts as the structural link required by the `HasCaseEvents` contract. 
-     * It instructs the central EventManager to use the specified formatter for 
+     * * This method acts as the structural link required by the `HasCaseEvents` contract.
+     * It instructs the central EventManager to use the specified formatter for
      * transforming raw Eloquent mutations into domain-specific timeline events.
      *
      * @return string The fully qualified class name of the formatter.
@@ -171,7 +172,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
 
     /**
      * Get all timeline events associated with this specific case.
-     * * This provides a chronological audit trail of all actions, 
+     * * This provides a chronological audit trail of all actions,
      * sessions, and status changes linked to the beneficiary's file.
      *
      * @return HasMany

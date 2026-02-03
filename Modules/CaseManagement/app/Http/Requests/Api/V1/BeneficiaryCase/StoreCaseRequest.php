@@ -4,6 +4,7 @@ namespace Modules\CaseManagement\Http\Requests\Api\V1\BeneficiaryCase;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Assessments\Enums\PriorityLevel;
 use Modules\CaseManagement\Enums\CaseStatus;
 
 /**
@@ -34,7 +35,7 @@ class StoreCaseRequest extends FormRequest
             'issue_type_id'   => 'required|exists:issue_types,id',
             'region_id'       => 'required|exists:regions,id',
             'status'          => ['required', Rule::in(CaseStatus::all())],
-            'priority'        => 'required|string',
+            'priority'        => ['sometimes', Rule::in(values: PriorityLevel::all())],
             'opened_at'       => 'required|date',
         ];
     }
