@@ -59,10 +59,12 @@ class UpdateCasePlanGoalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'goal_description' => 'sometimes|string|max:1000',
+            'goal_description' => 'sometimes|array',
+            'goal_description.*' => 'sometimes|string|max:1000',
             'status' => ['sometimes', Rule::in(PlanStatus::all())],
             'target_date' => ['sometimes', 'date', 'after:today', new ValidGoalTargetDate($this->route('case_plan_goal')->plan_id)],
-            'notes' => 'sometimes|nullable|string|max:1000',
+            'notes' => 'sometimes|nullable|array',
+            'notes.*' => 'nullable|string|max:1000',
             'achieved_at' => 'sometimes|nullable|date|date_equals:today'
         ];
     }
