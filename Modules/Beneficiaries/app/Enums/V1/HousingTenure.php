@@ -29,10 +29,10 @@ enum HousingTenure: string
     case RENTED = 'rented';
 
     // The property is provided or hosted by a relative or friend.
-    case HOSTED = 'hosted ';
+    case HOSTED = 'hosted';
 
     // The property is informal or irregularly occupied (e.g., squatting, unregistered).
-    case INFORMAL = 'informal ';
+    case INFORMAL = 'informal';
 
     /**
      * Return the human-readable label of the current enum case.
