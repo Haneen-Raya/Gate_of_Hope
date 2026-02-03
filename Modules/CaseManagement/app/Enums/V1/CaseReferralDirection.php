@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum CaseReferralDirection
  *
@@ -19,32 +21,14 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum CaseReferralDirection : string
 {
+    use HasEnumTranslation;
+
     /* Referral for a service delivered internally by the organization or its internal departments.*/
     case INTERNAL = 'internal';
 
     /* Referral for a service delivered externally by a partner organization or third-party entity.*/
     case EXTERNAL = 'external';
 
-    /**
-     * Get a human-readable label for the referral direction.
-     *
-     * This label is intended for:
-     * - UI dropdowns and badges
-     * - Reports and exports
-     * - API consumer readability
-     *
-     * The enum value is used internally for storage
-     * and business logic consistency.
-     *
-     * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::INTERNAL   => 'Internal Referral',
-            self::EXTERNAL   => 'External Referral',
-        };
-    }
 
     /**
      * Retrieve all enum values.

@@ -4,7 +4,7 @@ namespace Modules\Programs\Http\Requests\Api\V1\Activity;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Programs\Enums\Api\V1\Activity\ActivityType;
+use Modules\Programs\Enums\V1\Activity\ActivityType;
 
 class UpdateActivityRequest extends FormRequest
 {

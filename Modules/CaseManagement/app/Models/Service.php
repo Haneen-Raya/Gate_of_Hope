@@ -5,6 +5,7 @@ namespace Modules\CaseManagement\Models;
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,7 +42,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class Service extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,HasActiveState, AutoFlushCache, HasTranslations;
+    use HasFactory, LogsActivity,HasActiveState, AutoFlushCache, HasTranslations, InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -175,5 +176,21 @@ class Service extends Model implements CacheInvalidatable
     public function caseReferrals(): HasMany
     {
         return $this->hasMany(CaseReferral::class);
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'direction',
+        ]);
     }
 }

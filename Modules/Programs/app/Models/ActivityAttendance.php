@@ -4,6 +4,7 @@ namespace Modules\Programs\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Beneficiaries\Models\Beneficiary;
 use Modules\Core\Models\User;
 use Modules\HumanResources\Models\Trainer;
-use Modules\Programs\Enums\Api\V1\Activity\AttendanceStatus;
+use Modules\Programs\Enums\V1\Activity\AttendanceStatus;
 use Modules\Programs\Models\Builders\ActivityAttendanceBuilder;
 use Spatie\Translatable\HasTranslations;
 
@@ -40,7 +41,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class ActivityAttendance extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache,HasTranslations;
+    use HasFactory, LogsActivity, AutoFlushCache,HasTranslations, InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -210,5 +211,21 @@ class ActivityAttendance extends Model implements CacheInvalidatable
     public function belongsToProviderEntity(User $user): bool
     {
         return $this->activitySession?->activity?->provider_entity_id === $user->entitiy?->id;
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'attendance_status',
+        ]);
     }
 }

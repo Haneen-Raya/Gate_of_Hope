@@ -4,6 +4,7 @@ namespace Modules\Programs\Models;
 
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Illuminate\Database\Query\Builder;
 use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
 use Modules\HumanResources\Models\Profession;
-use Modules\Programs\Enums\Api\V1\Activity\ActivityType;
+use Modules\Programs\Enums\V1\Activity\ActivityType;
 use Modules\Programs\Models\Builders\ActivityBuilder;
 use Spatie\Translatable\HasTranslations;
 
@@ -37,7 +38,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class Activity extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations,InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -217,5 +218,21 @@ class Activity extends Model implements CacheInvalidatable
     public function isProvidedByEntityOf(User $user): bool
     {
         return $this->providerEntity?->user_id === $user->id;
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'activity_type',
+        ]);
     }
 }

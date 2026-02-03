@@ -32,7 +32,7 @@ class RolesSeeder extends Seeder
                 ->orWhere('name','like','activity.%')
                 ->orWhere('name','like','case.%self%')
                 ->orWhere('name','like','social_backgrounds.%')
-                ->orWhere('name','like','case_referral.read')
+                ->orWhere('name','like','case.referral.read')
                 ->orWhere('name','like','activity.attendance.read')
                 ->get()
             );
@@ -63,7 +63,7 @@ class RolesSeeder extends Seeder
                 'activities.sessions.update','activities.sessions.delete',
                 'activity.beneficiary.read_minimal',
                 'case.referral.update.status',
-                'case_referral.read',
+                'case.referral.read',
                 'entities.read.self','entities.update.self',
                 'activities.read',
                 'activity.attendance.read'
