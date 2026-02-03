@@ -10,6 +10,7 @@ use Modules\CaseManagement\Models\CaseSession;
 use Modules\CaseManagement\Services\CaseSessionService;
 use Modules\CaseManagement\Http\Requests\StoreCaseSessionRequest;
 use Modules\CaseManagement\Http\Requests\UpdateCaseSessionRequest;
+use Modules\CaseManagement\Http\Resources\V1\CaseSessionResource;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 
 /**
@@ -41,7 +42,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             'Case sessions retrieved successfully',
-            $sessions
+            CaseSessionResource::collection($sessions) // Resource collection
         );
     }
 
@@ -64,7 +65,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             'Session created successfully',
-            $session,
+             new CaseSessionResource($session), // Resource
             201
         );
     }
@@ -82,7 +83,7 @@ class CaseSessionController extends Controller
         $this->authorize('view', $caseSession);
         return $this->successResponse(
             'Case session retrieved successfully',
-            $caseSession
+            new CaseSessionResource($caseSession) // Resource
         );
     }
 
@@ -105,7 +106,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             'Case session updated successfully',
-            $updatedSession
+            new CaseSessionResource($updatedSession) // Resource
         );
     }
 
@@ -138,7 +139,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             'Specialist sessions retrieved successfully',
-            $sessions
+             CaseSessionResource::collection($sessions) // Resource collection
         );
     }
 
@@ -193,7 +194,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             'Case sessions retrieved successfully',
-            $sessions
+             CaseSessionResource::collection($sessions) // Resource collection
         );
     }
 
@@ -222,7 +223,7 @@ class CaseSessionController extends Controller
 
         return $this->successResponse(
             "Case sessions between {$from} and {$to} retrieved successfully",
-            $sessions
+             CaseSessionResource::collection($sessions) // Resource collection
         );
     }
 }

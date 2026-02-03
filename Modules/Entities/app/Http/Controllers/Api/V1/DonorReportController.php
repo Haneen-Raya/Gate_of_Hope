@@ -2,58 +2,88 @@
 
 namespace Modules\Entities\Http\Controllers\Api\V1;
 
+use Modules\Entities\Reports\Donor\DonorReportService;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Modules\Entities\Http\Requests\Api\V1\Reports\GenerateDonorReportRequest;
+use Modules\Entities\Models\DonorReport;
 
+/**
+ * Class DonorReportController
+ *
+ * Controller responsible for managing Donor Reports.
+ * Handles creating new reports and fetching existing reports
+ * for donors within a specific program and reporting period.
+ *
+ * @group Donor Reports
+ */
 class DonorReportController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    use AuthorizesRequests;
+    protected DonorReportService $reportService;
 
-        return response()->json([]);
+    public function __construct(DonorReportService $reportService)
+    {
+        $this->reportService = $reportService;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Generate a new donor report.
+     *
+     * Admins and donor entities can generate reports only for themselves.
+     *
+     * @param GenerateDonorReportRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function generate(GenerateDonorReportRequest $request)
     {
-        //
+        $validated = $request->validated();
 
-        return response()->json([]);
+        // Authorization via policy
+        $this->authorize('generate', [DonorReport::class, $validated['donor_entity_id']]);
+
+        $report = $this->reportService->generateAndStore(
+            $validated['donor_entity_id'],
+            $validated['program_id'],
+            $validated['reporting_period_start'],
+            $validated['reporting_period_end']
+        );
+
+        return $this->successResponse(
+            'Report generated successfully',
+            [
+                'report_id' => $report->id,
+                'report'    => $report->aggregated_data
+            ],
+            201
+        );
     }
 
     /**
-     * Show the specified resource.
+     * Show an existing donor report.
+     *
+     * Only admins or the donor entity associated with the report can view it.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(int $id)
     {
-        //
+        $report = $this->reportService->getReport($id);
 
-        return response()->json([]);
-    }
+        if (!$report) {
+            return $this->errorResponse('Report not found', null, 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        // Authorization via policy
+        $this->authorize('view', $report);
 
-        return response()->json([]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-
-        return response()->json([]);
+        return $this->successResponse(
+            'Report retrieved successfully',
+            [
+                'report_id' => $report->id,
+                'report'    => $report->aggregated_data
+            ]
+        );
     }
 }

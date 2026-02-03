@@ -12,12 +12,13 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Modules\HumanResources\Models\Trainer;
 use Modules\Programs\Enums\ActivitySessionStatus;
 use Modules\Programs\Models\Builders\ActivitySessionBuilder;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\Programs\Database\Factories\ActivitySessionFactory;
 
 class ActivitySession extends Model
 {
-    use HasFactory, LogsActivity , HasSpatial;
+    use HasFactory, LogsActivity , HasSpatial, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -45,6 +46,9 @@ class ActivitySession extends Model
         'status'       => ActivitySessionStatus::class,
         'location'     => Point::class,
     ];
+
+    public array $translatable = ['session_notes'];
+
 
     // protected static function newFactory(): ActivitySessionFactory
     // {

@@ -11,12 +11,13 @@ use Modules\Assessments\Models\IssueCategory;
 use Modules\CaseManagement\Models\CaseReview;
 use Modules\CaseManagement\Models\CaseSession;
 use Modules\Core\Models\User;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\HumanResources\Database\Factories\SpecialistFactory;
 
 class Specialist extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasTranslations;
 
     /**
      * The attributes that are mass assignable.

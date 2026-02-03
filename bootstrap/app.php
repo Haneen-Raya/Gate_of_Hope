@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
+     ->withSchedule(function ($schedule) {
+            $schedule->command('notify:upcoming-sessions')->dailyAt('08:00');
+     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (UnauthorizedException  $e, $request) {
             Logger::security('forbidden', 'An Unauthorized User Trying To Access', ['message' => $e->getMessage()]);

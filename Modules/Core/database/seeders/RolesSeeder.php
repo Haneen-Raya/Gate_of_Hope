@@ -72,7 +72,7 @@ class RolesSeeder extends Seeder
         // Donor
         Role::firstOrCreate(['name' => 'donor'])
             ->syncPermissions([
-                'program.read.funded','program_funding.read.self','donor_report.read',
+                'program.read.funded','program_funding.read.self','donor_report.read','donor_report.generate',
                 'program.report.read.aggregated','program.analytics.read','region.statistics.read',
                 'entities.read.self',
                 'program.funding.read'
