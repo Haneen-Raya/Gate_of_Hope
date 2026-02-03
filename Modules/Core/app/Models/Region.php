@@ -2,19 +2,20 @@
 
 namespace Modules\Core\Models;
 
-use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
 use Spatie\Activitylog\LogOptions;
+use App\Contracts\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use MatanYadaev\EloquentSpatial\Objects\Point;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Class Region
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  */
 class Region extends Model implements CacheInvalidatable
 {
-    use HasActiveState,HasFactory, LogsActivity,HasSpatial, AutoFlushCache;
+    use HasActiveState,HasFactory, LogsActivity,HasSpatial, AutoFlushCache , HasTranslations;
 
     /**
      * @var array<int, string> The attributes that are mass assignable.
@@ -43,7 +44,7 @@ class Region extends Model implements CacheInvalidatable
         'location' => Point::class,
         'is_active' => 'boolean',
     ];
-
+    public array $translatable = ['label'];
    /**
  * Classic Accessor.
  * This will NOT run automatically because it's not in $appends.

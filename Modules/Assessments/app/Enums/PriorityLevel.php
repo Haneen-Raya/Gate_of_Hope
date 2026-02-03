@@ -2,6 +2,8 @@
 
 namespace Modules\Assessments\Enums;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Enum PriorityLevel
  *
@@ -12,6 +14,7 @@ namespace Modules\Assessments\Enums;
  */
 enum PriorityLevel: string
 {
+    use HasEnumTranslation;
     /** Routine importance; standard response time. */
     case LOW = 'low';
 

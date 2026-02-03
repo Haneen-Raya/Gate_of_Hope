@@ -14,7 +14,7 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,
 
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum','set_locale_lang'])->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])

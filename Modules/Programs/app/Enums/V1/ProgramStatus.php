@@ -2,6 +2,8 @@
 
 namespace Modules\Programs\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * Enum ProgramStatus
  * * Managed Lifecycle of a Rehabilitation Program.
@@ -11,6 +13,7 @@ namespace Modules\Programs\Enums\V1;
  */
 enum ProgramStatus: string
 {
+    use HasEnumTranslation;
     /** * Initial preparation stage.
      * Program is hidden from specialists and beneficiaries.
      */

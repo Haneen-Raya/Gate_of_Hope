@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('programs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('issue_category_id')->constrained('issue_categories');
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->json('name');
+            $table->json('description')->nullable();
             $table->json('objectives');
-            $table->string('target_groups');
+            $table->json('target_groups');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('budget', 15, 2);

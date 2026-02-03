@@ -52,6 +52,26 @@ return [
         'stable'    => 'Stable',
         'worsening' => 'Worsening',
     ],
+    'priority_levels' => [
+        'low'      => 'Low',
+        'medium'   => 'Medium',
+        'high'     => 'High',
+        'critical' => 'Critical',
+    ],
+    'program_statuses' => [
+        'draft'     => 'Draft',
+        'active'    => 'Active',
+        'completed' => 'Completed',
+        'suspended' => 'Suspended',
+        'archived'  => 'Archived',
+    ],
+    'resource_types' => [
+        'educational' => 'Educational Materials',
+        'logistics'   => 'Logistical Services',
+        'equipment'   => 'Equipment and Gear',
+        'kits'        => 'Support Kits',
+        'venue'       => 'Venue Rentals',
+    ],
 
 'family_stability' => [
         'stable' => 'Stable',

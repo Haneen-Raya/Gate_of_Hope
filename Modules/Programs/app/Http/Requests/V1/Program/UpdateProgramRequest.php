@@ -40,10 +40,13 @@ class UpdateProgramRequest extends FormRequest
     {
         return [
             'issue_category_id' => 'sometimes|exists:issue_categories,id',
-            'name'              => 'sometimes|string|max:255|unique:programs,name,' . $this->route('program'),
+            'name'              => 'sometimes|array|max:255|unique:programs,name,' . $this->route('program'),
             'status'            => ['required', Rule::in(values: ProgramStatus::all())],
             'end_date'          => 'sometimes|date|after:start_date',
             'budget'            => 'sometimes|numeric|min:0',
+            'description'       => 'sometimes|array',
+            'objectives'        => 'sometimes|array',
+            'target_groups'     => 'sometimes|array',
         ];
     }
 }

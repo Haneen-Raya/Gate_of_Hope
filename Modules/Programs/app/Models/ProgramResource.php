@@ -3,9 +3,11 @@
 namespace Modules\Programs\Models;
 
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Spatie\Activitylog\LogOptions;
 use App\Contracts\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Modules\Programs\Enums\V1\ResourceType;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -33,7 +35,7 @@ use Modules\Programs\Models\Builders\ProgramResourceBuilder;
  */
 class ProgramResource extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache , InteractsWithEnums , HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -47,7 +49,7 @@ class ProgramResource extends Model implements CacheInvalidatable
         'cost',
         'notes'
     ];
-
+    public array $translatable = ['notes'];
     /**
      * The accessors to append to the model's array form.
      * * @var array<int, string>
@@ -136,5 +138,11 @@ class ProgramResource extends Model implements CacheInvalidatable
     public function program()
     {
         return $this->belongsTo(Program::class);
+    }
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'resource_type',
+        ]);
     }
 }

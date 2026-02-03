@@ -41,10 +41,10 @@ class StoreProgramRequest extends FormRequest
     {
         return [
             'issue_category_id' => 'required|exists:issue_categories,id',
-            'name'              => 'required|string|max:255|unique:programs,name',
-            'description'       => 'nullable|string',
+            'name'              => 'required|array|max:255|unique:programs,name',
+            'description'       => 'nullable|array',
             'objectives'        => 'required|array',
-            'target_groups'     => 'required|string',
+            'target_groups'     => 'required|array',
             'start_date'        => 'required|date|after_or_equal:today',
             'end_date'          => 'required|date|after:start_date',
             'budget'            => 'required|numeric|min:0',

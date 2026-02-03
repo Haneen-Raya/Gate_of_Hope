@@ -63,7 +63,7 @@ class UpdateProgramResourceRequest extends FormRequest
              * Additional information or description.
              * Can be null or a string.
              */
-            'notes'         => 'nullable|string'
+            'notes'         => 'nullable|array'
         ];
     }
 }

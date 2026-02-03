@@ -17,7 +17,7 @@ use Modules\Assessments\Models\IssueType;
 class IssueTypeService
 {
     private const CACHE_TAGS = ['assessment', 'issue_types'];
-    private const CACHE_TTL = 21600; // 6 ساعات
+    private const CACHE_TTL = 21600;
 
     /**
      * Get all active issue types, optionally filtered by category
