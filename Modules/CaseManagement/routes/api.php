@@ -12,7 +12,7 @@ use Modules\CaseManagement\Http\Controllers\CaseManagementController;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
 
     // Register case managements routes
     require __DIR__ . '/v1/case_sessions.php';
@@ -34,6 +34,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Register Case Referrals routes
     require __DIR__ . '/V1/case-referrals.php';
-    
+
     require __DIR__ . '/V1/beneficiary-case.php';
 });

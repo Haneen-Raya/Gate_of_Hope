@@ -23,20 +23,6 @@ enum PriorityLevel: string
 
     /** Immediate action required; highest level of urgency. */
     case CRITICAL = 'critical';
-
-    /**
-     * Retrieve the translated label for the current priority level.
-     *
-     * This method fetches the translation from:
-     * Modules/Assessments/lang/{locale}/priority_level.php
-     *
-     * @return string The localized label.
-     */
-    public function label(): string
-    {
-        return __("assessments::priority_level.{$this->value}");
-    }
-
     /**
      * Retrieve all priority level values as an array of strings.
      *
