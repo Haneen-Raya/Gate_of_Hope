@@ -4,25 +4,40 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes Entry Point
+| API Routes Entry Point - Beneficiary Module
 |--------------------------------------------------------------------------
+|
+| This segment handles the demographic and socio-economic profile of
+| beneficiaries. It utilizes a modular approach to handle various
+| classification lookups.
+|
 */
 
-Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(function () {
 
-    // Register beneficiaries routes
+    /** * Primary Records:
+     * Main CRUD for beneficiary personal and contact data.
+     */
     require __DIR__ . '/V1/beneficiaries.php';
 
-    // Register education levels routes
+    /** * Educational Profiles:
+     * Classification for academic achievements (e.g., Primary, Secondary, University).
+     */
     require __DIR__ . '/V1/education_levels.php';
 
-    // Register employment Statuses routes
+    /** * Labor Market Status:
+     * Tracking employment, unemployment, or vocational training status.
+     */
     require __DIR__ . '/V1/employment_statuses.php';
 
-    // Register housing types routes
+    /** * Living Conditions:
+     * Defining housing situations (e.g., Owned, Rented, Refugee Camp).
+     */
     require __DIR__ . '/V1/housing_types.php';
 
-    // Register social backgrounds routes
+    /** * Social Context:
+     * Historical and social background classification for case analysis.
+     */
     require __DIR__ . '/V1/social_backgrounds.php';
 
 });

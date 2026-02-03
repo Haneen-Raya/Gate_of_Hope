@@ -4,25 +4,24 @@ namespace Modules\HumanResources\Policies;
 
 use Modules\Core\Models\User;
 use Modules\HumanResources\Models\Specialist;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 /**
  * Class SpecialistPolicy
- *
- * Handles authorization for actions on Specialists.
- *
- * Permissions:
- * - view_specialist
- * - create_specialist
- * - update_specialist
- * - delete_specialist
+ * * Orchestrates granular access control for the Specialist resource.
+ * This policy acts as a bridge between the Spatie Permission system and
+ * the application's business logic, ensuring that only authorized staff
+ * can interact with specialist professional data.
+ * * @package Modules\HumanResources\Policies
  */
 class SpecialistPolicy
 {
+    use HandlesAuthorization;
+
     /**
-     * Determine if the user can view all specialists.
-     *
-     * @param User $user
-     * @return bool
+     * Determine if the user can browse the list of specialists.
+     * * @param User $user
+     * @return bool Granted if user has 'view_specialist' permission.
      */
     public function viewAny(User $user): bool
     {
@@ -30,9 +29,8 @@ class SpecialistPolicy
     }
 
     /**
-     * Determine if the user can view a specific specialist.
-     *
-     * @param User $user
+     * Determine if the user can view a specific specialist's detailed profile.
+     * * @param User $user
      * @param Specialist $specialist
      * @return bool
      */
@@ -42,10 +40,9 @@ class SpecialistPolicy
     }
 
     /**
-     * Determine if the user can create a specialist.
-     *
-     * @param User $user
-     * @return bool
+     * Determine if the user has the authority to onboard a new specialist.
+     * * @param User $user
+     * @return bool Granted if user has 'create_specialist' permission.
      */
     public function create(User $user): bool
     {
@@ -53,11 +50,10 @@ class SpecialistPolicy
     }
 
     /**
-     * Determine if the user can update a specialist.
-     *
-     * @param User $user
+     * Determine if the user can modify an existing specialist's record.
+     * * @param User $user
      * @param Specialist $specialist
-     * @return bool
+     * @return bool Granted if user has 'update_specialist' permission.
      */
     public function update(User $user, Specialist $specialist): bool
     {
@@ -65,11 +61,11 @@ class SpecialistPolicy
     }
 
     /**
-     * Determine if the user can delete a specialist.
-     *
+     * Determine if the user can remove a specialist from the system.
+     * * @note This is a sensitive action usually reserved for HR Managers or Admins.
      * @param User $user
      * @param Specialist $specialist
-     * @return bool
+     * @return bool Granted if user has 'delete_specialist' permission.
      */
     public function delete(User $user, Specialist $specialist): bool
     {

@@ -1,40 +1,50 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\CaseManagement\Http\Controllers\Api\V1\CaseReferralController;
-use Modules\CaseManagement\Http\Controllers\Api\V1\ServiceController;
-use Modules\CaseManagement\Http\Controllers\CaseEventController;
 use Modules\CaseManagement\Http\Controllers\CaseManagementController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes Entry Point
-|--------------------------------------------------------------------------
-*/
+/**
+ * Case Management Domain - Version 1
+ * * Global Protection: All routes require Sanctum Authentication
+ * and Locale setting for multilingual clinical reports.
+ */
 
-Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(function () {
 
-    // Register case managements routes
+    /** * Case Sessions:
+     * Handles psychological and social work session logs.
+     */
     require __DIR__ . '/v1/case_sessions.php';
+
+    /** * Master Case Resource:
+     * Provides CRUD operations for the central Case Management entity.
+     */
     Route::apiResource('casemanagements', CaseManagementController::class)->names('casemanagement');
 
-    // Register Case Event routes
+    /** * Clinical Timeline:
+     * Manages Case Events (Significant occurrences) and Support Plans.
+     */
     require __DIR__ . '/V1/case-events.php';
-
-    // Register Case Support Plans routes
     require __DIR__ . '/V1/case-support-plans.php';
 
-    // Register Case Plan Goals routes
+    /** * Goal Setting & Monitoring:
+     * Endpoints for defining, tracking, and updating case goals.
+     */
     require __DIR__ . '/V1/case-plan-goals.php';
 
-    // Register Case Reviews routes
+    /** * Evaluation & Feedback:
+     * Manages periodic Case Reviews to assess progress.
+     */
     require __DIR__ . '/V1/case-reviews.php';
 
-    // Register Case Referrals routes
+    /** * External Referrals & Service Mapping:
+     * Handles out-referrals to other entities and available service catalogs.
+     */
     require __DIR__ . '/V1/case-referrals.php';
-
-    // Register Services routes
     require __DIR__ . '/V1/services.php';
 
+    /** * Beneficiary Mapping:
+     * Logic for linking specific beneficiaries to their management cases.
+     */
     require __DIR__ . '/V1/beneficiary-case.php';
 });

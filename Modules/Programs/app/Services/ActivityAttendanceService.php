@@ -6,6 +6,16 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\Programs\Models\ActivityAttendance;
 
+/**
+ * Class ActivityAttendanceService
+ *
+ * * Key Architectural Patterns:
+ * - Atomic Transactions: Uses DB::transaction to ensure data consistency during writes.
+ * - Tagged Caching: Implements Spatie-style cache tagging for precise cache invalidation.
+ * - Eager Loading: Optimizes database performance by pre-fetching relations.
+ *
+ * @package Modules\Programs\Services
+ */
 class ActivityAttendanceService
 {
     /**
@@ -21,24 +31,28 @@ class ActivityAttendanceService
     private const TAG_ACTIVITY_ATTENDANCE_PREFIX = 'activity_attendance_';      // Tag for specific activity attendance details
 
     /**
-     * Get all activity attendances from database
+     * Fetch all activity attendances with multi-layered filtering and pagination.
+     * * * Caching Logic:
+     * - Generates a unique MD5 hash based on filters, page, and limit.
+     * - Uses Global Tags for mass-invalidation when data changes.
      *
-     * @return array $arraydata
+     * @param array $filters Search/Filter parameters
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getAllActivityAttendances(array $filters = [])
     {
-        ksort($filters);
-        $page=request()->get('page',1);
-        $perPage=request()->get('perPage',15);
+        ksort($filters); // Ensures consistent cache key generation
+        $page = request()->get('page', 1);
+        $perPage = request()->get('perPage', 15);
         $cacheBase = json_encode($filters) . "_limit_{$perPage}_page_{$page}";
         $cacheKey = 'activity_attendances_list_' . md5($cacheBase);
 
-        $query = ActivityAttendance::with(['beneficiary','activitySession']);
+        $query = ActivityAttendance::with(['beneficiary', 'activitySession']);
 
         return Cache::tags([self::TAG_ACTIVITY_ATTENDANCES_GLOBAL])->remember(
             $cacheKey,
             self::CACHE_TTL,
-            function () use ($filters, $perPage,$query) {
+            function () use ($filters, $perPage, $query) {
                 return $query
                     ->filter($filters)      // Executes the specialized ActivityBuilder orchestration.
                     ->paginate($perPage);   // Returns a paginated instance with metadata.
@@ -47,31 +61,33 @@ class ActivityAttendanceService
     }
 
     /**
-     * Add new activityAttendance to the database.
+     * Persist a new activity attendance record.
+     * * * Security:
+     * Automatically injects the authenticated user ID as 'recorded_by'.
      *
-     * @param array $arraydata
-     *
-     * @return ActivityAttendance $activityAttendance
+     * @param array $data Validated attendance data
+     * @return ActivityAttendance
      */
     public function createActivityAttendance(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $data['recorded_by']= auth()->id();
+            $data['recorded_by'] = auth()->id();
             $activityAttendance = ActivityAttendance::create($data);
             return $activityAttendance;
         });
     }
 
     /**
-     * Get a single activityAttendance with its relationships.
+     * Retrieve a specific activity attendance with optimized caching.
+     * * * Strategy:
+     * Uses double tagging (Global + Specific ID) for granular control.
      *
      * @param  ActivityAttendance $activityAttendance
-     *
-     * @return ActivityAttendance $activityAttendance
+     * @return array The attendance record with loaded relationships.
      */
     public function showActivityAttendance(ActivityAttendance $activityAttendance)
     {
-        $cacheKey=self::TAG_ACTIVITY_ATTENDANCE_PREFIX. "details_{$activityAttendance->id}";
+        $cacheKey = self::TAG_ACTIVITY_ATTENDANCE_PREFIX . "details_{$activityAttendance->id}";
         $activityAttendanceTag = self::TAG_ACTIVITY_ATTENDANCE_PREFIX . $activityAttendance->id;
 
         return Cache::tags([self::TAG_ACTIVITY_ATTENDANCES_GLOBAL, $activityAttendanceTag])->remember($cacheKey, self::CACHE_TTL, function () use ($activityAttendance) {
@@ -80,32 +96,28 @@ class ActivityAttendanceService
     }
 
     /**
-     * Update the specified activityAttendance in the database.
+     * Update an existing record within a transaction.
      *
-     * @param array $arraydata
-     * @param  ActivityAttendance $activityAttendance
-     *
-     * @return ActivityAttendance $activityAttendance
+     * @param array $data Update fields
+     * @param ActivityAttendance $activityAttendance
+     * @return ActivityAttendance
      */
     public function updateActivityAttendance(array $data, ActivityAttendance $activityAttendance)
     {
-        return DB::transaction(function () use ($data,$activityAttendance) {
+        return DB::transaction(function () use ($data, $activityAttendance) {
             $activityAttendance->update($data);
             return $activityAttendance->refresh();
         });
     }
 
     /**
-     * Delete the specified activityAttendance from the database.
+     * Remove the record from storage.
      *
      * @param ActivityAttendance $activityAttendance
-     *
+     * @return void
      */
     public function deleteActivityAttendance(ActivityAttendance $activityAttendance)
     {
         $activityAttendance->delete();
     }
-
 }
-
-

@@ -6,18 +6,26 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Programs\Enums\V1\Activity\ActivityType;
 
+/**
+ * Class UpdateActivityRequest
+ * * Manages the validation for updating existing activities.
+ * It uses Route Model Binding to authorize the specific activity instance.
+ */
 class UpdateActivityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     * Leverages the 'update' policy for the specific activity model.
      */
     public function authorize(): bool
     {
-        $activity=$this->route('activity');
-        return $this->user()->can('update',$activity);
+        $activity = $this->route('activity');
+        return $this->user()->can('update', $activity);
     }
+
     /**
      * Get the validation rules that apply to the request.
+     * Fields are nullable to allow partial updates (PATCH style).
      */
     public function rules(): array
     {
@@ -32,4 +40,3 @@ class UpdateActivityRequest extends FormRequest
         ];
     }
 }
-

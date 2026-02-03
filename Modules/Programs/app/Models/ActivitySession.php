@@ -14,14 +14,20 @@ use Modules\Programs\Enums\ActivitySessionStatus;
 use Modules\Programs\Models\Builders\ActivitySessionBuilder;
 use Spatie\Translatable\HasTranslations;
 
-// use Modules\Programs\Database\Factories\ActivitySessionFactory;
-
+/**
+ * Class ActivitySession
+ * * * Core Features:
+ * - Spatial Intelligence: Uses 'HasSpatial' for location-based indexing (GPS Point).
+ * - Multi-lingual: 'HasTranslations' manages localized session notes.
+ * - Audit Trail: 'LogsActivity' tracks every modification for compliance.
+ * - Custom Builder: Uses 'ActivitySessionBuilder' for specialized geographic queries.
+ */
 class ActivitySession extends Model
 {
     use HasFactory, LogsActivity , HasSpatial, HasTranslations;
 
     /**
-     * The attributes that are mass assignable.
+     * @var array Mass-assignable attributes for session lifecycle.
      */
     protected $fillable = [
         'activity_id',
@@ -34,11 +40,17 @@ class ActivitySession extends Model
         'status',
         'session_notes'
     ];
-    
+
+    /** @var array Fields handled as spatial geometric data. */
     protected array $spatialFields = [
             'location',
         ];
 
+    /**
+     * Data Casting
+     * - location: Cast to Spatial 'Point' for distance calculations.
+     * - status: Cast to 'ActivitySessionStatus' Enum for type safety.
+     */
     protected $casts = [
         'session_date' => 'date',
         'start_time'   => 'datetime:H:i',
@@ -47,56 +59,47 @@ class ActivitySession extends Model
         'location'     => Point::class,
     ];
 
+    /** @var array Translatable database columns. */
     public array $translatable = ['session_notes'];
 
-
-    // protected static function newFactory(): ActivitySessionFactory
-    // {
-    //     // return ActivitySessionFactory::new();
-    // }
-
+    /** Configures Spatie Activity Log defaults. */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logAll();
     }
+
+    /** Relation: The trainer assigned to lead this session. */
     public function trainer()
     {
         return $this->belongsTo(Trainer::class);
     }
 
-    /**
-     *
-     */
+    /** Relation: The parent activity category. */
     public function activity()
     {
         return $this->belongsTo(Activity::class);
     }
 
-    /**
-     *
-     */
+    /** Relation: Collection of beneficiary attendance records. */
     public function activityAttendances(): HasMany
     {
         return $this->hasMany(ActivityAttendance::class);
     }
-    /**
-     * Use custom Builder for fluent queries
-     */
+
+    /** Overrides default builder to provide fluent custom query scopes. */
     public function newEloquentBuilder($query): ActivitySessionBuilder
     {
         return new ActivitySessionBuilder($query);
     }
 
+    /**
+     * Model Boot Logic
+     * Ensures every new session starts as a 'DRAFT' status if not specified.
+     */
     protected static function booted()
     {
         static::creating(function ($session) {
             $session->status ??= ActivitySessionStatus::DRAFT;
         });
     }
-
-    
-
 }
-
-
-

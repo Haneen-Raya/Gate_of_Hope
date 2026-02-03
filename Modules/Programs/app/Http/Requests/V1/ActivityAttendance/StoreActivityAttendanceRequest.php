@@ -7,10 +7,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Modules\Programs\Enums\V1\Activity\AttendanceStatus;
 
+/**
+ * Class StoreActivityAttendanceRequest
+ * * Authorizes and validates the creation of an attendance record.
+ * This request ensures that every attendance entry is mapped to a valid session
+ * and follows the standardized AttendanceStatus Enum.
+ */
 class StoreActivityAttendanceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     * Verified against the 'activity.attendance.create' permission.
      */
     public function authorize(): bool
     {
@@ -20,6 +27,10 @@ class StoreActivityAttendanceRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * * RULES:
+     * - activity_session_id: Mandatory foreign key to the specific session.
+     * - beneficiary_id: Mandatory foreign key to the recipient.
+     * - attendance_status: Validated against predefined Enum values (Present, Absent, etc.).
      */
     public function rules(): array
     {
