@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum ProgressStatus
  * 
@@ -12,23 +14,12 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum ProgressStatus: string
 {
+    use HasEnumTranslation;
+
     case IMPROVING = 'improving';
     case STABLE = 'stable';
     case WORSENING = 'worsening';
 
-    /**
-     * Get a human-readable label for each status.
-     * Essential for UI consistency, PDF exports, and stakeholder reporting.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::IMPROVING     => 'Improving',
-            self::STABLE => 'Stable',
-            self::WORSENING    => 'Worsening',
-        };
-    }
 
     /**
      * Retrieve all enum values.
