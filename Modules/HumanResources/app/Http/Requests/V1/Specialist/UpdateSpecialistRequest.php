@@ -4,7 +4,7 @@ namespace Modules\HumanResources\Http\Requests\V1\Specialist;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-use Modules\HumanResources\Enums\Gender;
+use Modules\HumanResources\Enums\V1\Gender;
 
 /**
  * Class UpdateSpecialistRequest

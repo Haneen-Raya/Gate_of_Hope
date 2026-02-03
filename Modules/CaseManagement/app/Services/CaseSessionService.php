@@ -6,8 +6,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
+use Modules\CaseManagement\Enums\V1\SessionType;
 use Modules\CaseManagement\Models\CaseSession;
-use Modules\CaseManagement\Enums\SessionType;
 use Modules\CaseManagement\Models\BeneficiaryCase;
 use Modules\CaseManagement\Notifications\UpcomingCaseSessionNotification;
 use Throwable;
@@ -230,7 +230,7 @@ class CaseSessionService
                     ->bySpecialist($specialistId)
                     ->latestSession()
                     ->Paginate($perPage)
-            );  
+            );
     }
 
     /**

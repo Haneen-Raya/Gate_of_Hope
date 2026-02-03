@@ -4,6 +4,7 @@ namespace Modules\HumanResources\Models;
 
 use Modules\Core\Models\User;
 use App\Traits\AutoFlushCache;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -12,10 +13,10 @@ use Modules\Programs\Models\ActivitySession;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\HumanResources\Enums\V1\CertificationLevel;
 use Modules\Programs\Models\ActivityAttendance;
-use Modules\HumanResources\Enums\CertificationLevel;
-use Modules\HumanResources\Enums\Gender;
-use Modules\HumanResources\Enums\TrainerStatus;
+use Modules\HumanResources\Enums\V1\Gender;
+use Modules\HumanResources\Enums\V1\TrainerStatus;
 use Modules\HumanResources\Models\Builders\TrainerBuilder;
 use Spatie\Translatable\HasTranslations;
 
@@ -34,7 +35,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class Trainer extends Model
 {
-    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations;
+    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations , InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -129,5 +130,23 @@ class Trainer extends Model
     public function newEloquentBuilder($query): Builder
     {
         return new TrainerBuilder($query);
+    }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'gender',
+            'status',
+            'certification_level',
+        ]);
     }
 }

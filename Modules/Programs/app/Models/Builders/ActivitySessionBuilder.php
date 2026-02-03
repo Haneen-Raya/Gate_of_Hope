@@ -3,7 +3,7 @@
 namespace Modules\Programs\Models\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
-use Modules\Programs\Enums\ActivitySessionStatus;
+use Modules\Programs\Enums\V1\ActivitySessionStatus;
 
 /**
  * Class ActivitySessionBuilder

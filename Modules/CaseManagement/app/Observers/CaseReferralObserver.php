@@ -2,7 +2,7 @@
 
 namespace Modules\CaseManagement\Observers;
 
-use Modules\CaseManagement\Enums\CaseReferralStatus;
+use Modules\CaseManagement\Enums\V1\CaseReferralStatus;
 use Modules\CaseManagement\Models\CaseReferral;
 
 class CaseReferralObserver

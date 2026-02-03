@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(function () {
 
     /** * Professions Domain:
      * Handles endpoints related to professional categories and certifications.

@@ -3,7 +3,7 @@
 namespace Modules\CaseManagement\Models\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
-use Modules\CaseManagement\Enums\SessionType;
+use Modules\CaseManagement\Enums\V1\SessionType;
 
 /**
  * Class CaseSessionBuilder

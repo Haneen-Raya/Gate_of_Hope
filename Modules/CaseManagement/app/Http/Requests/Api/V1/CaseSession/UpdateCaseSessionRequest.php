@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\CaseManagement\Http\Requests;
+namespace Modules\CaseManagement\Http\Requests\Api\V1\CaseSession;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Modules\CaseManagement\Enums\SessionType;
+use Modules\CaseManagement\Enums\V1\SessionType;
 
 /**
  * Class UpdateCaseSessionRequest

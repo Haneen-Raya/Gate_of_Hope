@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Modules\CaseManagement\Enums\SessionType;
 use Modules\HumanResources\Models\Specialist;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\CaseManagement\Enums\V1\SessionType;
 use Modules\CaseManagement\Models\Builders\CaseSessionBuilder;
 use Modules\CaseManagement\Services\CaseEvent\Formatter\CaseSessionFormatter;
 

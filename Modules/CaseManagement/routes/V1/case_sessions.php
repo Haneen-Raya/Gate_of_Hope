@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\CaseManagement\Http\Controllers\Api\CaseSessionController;
+use Modules\CaseManagement\Http\Controllers\Api\V1\CaseSessionController;
 
 /*
 |--------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Assessments\Http\Controllers\AssessmentsController;
 
 /**
  * Assessments & Priority Module - Version 1
@@ -10,11 +9,6 @@ use Modules\Assessments\Http\Controllers\AssessmentsController;
  */
 
 Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(function () {
-
-    /** * Master Assessment Resource:
-     * Standard CRUD for creating and managing assessment templates.
-     */
-    Route::apiResource('assessments', AssessmentsController::class)->names('assessments');
 
     /** * Scoring & Priority Logic:
      * Routes for defining the business rules that calculate priority scores.

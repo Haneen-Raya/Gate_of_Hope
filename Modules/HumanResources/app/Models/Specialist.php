@@ -2,6 +2,7 @@
 
 namespace Modules\HumanResources\Models;
 
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
@@ -12,6 +13,7 @@ use Modules\Assessments\Models\IssueCategory;
 use Modules\CaseManagement\Models\CaseReview;
 use Modules\CaseManagement\Models\CaseSession;
 use Modules\Core\Models\User;
+use Modules\HumanResources\Enums\V1\Gender;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -28,7 +30,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class Specialist extends Model
 {
-    use HasFactory, LogsActivity, HasTranslations;
+    use HasFactory, LogsActivity, HasTranslations, InteractsWithEnums;
 
     /**
      * The attributes that are mass assignable.
@@ -41,10 +43,12 @@ class Specialist extends Model
         'user_id'
     ];
 
-    /**
-     * Configure the activity logging options.
-     * Logs all fillable attributes to maintain a full audit trail of specialist profiles.
-     */
+    protected $casts = [
+        'gender' => Gender::class,
+        'date_of_birth' => 'date',
+    ];
+    
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -89,4 +93,21 @@ class Specialist extends Model
     {
         return $this->belongsTo(IssueCategory::class);
     }
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * This override intercepts the standard array conversion to apply
+     * structured Enum transformations, providing localized labels and
+     * raw values for the API consumer.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->transformEnums(parent::toArray(), [
+            'gender'
+        ]);
+    }
+
 }

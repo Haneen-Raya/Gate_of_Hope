@@ -4,7 +4,7 @@ namespace Modules\Programs\Policies;
 
 use Modules\Programs\Models\ActivitySession;
 use Modules\Core\Models\User;
-use Modules\Programs\Enums\ActivitySessionStatus;
+use Modules\Programs\Enums\V1\ActivitySessionStatus;
 
 /**
  * Class ActivitySessionPolicy

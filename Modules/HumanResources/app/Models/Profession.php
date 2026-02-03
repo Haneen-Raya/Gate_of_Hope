@@ -5,6 +5,7 @@ namespace Modules\HumanResources\Models;
 use App\Contracts\CacheInvalidatable;
 use App\Traits\AutoFlushCache;
 use App\Traits\HasActiveState;
+use App\Traits\InteractsWithEnums;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,17 +36,17 @@ use Spatie\Translatable\HasTranslations;
  */
 class Profession extends Model implements CacheInvalidatable
 {
-    use HasFactory, AutoFlushCache, HasActiveState, HasTranslations;
+    use HasFactory, AutoFlushCache, HasActiveState, HasTranslations, InteractsWithEnums;
 
     /**
      * The attributes that are translatable via Spatie Translatable.
      *
-     * Each attribute listed here will be stored as a JSON object containing 
+     * Each attribute listed here will be stored as a JSON object containing
      * translations for different locales (e.g., {"en": "...", "ar": "..."}).
      *
      * @var array<int, string>
      */
-    public array $translatable = ['label'];
+    public array $translatable = ['name','label'];
 
     /**
      * The attributes that are mass assignable.
