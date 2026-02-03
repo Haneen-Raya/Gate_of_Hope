@@ -32,7 +32,7 @@ class RolesSeeder extends Seeder
                 ->orWhere('name','like','activity.%')
                 ->orWhere('name','like','case.%self%')
                 ->orWhere('name','like','social_backgrounds.%')
-                ->orWhere('name','like','case_referral.read')
+                ->orWhere('name','like','case.referral.read')
                 ->orWhere('name','like','activity.attendance.read')
                 ->get()
             );
@@ -43,7 +43,7 @@ class RolesSeeder extends Seeder
                 'file.read','file.update',
                 'case_session.view_any','case_session.view_all','case_session.view_by_date',
                 'case_session.view','case_session.create', 'case_session.update','case_session.delete' ,
-                'case_session.view_by_specialist', 'case_session.count', 
+                'case_session.view_by_specialist', 'case_session.count',
                 'case.review.create','case.review.read','case.review.update','google_forms.read',
                 'social_backgrounds.read'
             ]);
@@ -63,7 +63,7 @@ class RolesSeeder extends Seeder
                 'activities.sessions.update','activities.sessions.delete',
                 'activity.beneficiary.read_minimal',
                 'case.referral.update.status',
-                'case_referral.read',
+                'case.referral.read',
                 'entities.read.self','entities.update.self',
                 'activities.read',
                 'activity.attendance.read'
