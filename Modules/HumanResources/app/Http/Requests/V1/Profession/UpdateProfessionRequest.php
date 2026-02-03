@@ -47,6 +47,8 @@ class UpdateProfessionRequest extends FormRequest
                 'max:255',
                 Rule::unique('professions', 'name')->ignore($this->profession->id),
             ],
+            'label' => 'sometimes|array',
+            'label.*' => 'sometimes|string|max:255',
             'is_active' => 'sometimes|boolean'
         ];
     }

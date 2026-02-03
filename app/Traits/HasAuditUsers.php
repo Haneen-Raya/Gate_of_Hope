@@ -41,10 +41,13 @@ trait HasAuditUsers
             $updaterField = $model->getUpdatedByField();
 
             // Set the ID only if the field exists and hasn't been manually set
-                        if (($creatorField && empty($model->{$creatorField}))) {
+            if (($creatorField && empty($model->{$creatorField}))) {
                 $model->{$creatorField}  = Auth::id();
             }
 
+            if ($updaterField != null) {
+                $model->{$updaterField}  = Auth::id();
+            }
         });
 
         // Handle the updating event

@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('case_plan_goals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained('case_support_plans');
-            $table->text('goal_description');
+            $table->json('goal_description');
             $table->string('status');
             $table->date('target_date');
             $table->date('achieved_at')->nullable();
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamps();
         });
     }

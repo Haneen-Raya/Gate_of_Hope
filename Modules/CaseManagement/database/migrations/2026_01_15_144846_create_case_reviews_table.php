@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId(column: 'beneficiary_case_id')->constrained('beneficiary_cases');
             $table->foreignId('specialist_id')->constrained('specialists');
             $table->string('progress_status');
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamp('reviewed_at');
             $table->timestamps();
         });

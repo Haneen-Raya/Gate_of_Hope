@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\Logger;
+use App\Http\Middleware\SetLocaleLang;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -22,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'set_locale_lang' =>  App\Http\Middleware\SetLocaleLang::class,
+            'set_locale_lang' =>  SetLocaleLang::class,
         ]);
     })
     ->withSchedule(function ($schedule) {

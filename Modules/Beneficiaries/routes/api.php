@@ -1,10 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Beneficiaries\Http\Controllers\Api\V1\EducationLevelController;
-use Modules\Beneficiaries\Http\Controllers\Api\V1\EmploymentStatusController;
-use Modules\Beneficiaries\Http\Controllers\Api\V1\HousingTypeController;
-use Modules\Beneficiaries\Http\Controllers\Api\V1\SocialBackgroundController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,7 +8,7 @@ use Modules\Beneficiaries\Http\Controllers\Api\V1\SocialBackgroundController;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'set_locale_lang'])->prefix('v1')->group(function () {
 
     // Register beneficiaries routes
     require __DIR__ . '/V1/beneficiaries.php';

@@ -2,6 +2,8 @@
 
 namespace Modules\CaseManagement\Enums\V1;
 
+use App\Traits\HasEnumTranslation;
+
 /**
  * @Enum PlanStatus
  * 
@@ -13,25 +15,13 @@ namespace Modules\CaseManagement\Enums\V1;
  */
 enum PlanStatus: string
 {
+    use HasEnumTranslation;
+
     case PENDING = 'pending';
     case IN_PROGRESS = 'in_progress';
     case ACHIEVED = 'achieved';
     case CANCELLED = 'cancelled';
 
-    /**
-     * Get a human-readable label for each status.
-     * Essential for UI consistency, PDF exports, and stakeholder reporting.
-     * * @return string
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING     => 'Pending',
-            self::IN_PROGRESS => 'In Progress',
-            self::ACHIEVED    => 'Achieved',
-            self::CANCELLED   => 'Cancelled',
-        };
-    }
 
     /**
      * Retrieve all enum values.

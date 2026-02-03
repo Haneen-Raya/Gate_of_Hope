@@ -42,7 +42,8 @@ class UpdateCaseReviewRequest extends FormRequest
         return [
             'beneficiary_case_id' => 'prohibited',
             'progress_status'     => ['sometimes', Rule::in(ProgressStatus::all())],
-            'notes'               => 'sometimes|nullable|string|max:2000',
+            'notes' => 'sometimes|nullable|array',
+            'notes.*' => 'nullable|string|max:2000',
         ];
     }
 

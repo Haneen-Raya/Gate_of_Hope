@@ -49,7 +49,8 @@ class StoreCaseReviewRequest extends FormRequest
                 Rule::in(ProgressStatus::all())
             ],
 
-            'notes' => 'nullable|string|max:1000',
+            'notes' => 'nullable|array',
+            'notes.*' => 'nullable|string|max:2000',
 
             'reviewed_at' => 'required|date|before_or_equal:now',
 
