@@ -9,6 +9,7 @@ use Modules\HumanResources\Services\TrainerService;
 use Modules\HumanResources\Policies\TrainerPolicy;
 use Modules\HumanResources\Http\Requests\V1\Trainer\StoreTrainerRequest;
 use Modules\HumanResources\Http\Requests\V1\Trainer\UpdateTrainerRequest;
+use Modules\HumanResources\Http\Resources\TrainerResource;
 
 /**
  * Class TrainerController
@@ -55,11 +56,11 @@ class TrainerController extends Controller
     {
         $this->authorize('viewAny', Trainer::class);
 
-        $trainers = $this->service->list(request()->all());
+        $trainers = $this->service->list();
 
-        return $this->successResponse(
+          return $this->successResponse(
             'Trainers retrieved successfully',
-            $trainers
+            TrainerResource::collection($trainers)
         );
     }
 
@@ -81,7 +82,7 @@ class TrainerController extends Controller
 
         return $this->successResponse(
             'Trainer retrieved successfully',
-            $trainer
+                new TrainerResource($trainer)
         );
     }
 
@@ -105,7 +106,7 @@ class TrainerController extends Controller
 
         return $this->successResponse(
             'Trainer created successfully',
-            $trainer,
+            new TrainerResource($trainer),
             201
         );
     }
@@ -134,7 +135,7 @@ class TrainerController extends Controller
 
         return $this->successResponse(
             'Trainer updated successfully',
-            $trainer
+            new TrainerResource($trainer)
         );
     }
 
@@ -192,7 +193,7 @@ class TrainerController extends Controller
 
         return $this->successResponse(
             'Trainer approved successfully',
-            $trainer
+             new TrainerResource($trainer)
         );
     }
         /**
@@ -220,7 +221,7 @@ class TrainerController extends Controller
 
         return $this->successResponse(
             'Trainer rejected successfully',
-            $trainer
+             new TrainerResource($trainer)
         );
     }
 

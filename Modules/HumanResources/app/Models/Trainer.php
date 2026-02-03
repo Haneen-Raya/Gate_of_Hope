@@ -16,12 +16,13 @@ use Modules\HumanResources\Enums\CertificationLevel;
 use Modules\HumanResources\Enums\Gender;
 use Modules\HumanResources\Enums\TrainerStatus;
 use Modules\HumanResources\Models\Builders\TrainerBuilder;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\HumanResources\Database\Factories\TrainerFactory;
 
 class Trainer extends Model
 {
-    use HasFactory, LogsActivity,AutoFlushCache;
+    use HasFactory, LogsActivity,AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -46,6 +47,8 @@ class Trainer extends Model
         'is_external' => 'boolean',
         'date_of_birth' => 'date',
     ];
+    
+    public array $translatable = ['bio'];
 
     // protected static function newFactory(): TrainerFactory
     // {

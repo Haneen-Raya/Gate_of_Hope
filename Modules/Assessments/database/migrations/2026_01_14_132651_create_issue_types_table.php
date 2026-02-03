@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('issue_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('issue_category_id')->constrained('issue_categories');
-            $table->string('name');
+            $table->json('name');
             $table->string('code')->unique()->index();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

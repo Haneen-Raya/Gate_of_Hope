@@ -73,33 +73,18 @@ class UpdateCaseSessionRequest extends FormRequest
             /**
              * Optional notes about the session.
              */
-            'notes' => [
-                'sometimes',
-                'nullable',
-                'string',
-            ],
+            // Translatable JSON fields
+            'notes' => ['sometimes', 'nullable', 'array'],
+            'notes.*' => ['string', 'max:1000'],
 
             /**
              * Optional recommendations provided during the session.
              */
-            'recommendations' => [
-                'sometimes',
-                'nullable',
-                'string',
-            ],
+            'recommendations' => ['sometimes', 'nullable', 'array'],
+            'recommendations.*' => ['string', 'max:1000'],
 
-            /**
-             * Business rule:
-             * Usually, we do NOT allow changing the specialist after session creation.
-             *
-             * If allowed in the future, you can uncomment and use:
-             *
-             * 'conducted_by' => [
-             *     'sometimes',
-             *     'required',
-             *     'exists:specialists,id',
-             * ],
-             */
+            // Specialist change is usually not allowed
+            // 'conducted_by' => ['sometimes', 'required', 'exists:specialists,id'],
         ];
     }
 }

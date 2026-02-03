@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Modules\Assessments\Http\Requests\V1\IssueCategory\StoreIssueCategoryRequest;
 use Modules\Assessments\Http\Requests\V1\IssueCategory\UpdateIssueCategoryRequest;
 use Modules\Assessments\Models\IssueCategory;
-use Modules\Assessments\Services\IssueCategoryService;
+use Modules\Assessments\Services\V1\IssueCategoryService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class IssueCategoryController extends Controller
@@ -50,10 +50,23 @@ class IssueCategoryController extends Controller
     {
         $this->authorize('viewAny', IssueCategory::class);
 
-        return $this->successResponse(
-            'Active categories fetched successfully',
-            $this->service->getActive()
-        );
+    $categories = $this->service->getActive()->map(function($category) {
+        return [
+            'id' => $category->id,
+            'name' => $category->name, 
+            'code' => $category->code,
+            'label' => $category->label,
+            'is_active' => $category->is_active,
+            'created_at' => $category->created_at,
+            'updated_at' => $category->updated_at,
+        ];
+    });
+
+    return $this->successResponse(
+        'Active categories fetched successfully',
+        $categories
+    );
+
     }
 
     /**
@@ -99,7 +112,7 @@ class IssueCategoryController extends Controller
      */
     public function update(UpdateIssueCategoryRequest $request, IssueCategory $issueCategory)
     {
-        // $this->authorize('update', $issueCategory);
+        $this->authorize('update', $issueCategory);
 
         $updated = $this->service->update(
             $issueCategory,

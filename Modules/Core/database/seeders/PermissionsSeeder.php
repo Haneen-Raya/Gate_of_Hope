@@ -118,7 +118,7 @@ class PermissionsSeeder extends Seeder
             'program.funding.create','program.funding.update','program.funding.read','program.funding.delete',
 
             // Donor & Research
-            'program.read.funded','program_funding.read.self','donor_report.read',
+            'program.read.funded','program_funding.read.self','donor_report.read', 'donor_report.generate',
             'program.report.read.aggregated','program.analytics.read','region.statistics.read',
             'program.read.all','program.analytics.read.full',
             'program.report.read.comparative',

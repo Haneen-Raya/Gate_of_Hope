@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Assessments\Services;
+namespace Modules\Assessments\Services\V1;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\Assessments\Models\IssueType;
@@ -38,6 +38,21 @@ class IssueTypeService
                     ->when($categoryId, fn($q) => $q->where('issue_category_id', $categoryId))
                     ->where('is_active', true)
                     ->get()
+                    ->map(function ($type) {
+                        // إظهار القيم حسب اللغة الحالية فقط
+                        return [
+                            'id' => $type->id,
+                            'name' => $type->name, // Spatie يختار حسب app()->getLocale()
+                            'issue_category_id' => $type->issue_category_id,
+                            'is_active' => $type->is_active,
+                            'created_at' => $type->created_at,
+                            'updated_at' => $type->updated_at,
+                            'issueCategory' => [
+                                'id' => $type->issueCategory->id,
+                                'name' => $type->issueCategory->name, // حسب locale
+                            ],
+                        ];
+                    })
         );
     }
 
@@ -50,9 +65,23 @@ class IssueTypeService
      */
     public function getPaginated(?int $categoryId = null, int $perPage = 15)
     {
-        return IssueType::with('issueCategory')
-            ->when($categoryId, fn($q) => $q->where('issue_category_id', $categoryId))
-            ->paginate($perPage);
+        $query = IssueType::with('issueCategory')
+            ->when($categoryId, fn($q) => $q->where('issue_category_id', $categoryId));
+
+        return $query->paginate($perPage)->through(function ($type) {
+            return [
+                'id' => $type->id,
+                'name' => $type->name,
+                'issue_category_id' => $type->issue_category_id,
+                'is_active' => $type->is_active,
+                'created_at' => $type->created_at,
+                'updated_at' => $type->updated_at,
+                'issueCategory' => [
+                    'id' => $type->issueCategory->id,
+                    'name' => $type->issueCategory->name,
+                ],
+            ];
+        });
     }
 
     /**

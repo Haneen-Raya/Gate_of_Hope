@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('session_type');
             $table->date('session_date');
             $table->integer('duration_minutes');
-            $table->text('notes')->nullable();
-            $table->text('recommendations')->nullable();
+            $table->json('notes')->nullable();
+            $table->json('recommendations')->nullable();
             $table->foreignId('conducted_by')->constrained('specialists');
             $table->timestamps();
         });

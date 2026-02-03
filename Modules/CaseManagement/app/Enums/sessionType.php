@@ -23,12 +23,8 @@ enum SessionType: string
      */
     public function label(): string
     {
-        return match ($this) {
-            self::INDIVIDUAL => 'Individual Session',
-            self::GROUP => 'Group Session',
-            self::FAMILY => 'Family Session',
-            self::FOLLOW_UP => 'Follow-up Session',
-            self::ASSESSMENT => 'Assessment Session',
-        };
+        // Use the enum value as key in the lang file
+        return __('session_types.' . $this->value);
     }
+
 }
