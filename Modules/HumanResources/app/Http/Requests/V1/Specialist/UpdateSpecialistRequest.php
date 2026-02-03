@@ -6,10 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use Modules\HumanResources\Enums\Gender;
 
+/**
+ * Class UpdateSpecialistRequest
+ * * Handles partial updates for a specialist's professional profile.
+ * Uses the 'sometimes' rule to allow updating specific fields without
+ * requiring the full dataset.
+ */
 class UpdateSpecialistRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the user is authorized to update this specialist.
+     * * @return bool
      */
     public function authorize(): bool
     {
@@ -17,17 +24,16 @@ class UpdateSpecialistRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Get the validation rules for updating a specialist.
+     * * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'gender' => ['required', new Enum(Gender::class)],
-            'date_of_birth' => 'sometimes|date',
-            'user_id' => 'sometimes|exists:users,id',
-            'issue_category_id' => 'sometimes|exists:issue_categories,id',
-        ];  
+            'gender'            => ['sometimes', new Enum(Gender::class)],
+            'date_of_birth'     => ['sometimes', 'date', 'before:today'],
+            'user_id'           => ['sometimes', 'exists:users,id'],
+            'issue_category_id' => ['sometimes', 'exists:issue_categories,id'],
+        ];
     }
 }

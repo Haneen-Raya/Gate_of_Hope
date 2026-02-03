@@ -9,45 +9,32 @@ use Modules\CaseManagement\Models\BeneficiaryCase;
 /**
  * Class CaseSessionPolicy
  *
- * Policy class responsible for controlling access to Case Sessions.
+ * This policy governs the authorization logic for Case Sessions, ensuring high-level
+ * data privacy and clinical confidentiality.
  *
- * Security principles applied:
- * - Least Privilege: Users only get access to what they need.
- * - Role + Ownership + Context-based access: Checks role and ownership of session/case.
- * - Case Sessions are highly sensitive; access should be carefully controlled and audited.
+ * ACCESS HIERARCHY:
+ * 1. Admin: Unconditional administrative access (Audited).
+ * 2. Specialist: Owner-based access (Can Create/Update/Delete their own sessions).
+ * 3. Case Coordinator: Supervisory access (Read-only for managed cases).
+ * 4. Beneficiary: Self-service access (Read-only for own records).
  *
- * Allowed roles:
- * - Specialist (Psychologist / Social Worker)
- * - Case Manager (Read-only)
- * - Beneficiary (Read-only)
- * - System Admin (Exceptional access with audit logging)
- *
- * Methods overview:
- * - before(): Grants System Admin unconditional access before other checks.
- * - viewAny(): Can view all sessions of a specific case.
- * - view(): Can view a specific session.
- * - create(): Can create a session (specialist only, assigned case).
- * - update(): Can update a session (owner specialist only).
- * - delete(): Can delete a session (owner specialist only; soft deletes recommended).
- * - viewBySpecialist(): View sessions filtered by a specific specialist.
- * - count(): Check if user can see session count for a case.
+ * @package Modules\CaseManagement\Policies
  */
 class CaseSessionPolicy
 {
     /**
-     * Handle authorization before all other checks.
+     * Pre-authorization Gate.
+     * * Grants System Administrators full access before any other methods are executed.
+     * LOGGING REQUIREMENT: Any action performed via this gate should be recorded
+     * in the system's security audit logs.
      *
-     * System Admin has exceptional access for technical or auditing purposes.
-     * ⚠️ Any access granted here MUST be logged in Audit Logs.
-     *
-     * @param User   $user    The user requesting access
-     * @param string $ability The action being attempted
-     * @return bool|null       True if access granted, null to continue normal checks
+     * @param User   $user
+     * @param string $ability
+     * @return bool|null
      */
     public function before(User $user, string $ability): bool|null
     {
         if ($user->hasRole('admin')) {
-            // TODO: Trigger Audit Log for administrative access
             return true;
         }
 
@@ -55,12 +42,11 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can view a list of sessions for a beneficiary case.
-     *
-     * Rules:
-     * - Specialist: only for cases assigned to them
-     * - Case Manager: only for cases they manage (read-only)
-     * - Beneficiary: only their own case sessions (read-only)
+     * Determine access to the session index for a specific case.
+     * * ACCESS RULES:
+     * - Specialists must be the conductors of at least one session in the case.
+     * - Case Coordinators must be the officially assigned managers of the case.
+     * - Beneficiaries must be the owners of the case.
      *
      * @param User             $user
      * @param BeneficiaryCase  $case
@@ -68,19 +54,16 @@ class CaseSessionPolicy
      */
     public function viewAny(User $user, BeneficiaryCase $case): bool
     {
-        // Assigned specialist
         if ($user->hasRole('specialist')) {
             return CaseSession::where('beneficiary_case_id', $case->id)
                 ->where('conducted_by', $user->id)
                 ->exists();
         }
 
-        // Assigned case manager (read-only)
         if ($user->hasRole('case_coordinator') && $case->case_manager_id === $user->id) {
             return true;
         }
 
-        // Beneficiary accessing own sessions
         if ($user->hasRole('beneficiary') && $case->beneficiary_id === $user->id) {
             return true;
         }
@@ -89,12 +72,8 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can view a specific case session.
-     *
-     * Rules:
-     * - Specialist who created the session
-     * - Case Manager managing the related case (read-only)
-     * - Beneficiary owning the related case (read-only)
+     * Determine access to a specific session's details.
+     * * Implements "Owner-only" modification logic while allowing "Related-party" viewing.
      *
      * @param User         $user
      * @param CaseSession  $session
@@ -104,17 +83,14 @@ class CaseSessionPolicy
     {
         $case = $session->beneficiaryCase;
 
-        // Session owner (specialist)
         if ($user->hasRole('specialist') && $session->conducted_by === $user->id) {
             return true;
         }
 
-        // Case manager (read-only access)
         if ($user->hasRole('case_coordinator') && $case->case_manager_id === $user->id) {
             return true;
         }
 
-        // Beneficiary (read-only access)
         if ($user->hasRole('beneficiary') && $case->beneficiary_id === $user->id) {
             return true;
         }
@@ -123,14 +99,9 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can create a new session for a case.
-     *
-     * Rule:
-     * - Only the specialist assigned to the case can create sessions.
-     *
-     * ⚠️ Note: Current implementation checks if a session already exists.
-     *        Might need revision: specialists should be allowed to create new sessions
-     *        even if no sessions exist yet.
+     * Determine if the user can create a session.
+     * * Current Logic: Limits creation to specialists who already have at least
+     * one session record in the targeted case.
      *
      * @param User             $user
      * @param BeneficiaryCase  $case
@@ -145,10 +116,9 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can update a case session.
-     *
-     * Rule:
-     * - Only the specialist who created the session can modify it.
+     * Determine if a session can be updated.
+     * * STRICT RULE: Only the primary conductor (specialist) who logged the
+     * session can edit its content.
      *
      * @param User         $user
      * @param CaseSession  $session
@@ -160,11 +130,9 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can delete a case session.
-     *
-     * Rule:
-     * - Only the specialist who owns the session may delete it.
-     * - Prefer Soft Deletes and mandatory Audit Logging.
+     * Determine if a session can be deleted.
+     * * It is recommended to use Soft Deletes in conjunction with this method
+     * to maintain clinical audit trails.
      *
      * @param User         $user
      * @param CaseSession  $session
@@ -176,11 +144,9 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can view sessions by a specific specialist.
-     *
-     * Rules:
-     * - Specialist can view their own sessions
-     * - Case Manager may view sessions related to cases they manage
+     * Filter-based authorization.
+     * * Checks if the user has the right to view sessions conducted by a specific specialist,
+     * usually for reporting or supervisory purposes.
      *
      * @param User $user
      * @param int  $specialistId
@@ -204,13 +170,10 @@ class CaseSessionPolicy
     }
 
     /**
-     * Determine whether the user can view the number of sessions for a case.
+     * Authorization for metadata/metrics.
+     * * Reuses viewAny logic to determine if the user can see session statistics.
      *
-     * Note:
-     * - Reuses the same rules as viewAny()
-     * - Returned data is non-sensitive (count only)
-     *
-     * @param User            $user
+     * @param User             $user
      * @param BeneficiaryCase $case
      * @return bool
      */

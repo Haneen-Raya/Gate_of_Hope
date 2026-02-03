@@ -7,6 +7,19 @@ use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Modules\Programs\Models\Program;
 
+/**
+ * Class ProgramManagerOwnsProgram
+ *
+ * * Purpose:
+ * To enforce a strict 1-to-1 relationship check between the authenticated user
+ * and the specific Program they are trying to associate with an activity.
+ *
+ * * Logic:
+ * It intercepts the 'program_id' input and compares the 'created_by' attribute
+ * of the program with the 'id' of the current session user.
+ *
+ * @package Modules\Programs\Rules
+ */
 class ProgramManagerOwnsProgram implements Rule
 {
     /**
@@ -29,11 +42,16 @@ class ProgramManagerOwnsProgram implements Rule
         }
 
         // Ensure the authenticated user is the program manager (creator)
+        // This is a critical security check for multi-tenant data integrity.
         return $program->created_by === Auth::id();
     }
 
     /**
      * Get the validation error message.
+     *
+     * * Security Note:
+     * Returning an unauthorized message rather than a "not found" message
+     * provides better feedback for internal staff usage.
      *
      * @return string
      */

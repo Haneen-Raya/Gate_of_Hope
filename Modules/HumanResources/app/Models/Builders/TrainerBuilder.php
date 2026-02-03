@@ -5,10 +5,16 @@ namespace Modules\HumanResources\Models\Builders;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\HumanResources\Enums\Gender;
 
+/**
+ * Class TrainerBuilder
+ * * Orchestrates complex Eloquent queries for the Trainer model.
+ * Provides a fluent interface for workforce analysis, specialized in filtering
+ * by origin (Internal/External), demographics, and session engagement.
+ */
 class TrainerBuilder extends Builder
 {
     /**
-     * Filter internal trainers
+     * Scope query to internal trainers (staff).
      */
     public function internal(): self
     {
@@ -16,7 +22,7 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Filter external trainers
+     * Scope query to external consultants/contractors.
      */
     public function external(): self
     {
@@ -24,7 +30,8 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Filter trainers by gender
+     * Filter trainers by gender using Type-Safe Enums.
+     * * @param Gender|string $gender
      */
     public function gender(Gender|string $gender): self
     {
@@ -35,7 +42,7 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Filter trainers by profession
+     * Filter by professional classification ID.
      */
     public function profession(int $professionId): self
     {
@@ -43,7 +50,7 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Trainers that have activity sessions
+     * Retrieve trainers with at least one recorded activity session.
      */
     public function withSessions(): self
     {
@@ -51,7 +58,7 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Trainers without any sessions
+     * Retrieve idle trainers without any assigned sessions.
      */
     public function withoutSessions(): self
     {
@@ -59,7 +66,8 @@ class TrainerBuilder extends Builder
     }
 
     /**
-     * Order by hourly rate
+     * Apply financial ordering by hourly compensation.
+     * * @param string $direction 'asc' or 'desc'.
      */
     public function orderByRate(string $direction = 'asc'): self
     {
