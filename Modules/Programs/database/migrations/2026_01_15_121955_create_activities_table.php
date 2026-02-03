@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('program_id')->constrained('programs');
             $table->foreignId('profession_id')->constrained('professions');
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->json('name');
+            $table->json('description')->nullable();
             $table->string('activity_type');
             $table->foreignId('provider_entity_id')->constrained('entities');
             $table->boolean('is_active')->default(1);

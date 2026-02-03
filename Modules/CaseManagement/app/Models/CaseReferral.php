@@ -21,6 +21,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Modules\Core\Models\User;
 use Modules\Entities\Models\Entitiy;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\CaseReferralControllerFactory;
 
@@ -43,7 +44,7 @@ use Modules\Entities\Models\Entitiy;
  */
 class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents;
+    use HasFactory, LogsActivity, AutoFlushCache, HasTranslations, LogsCaseEvents;
 
     /**
      * The attributes that are mass assignable.
@@ -96,7 +97,14 @@ class CaseReferral extends Model implements HasCaseEvents ,CacheInvalidatable
     ];
 
     /**
-     * Map the Model to its dedicated Event Formatter.
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['reason','notes','rejection_reason','cancellation_reason'];
+
+    /* Map the Model to its dedicated Event Formatter.
      * * This method acts as the structural link required by the `HasCaseEvents` contract.
      * It instructs the central EventManager to use the specified formatter for
      * transforming raw Eloquent mutations into domain-specific timeline events.

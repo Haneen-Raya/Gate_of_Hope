@@ -15,6 +15,7 @@ use Modules\Core\Models\User;
 use Modules\HumanResources\Models\Trainer;
 use Modules\Programs\Enums\Api\V1\Activity\AttendanceStatus;
 use Modules\Programs\Models\Builders\ActivityAttendanceBuilder;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Class ActivityAttendance
@@ -39,7 +40,7 @@ use Modules\Programs\Models\Builders\ActivityAttendanceBuilder;
  */
 class ActivityAttendance extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache;
+    use HasFactory, LogsActivity, AutoFlushCache,HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -63,6 +64,14 @@ class ActivityAttendance extends Model implements CacheInvalidatable
     protected $casts = [
         'attendance_status' => AttendanceStatus::class
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['notes'];
 
     /**
      * Define cache tags to invalidate on model changes.

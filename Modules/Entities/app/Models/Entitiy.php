@@ -18,7 +18,7 @@ use Modules\Entities\Enums\EntityType;
 use Modules\Programs\Models\Activity;
 use Modules\Entities\Models\Builders\EntityBuilder;
 use Illuminate\Database\Query\Builder;
-
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\Entities\Database\Factories\EntitiesFactory;
 
@@ -42,7 +42,7 @@ use Illuminate\Database\Query\Builder;
  */
 class Entitiy extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity, HasActiveState, AutoFlushCache;
+    use HasFactory, LogsActivity, HasActiveState, AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -97,6 +97,14 @@ class Entitiy extends Model implements CacheInvalidatable
      * @var string
      */
     protected $table = 'entities';
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['name','address'];
 
     /**
      * Define cache tags to invalidate on model changes.

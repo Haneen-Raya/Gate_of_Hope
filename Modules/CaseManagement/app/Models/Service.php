@@ -16,6 +16,7 @@ use Illuminate\Database\Query\Builder;
 use Modules\Assessments\Models\IssueCategory;
 use Modules\CaseManagement\Enums\V1\ServiceDirection;
 use Modules\CaseManagement\Models\Builders\ServiceBuilder;
+use Spatie\Translatable\HasTranslations;
 
 // use Modules\CaseManagement\Database\Factories\ServiceFactory;
 
@@ -40,7 +41,7 @@ use Modules\CaseManagement\Models\Builders\ServiceBuilder;
  */
 class Service extends Model implements CacheInvalidatable
 {
-    use HasFactory, LogsActivity,HasActiveState, AutoFlushCache;
+    use HasFactory, LogsActivity,HasActiveState, AutoFlushCache, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -73,6 +74,14 @@ class Service extends Model implements CacheInvalidatable
         'is_active' => 'boolean',
         'direction' => ServiceDirection::class
     ];
+
+    /**
+     * The model attributes that should be automatically translated
+     *
+     * Used by a translation trait (like AutoTranslatesAttributes) to know
+     * which fields to process when the model is converted to an array
+     */
+    public array $translatable = ['name','description'];
 
     /**
      * Define cache tags to invalidate on model changes.

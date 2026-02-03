@@ -12,6 +12,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Programs\Http\Controllers\Api\V1\ProgramController;
+use Modules\Programs\Http\Controllers\Api\V1\ProgramPerformanceReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,4 +71,12 @@ Route::prefix('programs')->group(function () {
      * @auditing Logs 'program.deleted' event upon success.
      */
     Route::delete('/{program}', [ProgramController::class, 'destroy']);
+
+    /**
+     * Retrieve detailed information for a specific program.
+     * * @method GET
+     * @endpoint /api/v1/programs/{id}/reports/performance
+     * 
+     */
+    Route::get('/{id}/reports/performance', [ProgramPerformanceReportController::class, 'show']);
 });

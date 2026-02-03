@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('currency');
+            $table->json('currency');
             $table->timestamps();
 
             $table->index(['donor_entity_id', 'program_id']);
