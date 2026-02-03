@@ -24,29 +24,34 @@ use Modules\CaseManagement\Services\CaseEvent\Formatter\BeneficiaryCaseFormatter
 
 /**
  * Class BeneficiaryCase
- * * Represents a specific case file for a beneficiary within the Case Management module.
- *
- * @property int $id
- * @property int $beneficiary_id
- * @property int $issue_type_id
- * @property int $case_manager_id
- * @property int $region_id
- * @property CaseStatus $status
- * @property string $priority
- * @property Carbon|null $opened_at
- * @property Carbon|null $closed_at
- * @property string|null $closure_reason
- * @property Carbon $created_at
- * @property Carbon $updated_at
  * * @package Modules\CaseManagement\Models
+ * @author Case Management Lead
+ * * DESCRIPTION:
+ * The central entity of the Case Management module. This model acts as a composite
+ * container for beneficiary lifecycle data, orchestrating relationships between
+ * clinical assessments, support interventions, and chronological event auditing.
+ * * CORE CAPABILITIES:
+ * - Multi-Layered Caching: Implements CacheInvalidatable for high-performance retrieval.
+ * - Event Sourcing: Transforms raw mutations into domain events via BeneficiaryCaseFormatter.
+ * - Auto-Closure Logic: Automatically synchronizes closure timestamps based on status transitions.
+ * - Localization: Supports multi-lingual closure reasons via Spatie Translatable.
+ * * @property int $id Internal primary key.
+ * @property int $beneficiary_id Reference to the core beneficiary profile.
+ * @property int $issue_type_id Classification of the primary protection/social issue.
+ * @property int $case_manager_id The assigned specialist responsible for case progression.
+ * @property int $region_id Geographical jurisdiction of the case.
+ * @property CaseStatus $status Enum representing the operational state (Active, Closed, etc.).
+ * @property string $priority Urgency level (Critical, High, Medium, Low).
+ * @property Carbon|null $opened_at Formal activation timestamp.
+ * @property Carbon|null $closed_at Termination timestamp, managed by system observers.
+ * @property string|null $closure_reason Multi-lingual narrative for case termination.
  */
-class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
+class BeneficiaryCase extends Model implements HasCaseEvents, CacheInvalidatable
 {
-    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents,HasTranslations;
+    use HasFactory, LogsActivity, AutoFlushCache, LogsCaseEvents, HasTranslations;
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * Mass assignable attributes for bulk ingestion.
      * @var array<int, string>
      */
     protected $fillable = [
@@ -60,10 +65,15 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
         'closed_at',
         'closure_reason'
     ];
-    public array $translatable = ['closure_reason'];
+
     /**
-     * The attributes that should be cast to native types.
-     *
+     * Translatable field registry.
+     * @var array<int, string>
+     */
+    public array $translatable = ['closure_reason'];
+
+    /**
+     * Attribute casting for strict type enforcement and Enum mapping.
      * @var array<string, string>
      */
     protected $casts = [
@@ -73,12 +83,9 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     ];
 
     /**
-     * Map the Model to its dedicated Event Formatter.
-     * * This method acts as the structural link required by the `HasCaseEvents` contract.
-     * It instructs the central EventManager to use the specified formatter for
-     * transforming raw Eloquent mutations into domain-specific timeline events.
-     *
-     * @return string The fully qualified class name of the formatter.
+     * LINKAGE: Domain Event Formatter.
+     * Required by HasCaseEvents contract to bridge Eloquent and the Timeline Event Manager.
+     * @return string Fully qualified class name of the specialized formatter.
      */
     public function caseEventFormatter(): string
     {
@@ -86,8 +93,8 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Define the cache tags that should be invalidated when this model is updated.
-     *
+     * CACHE STRATEGY: Define invalidation ripples.
+     * Ensures that updates to a specific case purge global lists and individual detail caches.
      * @return array<int, string>
      */
     public function getCacheTagsToInvalidate(): array
@@ -100,10 +107,8 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Override the default Eloquent query builder.
-     *
-     * @param \Illuminate\Database\Query\Builder $query
-     * @return BeneficiaryCaseBuilder
+     * EXTENSION: Custom Query Scope Orchestration.
+     * Returns a specialized builder for complex domain-specific query constraints.
      */
     public function newEloquentBuilder($query): BeneficiaryCaseBuilder
     {
@@ -111,19 +116,17 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Define activity logging options for Spatie LogsActivity.
-     *
-     * @return LogOptions
+     * AUDIT CONFIG: Activity log behavior specification.
      */
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logAll();
+        return LogOptions::defaults()->logAll()->logOnlyDirty();
     }
 
+    /* --- RELATIONSHIP DEFINITIONS --- */
+
     /**
-     * The manager (User) assigned to handle this case.
-     *
-     * @return BelongsTo
+     * The specialist (User) architecting the case's progress.
      */
     public function caseManager(): BelongsTo
     {
@@ -131,9 +134,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * The beneficiary associated with this case.
-     *
-     * @return BelongsTo
+     * The master profile of the beneficiary receiving services.
      */
     public function beneficiary(): BelongsTo
     {
@@ -141,9 +142,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * The type of issue this case addresses.
-     *
-     * @return BelongsTo
+     * Categorization of the core issue handled within this case.
      */
     public function issueType(): BelongsTo
     {
@@ -151,9 +150,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * The geographical region where the case is located.
-     *
-     * @return BelongsTo
+     * Geographical containment of the case for reporting and logistics.
      */
     public function region(): BelongsTo
     {
@@ -161,9 +158,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Associated support plans for this case.
-     *
-     * @return HasMany
+     * Versioned support strategies and intervention targets.
      */
     public function caseSupportPlans(): HasMany
     {
@@ -171,11 +166,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Get all timeline events associated with this specific case.
-     * * This provides a chronological audit trail of all actions,
-     * sessions, and status changes linked to the beneficiary's file.
-     *
-     * @return HasMany
+     * Chronological audit log of all domain-specific events.
      */
     public function caseEvents(): HasMany
     {
@@ -183,9 +174,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Outgoing or incoming referrals associated with this case.
-     *
-     * @return HasMany
+     * External or internal resource referrals triggered by this case.
      */
     public function caseReferrals(): HasMany
     {
@@ -193,9 +182,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Documented sessions related to this case.
-     *
-     * @return HasMany
+     * Logged interaction sessions between specialists and the beneficiary.
      */
     public function caseSessions(): HasMany
     {
@@ -203,9 +190,7 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Periodic reviews of the case progress.
-     *
-     * @return HasMany
+     * Periodic progress evaluations and clinical assessments.
      */
     public function caseReviews(): HasMany
     {
@@ -213,26 +198,25 @@ class BeneficiaryCase extends Model implements HasCaseEvents ,CacheInvalidatable
     }
 
     /**
-     * Perform actions during the model booting process.
-     * Specifically handles automatic timestamping for case closure.
-     *
-     * @return void
+     * AUTO-SYNCHRONIZATION ENGINE:
+     * Hooks into the saving lifecycle to enforce business rules regarding case closure.
+     * 1. Forces status to CLOSED if a closure reason is provided.
+     * 2. Automatically manages the 'closed_at' timestamp based on the Status Enum.
      */
     protected static function booted()
-{
-    static::saving(function (BeneficiaryCase $case) {
-        if (!empty($case->closure_reason) && $case->status !== CaseStatus::CLOSED) {
-            $case->status = CaseStatus::CLOSED;
-        }
-
-        if ($case->status === CaseStatus::CLOSED) {
-            if (is_null($case->closed_at)) {
-                $case->closed_at = now();
+    {
+        static::saving(function (BeneficiaryCase $case) {
+            if (!empty($case->closure_reason) && $case->status !== CaseStatus::CLOSED) {
+                $case->status = CaseStatus::CLOSED;
             }
-        } else {
 
-            $case->closed_at = null;
-        }
-    });
-}
+            if ($case->status === CaseStatus::CLOSED) {
+                if (is_null($case->closed_at)) {
+                    $case->closed_at = now();
+                }
+            } else {
+                $case->closed_at = null;
+            }
+        });
+    }
 }

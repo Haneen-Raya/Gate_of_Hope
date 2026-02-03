@@ -38,7 +38,7 @@ class UpdateCaseRequest extends FormRequest
             'closed_at'       => 'nullable|date',
             'closure_reason'  => [
                 'nullable',
-                'string',
+                'array',
                 'max:1000',
                 Rule::requiredIf(fn() => !empty($this->closed_at)),
             ],

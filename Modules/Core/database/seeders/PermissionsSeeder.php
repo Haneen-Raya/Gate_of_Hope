@@ -63,7 +63,7 @@ class PermissionsSeeder extends Seeder
             'case_assignments.update','case_assignments.delete',
 
             'cases.read','case_support_plans.read','case_sessions.read',
-            'case_reviews.read','case_reviews.create','case_reviews.update','case_reviews.delete','case_referrals.read',
+            'case_reviews.read','case_reviews.create','case_reviews.update','case_reviews.delete','case_referral.read',
 
             // Issues
             'issue_categories.create','issue_categories.read',
@@ -148,7 +148,7 @@ class PermissionsSeeder extends Seeder
             'regions.create','regions.read','regions.update','regions.delete',
             //activity attendance
             'activity.attendance.create','activity.attendance.read','activity.attendance.update','activity.attendance.delete',
-            // trainer 
+            // trainer
             'trainer.profile.read','trainer.profile.update','trainer.schedule.read',
             'trainer.session.read','trainer.session.create','trainer.session.update',
         ];
