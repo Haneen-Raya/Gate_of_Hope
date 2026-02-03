@@ -18,8 +18,6 @@ Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(funct
     require __DIR__ . '/v1/case_sessions.php';
     Route::apiResource('casemanagements', CaseManagementController::class)->names('casemanagement');
 
-    Route::apiResource('services', ServiceController::class)->names('services');
-
     // Register Case Event routes
     require __DIR__ . '/V1/case-events.php';
 
@@ -34,6 +32,9 @@ Route::middleware(['auth:sanctum','set_locale_lang'])->prefix('v1')->group(funct
 
     // Register Case Referrals routes
     require __DIR__ . '/V1/case-referrals.php';
+
+    // Register Services routes
+    require __DIR__ . '/V1/services.php';
 
     require __DIR__ . '/V1/beneficiary-case.php';
 });

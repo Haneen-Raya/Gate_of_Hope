@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Modules\CaseManagement\Http\Requests\Api\V1\Service\StoreServiceRequest;
+use Modules\CaseManagement\Http\Requests\Api\V1\Service\UpdateServiceActivationRequest;
 use Modules\CaseManagement\Http\Requests\Api\V1\Service\UpdateServiceRequest;
 use Modules\CaseManagement\Models\Service;
 use Modules\CaseManagement\Services\ServiceService;
@@ -24,6 +25,7 @@ class ServiceController extends Controller
             new Middleware('can:service.create', only: ['store']),
             new Middleware('can:service.read', only: ['index','show']),
             new Middleware('can:service.update', only: ['update']),
+            new Middleware('can:service.activation.update', only: ['updateActivation']),
             new Middleware('can:service.delete', only: ['destroy']),
         ];
     }
@@ -122,6 +124,24 @@ class ServiceController extends Controller
         return $this->successResponse(
             'Deleted succcessful',
             null
+        );
+    }
+
+    /**
+     * Update the activation status of a specific service.
+     *
+     * Validates the activation data and delegates the update process
+     * to the entityService.
+     *
+     * @param  UpdateServiceActivationRequest $request
+     * @param  Service $service
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateActivation(UpdateServiceActivationRequest $request, Service $service)
+    {
+        return $this->successResponse(
+            'Updated succcessful',
+            $this->serviceService->updateActivationStatus($request->validated(), $service)
         );
     }
 }

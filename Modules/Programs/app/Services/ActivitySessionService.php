@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Support\Collection;
+use Modules\Programs\Events\ActivitySessionScheduled;
 
 /**
  * Class ActivitySessionService
@@ -77,6 +78,8 @@ class ActivitySessionService
             $session = ActivitySession::create($data);
 
             $this->flushCache($session);
+
+            event(new ActivitySessionScheduled($session));
 
             return $session;
         });

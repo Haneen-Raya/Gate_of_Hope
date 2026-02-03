@@ -5,100 +5,182 @@ use Modules\CaseManagement\Http\Controllers\Api\V1\CaseReferralController;
 
 /*
 |--------------------------------------------------------------------------
-| Case Referral Management - API V1
+| Case Referral Management Module - API V1
 |--------------------------------------------------------------------------
-| Controller: CaseReferralController
-| Model: CaseReferral
-| Base Path: /api/v1/case-referrals
+|
+| Controller : CaseReferralController
+| Model      : CaseReferral
+| Base Path  : /api/v1/case-referrals
+|
+| CaseReferrals represent referrals of beneficiary cases to specific services,
+| including direction, urgency, status, and lifecycle tracking (accepted, rejected, completed, cancelled).
+|
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('case-referrals')->group(function () {
 
-    /**
-     * @name 1. List & Search Case Referrals
-     * @path GET /api/v1/case-referrals
+    /*
+     * ----------------------------------------------------------------------
+     * 1. List & Search Case Referrals
+     * ----------------------------------------------------------------------
      *
-     * @query_params:
-     * - @param beneficiary_case_id (int): Filter by a specific case ID.
-     * - @param service_id (int): Filter by a specific service ID.
-     * - @param receiver_entity_id (int): Filter by a specific receiver entity ID.
-     * - @param type (string): Filter by referral type.
-     * - @param direction (string): Filter by referral direction.
-     * - @param status (string): Filter by referral status.
-     * - @param urgency_level (string): Filter by referral urgency_level.
-     * - @param referral_date_from (date): Filter referrals starting on/after YYYY-MM-DD.
-     * - @param referral_date_to (date): Filter plans ending before/on YYYY-MM-DD.
-     * - @param rejected (bool):  Quick filter for rejected referrals.
-     * - @param completed (bool):  Quick filter for completed referrals.
-     * - @param cancelled (bool):  Quick filter for cancelled referrals.
-     * - @param accepted (bool):  Quick filter for accepted referrals.
-     * - @param page (int): Pagination page number (default: 1).
+     * @name   CaseReferral Index
+     * @route  GET /api/v1/case-referrals
      *
-     * @features: Deterministic Tagged Caching, MD5 Signature Key, Custom Query Builder.
+     * @description
+     * Returns a paginated list of case referrals with dynamic filtering support.
+     *
+     * @queryParams
+     * - beneficiary_case_id   (int|null)    Filter by beneficiary case
+     * - service_id            (int|null)    Filter by requested service
+     * - receiver_entity_id    (int|null)    Filter by receiving entity
+     * - referral_type         (string|null) Filter by referral type
+     * - direction             (string|null) Filter by referral direction
+     * - status                (string|null) Filter by referral status
+     * - urgency_level         (string|null) Filter by urgency level
+     * - referral_date_from    (date|null)   Filter referrals from this date
+     * - referral_date_to      (date|null)   Filter referrals to this date
+     * - rejected              (bool|null)   Only rejected referrals
+     * - accepted              (bool|null)   Only accepted referrals
+     * - completed             (bool|null)   Only completed referrals
+     * - cancelled             (bool|null)   Only cancelled referrals
+     * - page                  (int)         Pagination page number (default: 1)
+     *
+     * @features
+     * - Custom CaseReferralBuilder Filters
+     * - Tagged Caching
+     * - Pagination Support
      */
-    Route::get('/', [CaseReferralController::class, 'index']);
+    Route::get('/', [CaseReferralController::class, 'index'])
+        ->name('case-referrals.index');
 
-    /**
-     * @name 2. Store New Case Referral
-     * @path POST /api/v1/case-referrals
+    /*
+     * ----------------------------------------------------------------------
+     * 2. Store New Case Referral
+     * ----------------------------------------------------------------------
      *
-     * @body_payload (StoreCaseReferralRequest):
-     * - beneficiary_case_id (int/required): The case this plan belongs to.
-     * - version (int/required): Plan iteration identifier.
-     * - is_active (bool/optional): Defaults to false unless specified.
-     * - start_date (date/required): Commencement of the plan (>= today).
-     * - end_date (date/required): Completion of the plan (> start_date).
+     * @name   CaseReferral Store
+     * @route  POST /api/v1/case-referrals
      *
-     * @description Persists a new plan, assigns current auth user to audit fields,
-     * and invalidates global list cache.
+     * @description
+     * Creates a new case referral and flushes related cache tags.
+     *
+     * @bodyParams (StoreCaseReferralRequest)
+     * - beneficiary_case_id   (int|required)     Related beneficiary case
+     * - service_id            (int|required)     Requested service
+     * - receiver_entity_id    (int|required)     Entity assigned to deliver the service
+     * - referral_type         (string|required)  Referral type enum
+     * - direction             (string|required)  Referral direction enum
+     * - status                (string|required)  Initial referral status enum
+     * - urgency_level         (string|nullable)  Urgency level enum
+     * - reason                (string|nullable)  Reason for referral
+     * - notes                 (string|nullable)  Additional notes
+     * - referral_date         (date|required)    Referral creation date
+     *
+     * @return
+     * Newly created CaseReferral JSON resource.
      */
-    Route::post('/', [CaseReferralController::class, 'store']);
+    Route::post('/', [CaseReferralController::class, 'store'])
+        ->name('case-referrals.store');
 
-    /**
-     * @name 3. Get Case Referral Profile
-     * @path GET /api/v1/case-referrals/{case_referral}
-     *
-     * @url_params:
-     * - case_referral (Case Referral): The object of the Case Referral.
-     *
-     * @return Full JSON object with goals and audit metadata.
-     *
-     * @note: Uses ID-based retrieval to maximize Service Layer Cache Hits.
-     */
-    Route::get('{case_referral}', [CaseReferralController::class, 'show']);
 
-    /**
-     * @name 4. Full/Partial Update
-     * @path PUT /api/v1/case-referrals/{case_referral}
+    /*
+     *----------------------------------------------------------------------
+     * 3. Get Case Referral Profile
+     * ----------------------------------------------------------------------
      *
-     * @description Updates referral attributes and purges dual-tag cache:
-     * 1. Individual record tag (case_referral_{id})
-     * 2. Global list tag (case_referrals)
+     * @name   CaseReferral Show
+     * @route  GET /api/v1/case-referrals/{case_referral}
+     *
+     * @description
+     * Returns full details of a single case referral record.
+     *
+     * @urlParams
+     * - case_referral  (int)  The ID of the case referral
+     *
+     * @return
+     * CaseReferral JSON resource including service, beneficiary case, and receiver entity relations.
      */
-    Route::put('{case_referral}', [CaseReferralController::class, 'update']);
+    Route::get('{case_referral}', [CaseReferralController::class, 'show'])
+        ->name('case-referrals.show');
 
-    /**
-     * @name 5. Delete Case Referral
-     * @path DELETE /api/v1/case-referrals/{case_referral}
+    /*
+     * ----------------------------------------------------------------------
+     * 4. Full/Partial Update
+     * ----------------------------------------------------------------------
      *
-     * @description Permanently or Soft deletes the record. Triggers cache flush
-     * for the specific resource and all paginated lists.
+     * @name   CaseReferral Update
+     * @route  PUT /api/v1/case-referrals/{case_referral}
+     *
+     * @description
+     * Updates an existing case referral record and flushes related cache tags.
+     *
+     * @bodyParams (UpdateCaseReferralRequest)
+     * - beneficiary_case_id   (int|nullable)
+     * - service_id            (int|nullable)
+     * - receiver_entity_id    (int|nullable)
+     * - referral_type         (string|nullable)
+     * - direction             (string|nullable)
+     * - status                (string|nullable)
+     * - urgency_level         (string|nullable)
+     * - reason                (string|nullable)
+     * - notes                 (string|nullable)
+     * - referral_date         (date|nullable)
+     * - accepted_at           (datetime|nullable)
+     * - completed_at          (datetime|nullable)
+     * - rejected_at           (datetime|nullable)
+     * - rejection_reason      (string|nullable)
+     * - cancelled_at          (datetime|nullable)
+     * - cancellation_reason   (string|nullable)
+     *
+     * @return
+     * Updated CaseReferral JSON resource.
      */
-    Route::delete('{case_referral}', [CaseReferralController::class, 'destroy']);
+    Route::put('{case_referral}', [CaseReferralController::class, 'update'])
+        ->name('case-referrals.update');
 
-    /**
-     * @name 6. FUpdate Referral Status
-     * @path PUT /api/v1/case-referrals/{case_referral}/updateStatus
+    /*
+     * ----------------------------------------------------------------------
+     * 5. Delete Case Referral
+     * ----------------------------------------------------------------------
      *
-     * * @url_params:
-     * - case_referral (Case Referral): The object of the Case Referral.
+     * @name   CaseReferral Delete
+     * @route  DELETE /api/v1/case-referrals/{case_referral}
      *
-     * @body_payload:
-     * - status (string/required): New referral status (pending, approved, rejected).
-     * - notes (string/optional): Optional note for status change.
+     * @description
+     * Soft or permanent deletes a case referral record and flushes relevant cache tags.
      *
-     * @description Updates only the status of the referral and invalidates relevant cache tags.
+     * @urlParams
+     * - case_referral  (int)  The ID of the case referral
      */
-    Route::put('{case_referral}/updateStatus', [CaseReferralController::class, 'updateStatus']);
-});
+    Route::delete('{case_referral}', [CaseReferralController::class, 'destroy'])
+        ->name('case-referrals.destroy');
+
+    /*
+     * ----------------------------------------------------------------------
+     * 6. Update Referral Status
+     * ----------------------------------------------------------------------
+     *
+     * @name   CaseReferral Update Status
+     * @route  PUT /api/v1/case-referrals/{case_referral}/updateStatus
+     *
+     * @description
+     * Updates the status lifecycle fields (accepted, rejected, completed, cancelled)
+     * of a referral and flushes related cache tags.
+     *
+     * @bodyParams
+     * - status                (string|required)  New referral status
+     * - accepted_at           (datetime|nullable)
+     * - completed_at          (datetime|nullable)
+     * - rejected_at           (datetime|nullable)
+     * - rejection_reason      (string|nullable)
+     * - cancelled_at          (datetime|nullable)
+     * - cancellation_reason   (string|nullable)
+     *
+     * @return
+     * Updated CaseReferral JSON resource.
+     */
+    Route::put('{case_referral}/updateStatus', [CaseReferralController::class, 'updateStatus'])
+        ->name('case-referrals.updateStatus');
+    });
