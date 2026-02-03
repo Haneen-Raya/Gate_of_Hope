@@ -115,34 +115,58 @@ class ProgramPerformanceReportService
      * Calculate positive change indicators for the program.
      *
      * These indicators provide deeper insights beyond raw attendance:
-     * - Regular attendance
-     * - Dropout estimation
+     * - Regular attendance (high engagement)
+     * - Dropout rate (missed participation)
      *
      * @param int $programId
      * @return array<string, mixed>
      */
     protected function calculatePositiveIndicators(int $programId): array
     {
-        $regularAttendees =  ActivityAttendance::with('activitySession.activity')
-                ->where('attendance_status', 'attended')
-                ->whereHas('activitySession.activity', function ($query) {
-                    $query->where('program_id', 1);
-                })
-                ->get()
-                ->groupBy('beneficiary_id')
-                ->filter(function ($attendances) {
-                    return $attendances->count() >= 5; 
-                });
+        $attendanceGrouped = ActivityAttendance::whereHas(
+            'activitySession.activity',
+            fn($q) => $q->where('program_id', $programId))
+            ->get()
+            ->groupBy('beneficiary_id');
+
+        //Regular attendees = beneficiaries who attended 5+ sessions.
+        $regularAttendeesCount = $attendanceGrouped
+            ->filter(function ($records) {
+                return $records->where(
+                    'attendance_status',
+                    AttendanceStatus::ATTENDED
+                )->count() >= 5;
+            })
+            ->count();
+
+        /**
+         * Dropout = beneficiaries who have attendance records
+         * but never attended any session.
+         */
+        $dropoutCount = $attendanceGrouped
+            ->filter(function ($records) {
+                return $records->where(
+                    'attendance_status',
+                    AttendanceStatus::ATTENDED
+                )->count() === 0;
+            })
+            ->count();
+
+        $totalBeneficiaries = $attendanceGrouped->count();
+
+        $dropoutRate = $totalBeneficiaries > 0
+            ? round(($dropoutCount / $totalBeneficiaries) * 100, 2)
+            : 0;
 
         return [
             "regular_attendees" => [
-                "count"      => $regularAttendees,
-                "definition" => "Beneficiaries who attended at least 5 sessions",
+                "count"      => $regularAttendeesCount,
+                "definition" => "Beneficiaries who attended at least 5 sessions.",
             ],
 
             "dropout_rate" => [
-                "value"       => 0.10,
-                "description" => "Placeholder until dropout logic is implemented",
+                "value"       => $dropoutRate,
+                "description" => "Dropout rate represents beneficiaries who were registered but never attended any session.",
             ],
         ];
     }
@@ -151,33 +175,39 @@ class ProgramPerformanceReportService
      * Generate beneficiary insights for the program.
      *
      * This section highlights:
-     * - Most benefited groups
-     * - Most in-need groups
-     *
-     * Currently simplified as placeholders.
+     * - Most benefited groups (highest attendance rate)
+     * - Most in-need groups (lowest attendance rate)
      *
      * @param int $programId
      * @return array<string, mixed>
      */
     protected function generateBeneficiaryInsights(int $programId): array
     {
-        return [
-            "most_benefited_groups" => [
-                [
+        $genderStats = ActivityAttendance::whereHas(
+            'activitySession.activity',
+            fn($q) => $q->where('program_id', $programId)
+            )
+            ->join('beneficiaries', 'beneficiaries.id', '=', 'activity_attendances.beneficiary_id')
+            ->selectRaw("
+                beneficiaries.gender as group_name,
+                COUNT(*) as total_records,
+                SUM(CASE WHEN attendance_status = 'attended' THEN 1 ELSE 0 END) as attended_count")
+            ->groupBy('beneficiaries.gender')
+            ->get()
+            ->map(function ($row) {
+                return [
                     "category"        => "gender",
-                    "group"           => "Women",
-                    "attendance_rate" => 0.85,
-                ],
-            ],
+                    "group"           => $row->group_name,
+                    "attendance_rate" => $row->total_records > 0
+                        ? round(($row->attended_count / $row->total_records) * 100, 2)
+                        : 0,
+                ];
+            });
 
-            "most_in_need_groups" => [
-                [
-                    "category"        => "age_range",
-                    "group"           => "18-25",
-                    "attendance_rate" => 0.45,
-                    "note"            => "Low attendance indicates need for follow-up",
-                ],
-            ],
+        return [
+            "most_benefited_groups" => $genderStats->sortByDesc('attendance_rate')->take(1)->values(),
+
+            "most_in_need_groups"   => $genderStats->sortBy('attendance_rate')->take(1)->values(),
         ];
     }
 
@@ -190,13 +220,13 @@ class ProgramPerformanceReportService
     protected function generateSummary(array $metrics): array
     {
         $effectiveness =
-            $metrics["attendance_rate"] >= 0.75 ? "good" :
-            ($metrics["attendance_rate"] >= 0.50 ? "average" : "weak");
+            $metrics["attendance_rate"] >= 75 ? "good" :
+            ($metrics["attendance_rate"] >= 50 ? "average" : "weak");
 
         return [
             "overall_effectiveness" => $effectiveness,
             "key_notes" => [
-                "Attendance rate is " . ($metrics["attendance_rate"] * 100) . "%",
+                "Attendance rate is " . ($metrics["attendance_rate"]) . "%",
                 "Total beneficiaries reached: " . $metrics["total_registered_beneficiaries"],
             ],
         ];
